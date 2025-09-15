@@ -1,4 +1,4 @@
-import axios, { type AxiosResponse } from 'axios';
+import axios from 'axios';
 import urlJoin from 'url-join';
 
 import type { APIFetcherFn } from '#DataContext/types.js';
@@ -19,7 +19,7 @@ const defaultApiFetcher: APIFetcherFn = async (args) => {
 
 	const { body, endpoint = '', endpointTag = '', headers = emptyObj, method = 'POST', url = ARRANGER_API } = args;
 
-	const response = await axios(urlJoin(url, endpoint, endpointTag), {
+	const response = await axios(urlJoin(url, endpoint, endpointTag || ''), {
 		data: JSON.stringify(body),
 		headers: { ...alwaysSendHeaders, ...headers },
 		method,
@@ -53,7 +53,7 @@ export const fetchExtendedMapping = ({
 			`,
 		},
 	}).then((response) => ({
-		extendedMapping: response.data?.[documentType].extended || response[documentType].extended,
+		extendedMapping: response.data?.[documentType]?.extended || [],
 	}));
 
 export const addHeaders = (headers: Headers) => {
