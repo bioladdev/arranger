@@ -1,32 +1,46 @@
-import React from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
-export default class StyleProvider extends React.Component {
-  state = {
+interface Theme {
+  id: string;
+  title: string;
+  stylePath: string;
+}
+
+interface StyleProviderProps {
+  availableThemes: Theme[];
+  selected: string;
+}
+
+const StyleProvider = ({ availableThemes, selected }: StyleProviderProps) => {
+  const [state, setState] = useState({
     themeLoaded: false,
     loadedStyle: null,
-  };
+  });
 
-  componentDidMount = () => {
-    this.applyStyle(this.props.availableThemes, this.props.selected);
-  };
+  const applyStyle = useCallback(async (themes: Theme[], selectedThemeId: string) => {
+    const theme = themes.find((theme) => theme.id === selectedThemeId);
+    if (!theme) return;
 
-  UNSAFE_componentWillReceiveProps = (nextProps) => {
-    this.applyStyle(nextProps.availableThemes, nextProps.selected);
-  };
+    try {
+      const response = await fetch(theme.stylePath);
+      const loadedStyle = await response.text();
 
-  applyStyle = async (availableThemes, selectedThemeId) => {
-    const stylePath = availableThemes.find((theme) => theme.id === selectedThemeId).stylePath;
+      setState({
+        themeLoaded: true,
+        loadedStyle,
+      });
+    } catch (error) {
+      console.error('Failed to load theme:', error);
+    }
+  }, []);
 
-    let response = await fetch(stylePath);
-    let loadedStyle = await response.text();
+  useEffect(() => {
+    applyStyle(availableThemes, selected);
+  }, [availableThemes, selected, applyStyle]);
 
-    this.setState({
-      themeLoaded: true,
-      loadedStyle,
-    });
-  };
+  return state.themeLoaded && state.loadedStyle ? (
+    <style type="text/css">{state.loadedStyle}</style>
+  ) : null;
+};
 
-  render() {
-    return this.state.themeLoaded && <style type="text/css"> {this.state.loadedStyle} </style>;
-  }
-}
+export default StyleProvider;

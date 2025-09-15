@@ -1,18 +1,19 @@
 import { css } from '@emotion/react';
 import cx from 'classnames';
+import { useEffect, useMemo, useState } from 'react';
 import ReactTable from 'react-table-old';
-import { compose, withPropsOnChange, withState } from 'recompose';
 
 import Pagination from './Table/index.js';
 
-const enhance = compose(
-	withState('activeTab', 'setActiveTab', null),
-	withPropsOnChange(['tabs'], ({ tabs, activeTab, setActiveTab }) => {
-		const tabsWithKey = tabs.map((x) => ({ ...x, key: x.key || x.title }));
-		!activeTab && tabs?.length && setActiveTab(tabsWithKey[0].key);
-		return { tabs: tabsWithKey };
-	}),
-);
+interface Tab {
+	key?: string;
+	title: string;
+	content: React.ReactNode;
+}
+
+interface TabsProps {
+	tabs: Tab[];
+}
 
 export const TabsTable = ({ className, columns, data, pageSize = 10, ...props }) => (
 	<ReactTable
@@ -34,16 +35,29 @@ export const TabsTable = ({ className, columns, data, pageSize = 10, ...props })
 	/>
 );
 
-const Tabs = ({ tabs, activeTab, setActiveTab }) =>
-	tabs?.length ? (
-		<div className={`tabs`}>
+const Tabs = ({ tabs }: TabsProps) => {
+	const [activeTab, setActiveTab] = useState<string | null>(null);
+
+	const tabsWithKey = useMemo(
+		() => tabs.map((x) => ({ ...x, key: x.key || x.title })),
+		[tabs],
+	);
+
+	useEffect(() => {
+		if (!activeTab && tabsWithKey.length > 0) {
+			setActiveTab(tabsWithKey[0].key);
+		}
+	}, [activeTab, tabsWithKey]);
+
+	return tabsWithKey.length ? (
+		<div className="tabs">
 			<div
-				className={`tabs-titles`}
+				className="tabs-titles"
 				css={css`
 					display: flex;
 				`}
 			>
-				{tabs.map(({ key, title }) => (
+				{tabsWithKey.map(({ key, title }) => (
 					<div
 						key={key}
 						className={cx('tabs-title', { 'active-tab': key === activeTab })}
@@ -54,8 +68,9 @@ const Tabs = ({ tabs, activeTab, setActiveTab }) =>
 				))}
 			</div>
 
-			<div className={`tabs-content`}>{tabs.find(({ key }) => key === activeTab)?.content}</div>
+			<div className="tabs-content">{tabsWithKey.find(({ key }) => key === activeTab)?.content}</div>
 		</div>
 	) : null;
+};
 
-export default enhance(Tabs);
+export default Tabs;

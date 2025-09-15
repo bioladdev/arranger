@@ -18,7 +18,23 @@ export interface DropDownThemeProps extends ThemedButtonProps {
 	TextFilter: InputThemeProps;
 }
 
+export interface DropDownItem {
+	id?: string;
+	show?: boolean;
+	exporterRequiresRowSelection?: boolean;
+	[key: string]: any;
+}
+
 export interface DropDownProps extends ThemeCommon.CustomCSS {
+	arrowColor?: string;
+	arrowTransition?: string;
+	hasSelectedRows?: boolean;
+	items: DropDownItem[];
+	onChange?: (item: DropDownItem) => void;
+	itemToString?: (item: DropDownItem) => React.ReactNode;
+	children?: React.ReactNode;
+	align?: 'left' | 'right';
+	singleSelect?: boolean;
 	theme?: RecursivePartial<DropDownThemeProps>;
 }
 

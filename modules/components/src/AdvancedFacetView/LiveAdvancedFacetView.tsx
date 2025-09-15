@@ -1,5 +1,5 @@
 import { isEqual } from 'lodash-es';
-import { Component } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import defaultApiFetcher from '#utils/api.js';
 import esToAggTypeMap from '#utils/esToAggTypeMap.js';
@@ -115,39 +115,59 @@ const removeFieldTypesFromMapping = ({ mapping, extended, parentField = null, fi
 
 const defaultFieldTypesToExclude = ['id', 'text'];
 
-export default class LiveAdvancedFacetView extends Component {
-	constructor(props) {
-		super(props);
-		const { sqon, fieldTypesToExclude = defaultFieldTypesToExclude } = props;
-		this.state = {
-			mapping: {},
-			extended: [],
-			facets: {},
-			aggregations: null,
-			sqon: sqon || null,
-		};
-		this.denyListedAggTypes = ['object', 'nested'].concat(fieldTypesToExclude);
-	}
+interface LiveAdvancedFacetViewProps {
+	index: string;
+	apiFetcher?: typeof defaultApiFetcher;
+	sqon?: any;
+	fieldTypesToExclude?: string[];
+	onSqonChange?: (args: { sqon: any }) => void;
+	documentType: string;
+	[key: string]: any;
+}
 
-	filterExtendedForFetchingAggs = ({ extended, facets }) =>
-		extended?.filter(
-			(e) =>
-				!this.denyListedAggTypes.includes(e.type) &&
-				facets?.aggregations?.find((s) => s.fieldName.split('__').join('.') === e.fieldName)?.isActive,
-		);
+const LiveAdvancedFacetView = ({
+	index,
+	apiFetcher = defaultApiFetcher,
+	sqon: initialSqon,
+	fieldTypesToExclude = defaultFieldTypesToExclude,
+	onSqonChange = noopFn,
+	documentType,
+	...props
+}: LiveAdvancedFacetViewProps) => {
+	const [state, setState] = useState({
+		mapping: {},
+		extended: [],
+		facets: {},
+		aggregations: null,
+		sqon: initialSqon || null,
+	});
 
-	componentDidMount() {
-		const { index, apiFetcher } = this.props;
-		const { sqon } = this.state;
-		const fetchConfig = { index, sqon, apiFetcher };
+	const prevSqonRef = useRef(initialSqon);
+
+	const denyListedAggTypes = useMemo(
+		() => ['object', 'nested'].concat(fieldTypesToExclude),
+		[fieldTypesToExclude],
+	);
+
+	const filterExtendedForFetchingAggs = useCallback(
+		({ extended, facets }: { extended: any[]; facets: any }) =>
+			extended?.filter(
+				(e) =>
+					!denyListedAggTypes.includes(e.type) &&
+					facets?.aggregations?.find((s) => s.fieldName.split('__').join('.') === e.fieldName)?.isActive,
+			),
+		[denyListedAggTypes],
+	);
+
+	useEffect(() => {
+		const fetchConfig = { index, sqon: state.sqon, apiFetcher };
 		fetchMappingData(fetchConfig).then(({ configs: { extended, facets } = emptyObj, mapping }) => {
 			return fetchAggregationData({
-				extended: this.filterExtendedForFetchingAggs({ extended, facets }),
+				extended: filterExtendedForFetchingAggs({ extended, facets }),
 				...fetchConfig,
 			}).then(({ aggregations }) => {
-				const { fieldTypesToExclude = defaultFieldTypesToExclude } = this.props;
-
-				this.setState({
+				setState((prev) => ({
+					...prev,
 					mapping: removeFieldTypesFromMapping({
 						mapping,
 						extended,
@@ -156,43 +176,49 @@ export default class LiveAdvancedFacetView extends Component {
 					facets,
 					extended,
 					aggregations,
-				});
+				}));
 			});
 		});
-	}
+	}, [index, apiFetcher, state.sqon, filterExtendedForFetchingAggs, fieldTypesToExclude]);
 
-	UNSAFE_componentWillReceiveProps({ sqon }) {
-		if (!isEqual(sqon, this.state.sqon)) {
-			this.setState({ sqon });
+	useEffect(() => {
+		if (!isEqual(initialSqon, prevSqonRef.current)) {
+			setState((prev) => ({ ...prev, sqon: initialSqon }));
+			prevSqonRef.current = initialSqon;
 		}
-	}
+	}, [initialSqon]);
 
-	onSqonFieldChange = ({ sqon }) => {
-		const { onSqonChange = noopFn } = this.props;
-		const { extended, facets } = this.state;
+	const onSqonFieldChange = useCallback(
+		({ sqon }: { sqon: any }) => {
+			const { extended, facets } = state;
 
-		fetchAggregationData({
-			...this.props,
-			extended: this.filterExtendedForFetchingAggs({
-				extended,
-				facets,
-			}),
-			sqon,
-		}).then(({ aggregations }) => this.setState({ sqon, aggregations }, () => onSqonChange({ sqon })));
-	};
+			fetchAggregationData({
+				index,
+				apiFetcher,
+				extended: filterExtendedForFetchingAggs({
+					extended,
+					facets,
+				}),
+				sqon,
+			}).then(({ aggregations }) => {
+				setState((prev) => ({ ...prev, sqon, aggregations }));
+				onSqonChange({ sqon });
+			});
+		},
+		[state, index, apiFetcher, filterExtendedForFetchingAggs, onSqonChange],
+	);
 
-	render() {
-		const { fieldTypesToExclude = defaultFieldTypesToExclude, ...props } = this.props;
-		return (
-			<AdvancedFacetView
-				{...props}
-				rootTypeName={props.documentType}
-				elasticMapping={this.state.mapping}
-				extendedMapping={this.state.extended.filter((ex) => !fieldTypesToExclude.some((type) => ex.type === type))}
-				aggregations={this.state.aggregations}
-				onSqonFieldChange={this.onSqonFieldChange}
-				sqon={this.state.sqon}
-			/>
-		);
-	}
-}
+	return (
+		<AdvancedFacetView
+			{...props}
+			rootTypeName={documentType}
+			elasticMapping={state.mapping}
+			extendedMapping={state.extended.filter((ex) => !fieldTypesToExclude.some((type) => ex.type === type))}
+			aggregations={state.aggregations}
+			onSqonFieldChange={onSqonFieldChange}
+			sqon={state.sqon}
+		/>
+	);
+};
+
+export default LiveAdvancedFacetView;
