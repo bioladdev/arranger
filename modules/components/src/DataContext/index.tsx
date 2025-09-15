@@ -27,7 +27,7 @@ export const DataContext = createContext<DataContextInterface>({
  * @param {string} [url] customises where requests should be made by the data fetcher.
  */
 export const DataProvider = ({
-	apiUrl = ARRANGER_API,
+	apiUrl = ARRANGER_API || '',
 	children,
 	customFetcher: apiFetcher = defaultApiFetcher,
 	documentType,
@@ -73,7 +73,7 @@ export const DataProvider = ({
 
 	return (
 		<DataContext.Provider value={contextValues}>
-			<ThemeProvider theme={theme}>{children}</ThemeProvider>
+			<ThemeProvider theme={theme || undefined}>{children}</ThemeProvider>
 		</DataContext.Provider>
 	);
 };
@@ -103,7 +103,7 @@ export const useDataContext = ({
 export const withData = <Props extends Omit<Props, keyof DataContextInterface>>(Component: ComponentType<Props>) => {
 	// UseDataContextProps;
 	const callerName = getComponentDisplayName(Component);
-	const ComponentWithData = (props) => {
+	const ComponentWithData = (props: any) => {
 		const dataProps = {
 			...props,
 			...useDataContext({ callerName }),
