@@ -1,11 +1,11 @@
 import { css } from '@emotion/react';
 import { addDays, endOfDay, startOfDay, subDays } from 'date-fns';
-import React from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
 import { removeSQON, replaceSQON } from '#SQONViewer/utils.js';
-import { withTheme } from '#ThemeContext/index.js';
+import { useThemeContext } from '#ThemeContext/index.js';
 import { emptyObj } from '#utils/noops.js';
 
 import AggsWrapper from './AggsWrapper.js';
@@ -16,18 +16,34 @@ const toSqonDate = (date) => date.valueOf();
 const dateFormat = 'yyyy/MM/dd';
 const fieldPlaceholder = dateFormat.toUpperCase();
 
-class DatesAgg extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = this.initializeState(props);
-	}
+interface DatesAggProps {
+	fieldName: string;
+	getActiveValue?: (args: { op: string; fieldName: string }) => any;
+	stats?: { min?: Date; max?: Date };
+	enforceStatsMax?: boolean;
+	handleDateChange?: (args: any) => void;
+	collapsible?: boolean;
+	displayName?: string;
+	facetView?: boolean;
+	type?: string;
+	WrapperComponent?: React.ComponentType<any>;
+}
 
-	UNSAFE_componentWillReceiveProps(nextProps) {
-		this.setState(this.initializeState(nextProps));
-	}
+const DatesAgg = ({
+	fieldName,
+	getActiveValue = () => null,
+	stats = {},
+	enforceStatsMax = false,
+	handleDateChange,
+	collapsible = true,
+	displayName = 'Date Range',
+	facetView = false,
+	type,
+	WrapperComponent,
+}: DatesAggProps) => {
+	const theme = useThemeContext();
 
-	initializeState = ({ getActiveValue = () => null, stats = {}, enforceStatsMax = false }) => {
-		const { fieldName } = this.props;
+	const initializeState = useCallback(() => {
 		const minDate = stats.min && subDays(stats.min, 1);
 		const statsMax = stats.max && addDays(stats.max, 1);
 		const maxDate = enforceStatsMax ? statsMax : Math.max(Date.now(), statsMax);
@@ -40,11 +56,16 @@ class DatesAgg extends React.Component {
 			startDate: startFromSqon ? dateFromSqon(startFromSqon) : null,
 			endDate: endFromSqon ? dateFromSqon(endFromSqon) : null,
 		};
-	};
+	}, [getActiveValue, stats, enforceStatsMax, fieldName]);
 
-	updateSqon = () => {
-		const { startDate, endDate } = this.state;
-		const { fieldName, handleDateChange } = this.props;
+	const [state, setState] = useState(() => initializeState());
+
+	useEffect(() => {
+		setState(initializeState());
+	}, [initializeState]);
+
+	const updateSqon = useCallback(() => {
+		const { startDate, endDate } = state;
 		if (handleDateChange && fieldName) {
 			const content = [
 				...(startDate
@@ -77,46 +98,43 @@ class DatesAgg extends React.Component {
 					replaceSQON(content.length ? { op: 'and', content } : null, removeSQON(fieldName, sqon)),
 			});
 		}
-	};
+	}, [state, handleDateChange, fieldName]);
 
-	handleDateChange = (limit) => (date) => {
-		this.setState({ [`${limit}Date`]: date }, this.updateSqon);
-	};
+	const handleDateChangeCallback = useCallback(
+		(limit: 'start' | 'end') => (date: Date | null) => {
+			setState((prev) => ({ ...prev, [`${limit}Date`]: date }));
+			// Use setTimeout to ensure state is updated before calling updateSqon
+			setTimeout(updateSqon, 0);
+		},
+		[updateSqon],
+	);
 
-	render() {
-		const {
-			collapsible = true,
-			displayName = 'Date Range',
-			facetView = false,
-			fieldName,
-			theme: {
-				colors,
-				components: {
-					Aggregations: {
-						NoDataContainer: {
-							fontColor: themeNoDataFontColor = colors?.grey?.[600],
-							fontSize: themeNoDataFontSize = '0.8em',
-						} = emptyObj,
-					} = emptyObj,
-					Input: {
-						borderColor: themeInputBorderColor = colors?.grey?.[400],
-						boxShadow: themeInputBoxShadow,
-					} = emptyObj,
+	const {
+		colors,
+		components: {
+			Aggregations: {
+				NoDataContainer: {
+					fontColor: themeNoDataFontColor = colors?.grey?.[600],
+					fontSize: themeNoDataFontSize = '0.8em',
 				} = emptyObj,
-			},
-			type,
-			WrapperComponent,
-		} = this.props;
-		const { minDate, maxDate, startDate, endDate } = this.state;
-		const hasData = minDate && maxDate;
+			} = emptyObj,
+			Input: {
+				borderColor: themeInputBorderColor = colors?.grey?.[400],
+				boxShadow: themeInputBoxShadow,
+			} = emptyObj,
+		} = emptyObj,
+	} = theme;
+	
+	const { minDate, maxDate, startDate, endDate } = state;
+	const hasData = minDate && maxDate;
 
-		const dataFields = {
-			...(fieldName && { 'data-fieldname': fieldName }),
-			...(type && { 'data-type': type }),
-		};
+	const dataFields = {
+		...(fieldName && { 'data-fieldname': fieldName }),
+		...(type && { 'data-type': type }),
+	};
 
-		return (
-			<AggsWrapper dataFields={dataFields} {...{ displayName, WrapperComponent, collapsible }}>
+	return (
+		<AggsWrapper dataFields={dataFields} {...{ displayName, WrapperComponent, collapsible }}>
 				{hasData ? (
 					<div
 						css={css`
@@ -208,7 +226,7 @@ class DatesAgg extends React.Component {
 							dateFormat={dateFormat}
 							disabled={!hasData}
 							isClearable
-							onChange={this.handleDateChange('start')}
+							onChange={handleDateChangeCallback('start')}
 							openToDate={startDate || minDate}
 							placeholderText={fieldPlaceholder}
 							popperPlacement={facetView ? 'bottom-start' : 'top-start'}
@@ -233,7 +251,7 @@ class DatesAgg extends React.Component {
 							dateFormat={dateFormat}
 							disabled={!hasData}
 							isClearable
-							onChange={this.handleDateChange('end')}
+							onChange={handleDateChangeCallback('end')}
 							openToDate={endDate || maxDate}
 							placeholderText={fieldPlaceholder}
 							popperPlacement={facetView ? 'bottom-end' : 'top-start'}
@@ -257,7 +275,6 @@ class DatesAgg extends React.Component {
 				)}
 			</AggsWrapper>
 		);
-	}
-}
+};
 
-export default withTheme(DatesAgg);
+export default DatesAgg;

@@ -1,17 +1,29 @@
 import zlib from 'node:zlib';
 
-import { Router, urlencoded } from 'express';
+import type { Request, Response, Router } from 'express';
+import { Router as ExpressRouter, urlencoded } from 'express';
 import { defaults } from 'lodash-es';
 import { pack as tarPack } from 'tar-stream';
 
 import dataToExportFormat from '#utils/dataToExportFormat.js';
 import getAllData from '#utils/getAllData.js';
 
-// nfdhjfjhdfjf
+interface ConvertDataToExportFormatOptions {
+	ctx: any;
+	fileType: string;
+}
+
+interface FileOptions {
+	chunkSize?: number;
+	fileType?: string;
+	mock?: boolean;
+	fileName?: string;
+	[key: string]: any;
+}
 
 const convertDataToExportFormat =
-	({ ctx, fileType }) =>
-	async (args) =>
+	({ ctx, fileType }: ConvertDataToExportFormatOptions) =>
+	async (args: any) =>
 		(
 			await getAllData({
 				ctx,
@@ -19,7 +31,13 @@ const convertDataToExportFormat =
 			})
 		).pipe(dataToExportFormat({ ...args, ctx, fileType }));
 
-const getFileStream = async ({ chunkSize, ctx, file, fileType, mock }) => {
+const getFileStream = async ({ chunkSize, ctx, file, fileType, mock }: {
+	chunkSize?: number;
+	ctx: any;
+	file: FileOptions;
+	fileType: string;
+	mock?: boolean;
+}) => {
 	const exportArgs = defaults(file, { chunkSize, fileType, mock });
 
 	return convertDataToExportFormat({ ctx, fileType })({
@@ -28,7 +46,12 @@ const getFileStream = async ({ chunkSize, ctx, file, fileType, mock }) => {
 	});
 };
 
-const multipleFiles = async ({ chunkSize, ctx, files, mock }) => {
+const multipleFiles = async ({ chunkSize, ctx, files, mock }: {
+	chunkSize?: number;
+	ctx: any;
+	files: FileOptions[];
+	mock?: boolean;
+}) => {
 	const pack = tarPack();
 
 	Promise.all(
@@ -63,7 +86,7 @@ const multipleFiles = async ({ chunkSize, ctx, files, mock }) => {
 	return pack.pipe(zlib.createGzip());
 };
 
-export const dataStream = async ({ ctx, params }) => {
+export const dataStream = async ({ ctx, params }: { ctx: any; params: any }) => {
 	const { chunkSize, files, fileName = 'file.tar.gz', fileType = 'tsv', mock } = params;
 
 	if (files?.length > 0) {
@@ -90,14 +113,14 @@ export const dataStream = async ({ ctx, params }) => {
 	throw new Error('files array was missing or empty');
 };
 
-const download = ({ enableAdmin }) => {
+const download = ({ enableAdmin }: { enableAdmin: boolean }): Router => {
 	console.log('enableAdmin', enableAdmin);
 
-	const router = Router();
+	const router = ExpressRouter();
 
 	router.use(urlencoded({ extended: true }));
 
-	router.post('/', async function (req, res) {
+	router.post('/', async function (req: Request, res: Response) {
 		try {
 			console.time('download');
 
@@ -122,7 +145,7 @@ const download = ({ enableAdmin }) => {
 	});
 
 	if (enableAdmin) {
-		router.get('/fields', async (req, res) => {
+		router.get('/fields', async (req: Request, res: Response) => {
 			// all the fields, as flattened from the ES mapping
 			const { fieldsFromMapping } = req.context;
 

@@ -1,4 +1,4 @@
-function getValue(key, defaultValue) {
+function getValue(key: string, defaultValue: string | null): string | null {
 	return (
 		process.env[`STORYBOOK_${key}`] ||
 		process.env[`REACT_APP_${key}`] ||
@@ -7,12 +7,16 @@ function getValue(key, defaultValue) {
 	);
 }
 
-export function setValue(key, value) {
-	localStorage[key] = value;
+export function setValue(key: string, value: string): void {
+	if (typeof window !== 'undefined') {
+		localStorage[key] = value;
+	}
 }
 
-export function deleteValue(key) {
-	delete localStorage[key];
+export function deleteValue(key: string): void {
+	if (typeof window !== 'undefined') {
+		delete localStorage[key];
+	}
 }
 
 export const ACTIVE_INDEX = getValue('ACTIVE_INDEX', null);

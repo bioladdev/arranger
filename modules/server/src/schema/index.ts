@@ -15,6 +15,17 @@ export const setsMapping = {
 	createdAt: { type: 'date' },
 };
 
+interface MakeSchemaOptions {
+	enableAdmin?: boolean;
+	getServerSideFilter?: any;
+	middleware?: any[];
+	mock?: boolean;
+	rootTypes?: any[];
+	scalarTypes?: any[];
+	setsIndex?: string;
+	types?: any[];
+}
+
 const makeSchema = ({
 	enableAdmin = false,
 	getServerSideFilter,
@@ -24,7 +35,7 @@ const makeSchema = ({
 	scalarTypes = [],
 	setsIndex,
 	types = [],
-} = {}) => {
+}: MakeSchemaOptions = {}) => {
 	const typesWithSets = [
 		types,
 		[

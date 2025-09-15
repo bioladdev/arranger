@@ -1,5 +1,5 @@
 import { debounce } from 'lodash-es';
-import { Component } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { decorateFieldWithColumnsState } from '#QuickSearch/QuickSearchQuery.js';
 import api from '#utils/api.js';
@@ -14,111 +14,31 @@ let matchBoxFields = `
   }
 `;
 
-class MatchBoxState extends Component {
-	state = {
+interface MatchBoxStateProps {
+	documentType: string;
+	onInitialLoaded?: (args: { activeFields: any[] }) => void;
+	render: (args: {
+		update: (args: { field: string; key: string; value: any }) => void;
+		matchBoxState: any[];
+		primaryKeyField: any;
+		activeFields: any[];
+		extended: any[];
+	}) => React.ReactNode;
+}
+
+const MatchBoxState = ({ documentType, onInitialLoaded = () => {}, render }: MatchBoxStateProps) => {
+	const [state, setState] = useState({
 		extended: [],
 		columnsState: {},
 		matchBoxState: [],
 		temp: [],
 		err: null,
-	};
+	});
+	
+	const prevDocumentTypeRef = useRef(documentType);
 
-	async componentDidMount() {
-		const { onInitialLoaded = () => {} } = this.props;
-		this.fetchMatchBoxState(this.props, onInitialLoaded);
-	}
-
-	UNSAFE_componentWillReceiveProps(next) {
-		if (this.props.documentType !== next.documentType) {
-			this.fetchMatchBoxState(next);
-		}
-	}
-
-	fetchMatchBoxState = debounce(async ({ documentType }, onComplete = () => {}) => {
-		try {
-			let {
-				data: {
-					[documentType]: {
-						extended,
-						matchBoxState: { state: matchBoxState },
-						columnsState: { state: columnsState },
-					},
-				},
-			} = await api({
-				endpoint: `/graphql`,
-				body: {
-					query: `{
-						${documentType} {
-							extended
-								matchBoxState {
-									${matchBoxFields}
-								}
-								columnsState {
-									state {
-										columns {
-											fieldName
-											query
-											jsonPath
-										}
-									}
-								}
-							}
-						}
-					}`,
-				},
-			});
-
-			this.setState(
-				{
-					matchBoxState,
-					temp: matchBoxState,
-					extended,
-					columnsState,
-					err: null,
-				},
-				() =>
-					onComplete({
-						activeFields: this.getActiveFields(),
-					}),
-			);
-		} catch (err) {
-			this.setState({ err });
-		}
-	}, 300);
-
-	save = debounce(async (state) => {
-		let { data } = await api({
-			endpoint: `/graphql`,
-			body: {
-				variables: { state },
-				query: `mutation($state: JSON!) {
-					saveMatchBoxState(
-						state: $state
-						documentType: "${this.props.documentType}"
-					) {
-						${matchBoxFields}
-					}
-				}`,
-			},
-		});
-
-		this.setState({
-			matchBoxState: data.saveMatchBoxState.state,
-			temp: data.saveMatchBoxState.state,
-		});
-	}, 300);
-
-	update = ({ field, key, value }) => {
-		let matchBoxField = this.state.temp.find((x) => x.field === field);
-		let index = this.state.temp.findIndex((x) => x.field === field);
-		let temp = Object.assign([], this.state.temp, {
-			[index]: { ...matchBoxField, [key]: value },
-		});
-		this.setState({ temp }, () => this.save(temp));
-	};
-
-	getActiveFields = () =>
-		this.state.temp
+	const getActiveFields = useCallback(() => {
+		return state.temp
 			?.filter((x) => x.isActive)
 			?.map((x) => {
 				return {
@@ -126,7 +46,7 @@ class MatchBoxState extends Component {
 					keyFieldName: {
 						fieldName: x.keyFieldName,
 						...decorateFieldWithColumnsState({
-							columnsState: this.state.columnsState,
+							columnsState: state.columnsState,
 							field: x.keyFieldName,
 						}),
 					},
@@ -134,22 +54,153 @@ class MatchBoxState extends Component {
 						field: y,
 						entityName: x.displayName,
 						...decorateFieldWithColumnsState({
-							columnsState: this.state.columnsState,
+							columnsState: state.columnsState,
 							field: y,
 						}),
 					})),
 				};
 			});
+	}, [state.temp, state.columnsState]);
 
-	render() {
-		return this.props.render({
-			update: this.update,
-			matchBoxState: this.state.temp,
-			primaryKeyField: this.state.extended?.find((x) => x.primaryKey),
-			activeFields: this.getActiveFields(),
-			extended: this.state.extended,
-		});
-	}
-}
+	const fetchMatchBoxState = useMemo(
+		() =>
+			debounce(async (docType: string, onComplete = () => {}) => {
+				try {
+					const {
+						data: {
+							[docType]: {
+								extended,
+								matchBoxState: { state: matchBoxState },
+								columnsState: { state: columnsState },
+							},
+						},
+					} = await api({
+						endpoint: `/graphql`,
+						body: {
+							query: `{
+								${docType} {
+									extended
+										matchBoxState {
+											${matchBoxFields}
+										}
+										columnsState {
+											state {
+												columns {
+													fieldName
+													query
+													jsonPath
+												}
+											}
+										}
+									}
+								}
+							}`,
+						},
+					});
+
+					setState({
+						matchBoxState,
+						temp: matchBoxState,
+						extended,
+						columnsState,
+						err: null,
+					});
+
+					// Call onComplete after state is set
+					setTimeout(() => {
+						onComplete({
+							activeFields: state.temp
+								?.filter((x) => x.isActive)
+								?.map((x) => ({
+									...x,
+									keyFieldName: {
+										fieldName: x.keyFieldName,
+										...decorateFieldWithColumnsState({
+											columnsState,
+											field: x.keyFieldName,
+										}),
+									},
+									searchFields: x.searchFields.map((y) => ({
+										field: y,
+										entityName: x.displayName,
+										...decorateFieldWithColumnsState({
+											columnsState,
+											field: y,
+										}),
+									})),
+								})) || [],
+						});
+					}, 0);
+				} catch (err) {
+					setState((prev) => ({ ...prev, err }));
+				}
+			}, 300),
+		[state.temp],
+	);
+
+	const save = useMemo(
+		() =>
+			debounce(async (stateToSave: any[]) => {
+				const { data } = await api({
+					endpoint: `/graphql`,
+					body: {
+						variables: { state: stateToSave },
+						query: `mutation($state: JSON!) {
+							saveMatchBoxState(
+								state: $state
+								documentType: "${documentType}"
+							) {
+								${matchBoxFields}
+							}
+						}`,
+					},
+				});
+
+				setState((prev) => ({
+					...prev,
+					matchBoxState: data.saveMatchBoxState.state,
+					temp: data.saveMatchBoxState.state,
+				}));
+			}, 300),
+		[documentType],
+	);
+
+	const update = useCallback(
+		({ field, key, value }: { field: string; key: string; value: any }) => {
+			setState((prevState) => {
+				const matchBoxField = prevState.temp.find((x) => x.field === field);
+				const index = prevState.temp.findIndex((x) => x.field === field);
+				const temp = Object.assign([], prevState.temp, {
+					[index]: { ...matchBoxField, [key]: value },
+				});
+				
+				// Call save after state update
+				setTimeout(() => save(temp), 0);
+				
+				return { ...prevState, temp };
+			});
+		},
+		[save],
+	);
+
+	useEffect(() => {
+		fetchMatchBoxState(documentType, onInitialLoaded);
+	}, []);
+
+	useEffect(() => {
+		if (prevDocumentTypeRef.current !== documentType) {
+			fetchMatchBoxState(documentType);
+			prevDocumentTypeRef.current = documentType;
+		}
+	}, [documentType, fetchMatchBoxState]);
+
+	return render({
+		update,
+		matchBoxState: state.temp,
+		primaryKeyField: state.extended?.find((x) => x.primaryKey),
+		activeFields: getActiveFields(),
+		extended: state.extended,
+	});
+};
 
 export default MatchBoxState;

@@ -2,12 +2,12 @@ import { css } from '@emotion/react';
 import cx from 'classnames';
 import convert from 'convert-units';
 import { debounce, isEqual, isNil } from 'lodash-es';
-import { Component } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import InputRange from 'react-input-range'; // TODO: abandoned. use rc-slider instead
 import 'react-input-range/lib/css/index.css';
 
 import { replaceFieldSQON } from '#SQONViewer/utils.js';
-import { withTheme } from '#ThemeContext/index.js';
+import { useThemeContext } from '#ThemeContext/index.js';
 import formatNumber from '#utils/formatNumber.js';
 import { emptyObj } from '#utils/noops.js';
 
@@ -73,30 +73,57 @@ const calculateRangeStep = (min, max) => {
 	return Math.max(decimalPointsFromMax, decimalPointsFromMin);
 };
 
-class RangeAgg extends Component {
-	constructor(props) {
-		super(props);
-		const { sqonValues, stats: { max = 0, min = 0 } = emptyObj, unit } = props;
+interface RangeAggProps {
+	sqonValues?: { max?: number; min?: number };
+	stats?: { max?: number; min?: number };
+	unit?: string;
+	displayName?: string;
+	fieldName: string;
+	handleChange?: (args: any) => void;
+	formatLabel?: (value: number, type: string) => string;
+	collapsible?: boolean;
+	disabled?: boolean;
+	rangeStep?: number;
+	type?: string;
+	WrapperComponent?: React.ComponentType<any>;
+}
 
-		const supportedConversions = supportedConversionFromUnit(unit);
+const RangeAgg = ({
+	sqonValues,
+	stats: { max = 0, min = 0 } = emptyObj,
+	unit,
+	displayName = 'Unnamed Field',
+	fieldName,
+	handleChange,
+	formatLabel,
+	collapsible = true,
+	disabled,
+	rangeStep: rangeStepFromProps,
+	type,
+	WrapperComponent,
+}: RangeAggProps) => {
+	const theme = useThemeContext();
+	const prevPropsRef = useRef({ sqonValues, stats: { max, min } });
 
-		this.state = {
-			currentValues: {
-				max: sqonValues?.max || max,
-				min: sqonValues?.min || min,
-			},
-			displayUnit: supportedConversions?.includes(unit)
-				? unit // use unit selected in Admin UI as default, if available here
-				: supportedConversions?.[0],
-			supportedConversions,
-		};
-	}
+	const supportedConversions = useMemo(() => supportedConversionFromUnit(unit), [unit]);
 
-	UNSAFE_componentWillReceiveProps(nextProps) {
-		const { sqonValues: { max: sqonMax, min: sqonMin } = emptyObj, stats: { max: newMax, min: newMin } = emptyObj } =
-			nextProps;
-		const { stats: { max: oldMax, min: oldMin } = emptyObj } = this.props;
-		const { currentValues: { max: selectedMax, min: selectedMin } = emptyObj } = this.state;
+	const [currentValues, setCurrentValues] = useState({
+		max: sqonValues?.max || max,
+		min: sqonValues?.min || min,
+	});
+
+	const [displayUnit, setDisplayUnit] = useState(
+		supportedConversions?.includes(unit)
+			? unit // use unit selected in Admin UI as default, if available here
+			: supportedConversions?.[0],
+	);
+
+	useEffect(() => {
+		const prevProps = prevPropsRef.current;
+		const { max: sqonMax, min: sqonMin } = sqonValues || emptyObj;
+		const { max: newMax, min: newMin } = { max, min };
+		const { max: oldMax, min: oldMin } = prevProps.stats;
+		const { max: selectedMax, min: selectedMin } = currentValues;
 
 		const resetMax = isNil(sqonMax)
 			? isNil(oldMax) || (newMax > oldMax && oldMax === selectedMax) || newMax !== selectedMax
@@ -105,152 +132,135 @@ class RangeAgg extends Component {
 			? isNil(oldMin) || (newMin < oldMin && oldMin === selectedMin) || newMin !== selectedMin
 			: newMin > selectedMin || newMax < selectedMin;
 
-		const newState = {
-			currentValues: {
-				max: resetMax ? newMax : Math.min(sqonMax || selectedMax, newMax),
-				min: resetMin ? newMin : Math.max(sqonMin || selectedMin, newMin),
-			},
+		const newValues = {
+			max: resetMax ? newMax : Math.min(sqonMax || selectedMax, newMax),
+			min: resetMin ? newMin : Math.max(sqonMin || selectedMin, newMin),
 		};
 
-		isEqual(this.state.currentValues, newState.currentValues) || this.setState(newState);
-	}
+		if (!isEqual(currentValues, newValues)) {
+			setCurrentValues(newValues);
+		}
 
-	onChangeComplete = debounce(() => {
-		const {
-			displayName,
-			fieldName,
-			handleChange,
-			stats: { max, min },
-		} = this.props;
-		let { currentValues, displayUnit } = this.state;
+		prevPropsRef.current = { sqonValues, stats: { max, min } };
+	}, [sqonValues, max, min, currentValues]);
 
-		return handleChange?.({
-			field: {
-				displayName,
-				displayUnit,
-				fieldName,
-			},
-			generateNextSQON: (sqon) =>
-				replaceFieldSQON(
-					fieldName,
-					{
-						op: 'and',
-						content: [
-							...(currentValues.min > min ? [{ op: '>=', content: { fieldName, value: currentValues.min } }] : []),
-							...(currentValues.max < max ? [{ op: '<=', content: { fieldName, value: currentValues.max } }] : []),
-						],
+	const onChangeComplete = useMemo(
+		() =>
+			debounce(() => {
+				return handleChange?.({
+					field: {
+						displayName,
+						displayUnit,
+						fieldName,
 					},
-					sqon,
-				),
-			max: currentValues.max,
-			min: currentValues.min,
-			value: currentValues,
-		});
-	}, 300);
+					generateNextSQON: (sqon) =>
+						replaceFieldSQON(
+							fieldName,
+							{
+								op: 'and',
+								content: [
+									...(currentValues.min > min ? [{ op: '>=', content: { fieldName, value: currentValues.min } }] : []),
+									...(currentValues.max < max ? [{ op: '<=', content: { fieldName, value: currentValues.max } }] : []),
+								],
+							},
+							sqon,
+						),
+					max: currentValues.max,
+					min: currentValues.min,
+					value: currentValues,
+				});
+			}, 300),
+		[displayName, displayUnit, fieldName, handleChange, currentValues, min, max],
+	);
 
-	setNewUnit = (event) => this.setState({ displayUnit: event.target.value });
+	const setNewUnit = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+		setDisplayUnit(event.target.value);
+	}, []);
 
-	setNewValue = ({ max: newMax, min: newMin }) => {
-		const {
-			stats: { max, min },
-		} = this.props;
+	const setNewValue = useCallback(
+		({ max: newMax, min: newMin }: { max: number; min: number }) => {
+			console.log('min', min);
+			console.log('newMin', newMin);
 
-		console.log('min', min);
-		console.log('newMin', newMin);
-
-		// if (!(newMax === max && newMin === min)) {
-		this.setState({
-			currentValues: {
+			setCurrentValues({
 				max: newMax <= max ? newMax : max,
 				min: newMin >= min ? newMin : min,
-			},
-		});
-		// }
-	};
+			});
+		},
+		[max, min],
+	);
 
-	formatRangeLabel = (value, type) => {
-		const { formatLabel, unit } = this.props;
-		const { displayUnit } = this.state;
+	const formatRangeLabel = useCallback(
+		(value: number, type?: string) => {
+			return (
+				formatLabel?.(value, type) ||
+				formatNumber(unit && displayUnit && unit !== displayUnit ? convert(value).from(unit).to(displayUnit) : value)
+			);
+		},
+		[formatLabel, unit, displayUnit],
+	);
 
-		return (
-			formatLabel?.(value, type) ||
-			formatNumber(unit && displayUnit && unit !== displayUnit ? convert(value).from(unit).to(displayUnit) : value)
-		);
-	};
-
-	render() {
-		const {
-			collapsible = true,
-			disabled,
-			displayName = 'Unnamed Field',
-			fieldName,
-			rangeStep: rangeStepFromProps,
-			stats: { max, min } = emptyObj,
-			theme: {
-				colors,
-				components: {
-					Aggregations: {
-						RangeAgg: {
-							// disableUnitSelection: themeDisableUnitSelection,
-							InputRange: { css: themeInputRangeCSS } = emptyObj,
-							NoDataContainer: {
-								fontColor: themeNoDataFontColor = colors?.grey?.[600],
-								fontSize: themeNoDataFontSize = '0.8em',
-							} = emptyObj,
-							RangeLabel: themeRangeLabelProps = emptyObj,
-							RangeSlider: {
-								background: themeRangeSliderBackground = colors?.common?.white,
-								borderColor: themeRangeSliderBorderColor = colors?.grey?.[500],
-								css: themeRangeSliderCSS,
-								disabledBackground: themeRangeSliderDisabledBackground = colors?.grey?.[200],
-								disabledBorderColor: themeRangeSliderDisabledBorderColor = colors?.grey?.[500],
-							} = emptyObj,
-							RangeTrack: {
-								background: themeRangeTrackBackground = 'none',
-								disabledBackground: themeRangeTrackDisabledBackground = colors?.grey?.[200],
-								disabledInBackground: themeRangeTrackDisabledInBackground = colors?.grey?.[400],
-								disabledOutBackground: themeRangeTrackDisabledOutBackground = colors?.grey?.[200],
-								inBackground: themeRangeTrackInBackground = colors?.grey?.[600],
-								outBackground: themeRangeTrackOutBackground = colors?.grey?.[200],
-							} = emptyObj,
-							RangeWrapper: { css: themeRangeWrapperCSS, ...RangeWrapperProps } = emptyObj,
-							...themeRangeAggProps
-						} = emptyObj,
+	const {
+		colors,
+		components: {
+			Aggregations: {
+				RangeAgg: {
+					// disableUnitSelection: themeDisableUnitSelection,
+					InputRange: { css: themeInputRangeCSS } = emptyObj,
+					NoDataContainer: {
+						fontColor: themeNoDataFontColor = colors?.grey?.[600],
+						fontSize: themeNoDataFontSize = '0.8em',
 					} = emptyObj,
+					RangeLabel: themeRangeLabelProps = emptyObj,
+					RangeSlider: {
+						background: themeRangeSliderBackground = colors?.common?.white,
+						borderColor: themeRangeSliderBorderColor = colors?.grey?.[500],
+						css: themeRangeSliderCSS,
+						disabledBackground: themeRangeSliderDisabledBackground = colors?.grey?.[200],
+						disabledBorderColor: themeRangeSliderDisabledBorderColor = colors?.grey?.[500],
+					} = emptyObj,
+					RangeTrack: {
+						background: themeRangeTrackBackground = 'none',
+						disabledBackground: themeRangeTrackDisabledBackground = colors?.grey?.[200],
+						disabledInBackground: themeRangeTrackDisabledInBackground = colors?.grey?.[400],
+						disabledOutBackground: themeRangeTrackDisabledOutBackground = colors?.grey?.[200],
+						inBackground: themeRangeTrackInBackground = colors?.grey?.[600],
+						outBackground: themeRangeTrackOutBackground = colors?.grey?.[200],
+					} = emptyObj,
+					RangeWrapper: { css: themeRangeWrapperCSS, ...RangeWrapperProps } = emptyObj,
+					...themeRangeAggProps
 				} = emptyObj,
 			} = emptyObj,
-			type,
-			WrapperComponent,
-		} = this.props;
-		const { currentValues, displayUnit, supportedConversions } = this.state;
+		} = emptyObj,
+	} = theme;
 
-		const hasData = [!isNil(min), !isNil(max)].every(Boolean);
+	const hasData = [!isNil(min), !isNil(max)].every(Boolean);
 
-		const dataFields = {
-			'data-available': hasData,
-			...(fieldName && { 'data-fieldname': fieldName }),
-			...(type && { 'data-type': type }),
-		};
+	const dataFields = {
+		'data-available': hasData,
+		...(fieldName && { 'data-fieldname': fieldName }),
+		...(type && { 'data-type': type }),
+	};
 
-		const decimals = calculateRangeStep(min, max);
-		const calculatedStep = decimals ? parseFloat(`0.${String(1).padStart(decimals, '0')}`) : 1;
+	const decimals = calculateRangeStep(min, max);
+	const calculatedStep = decimals ? parseFloat(`0.${String(1).padStart(decimals, '0')}`) : 1;
 
-		const rangeStep = rangeStepFromProps || calculatedStep;
-		// console.log('rangeStep', rangeStep);
+	const rangeStep = rangeStepFromProps || calculatedStep;
+	// console.log('rangeStep', rangeStep);
 
-		const minIsMax = min === max;
-		const unusable = disabled || min + rangeStep === max || minIsMax;
+	const minIsMax = min === max;
+	const unusable = disabled || min + rangeStep === max || minIsMax;
 
-		// TODO: implement unit selection disabling per fieldname.
-		// const enableUnitSelection = !themeDisableUnitSelection;
+	// TODO: implement unit selection disabling per fieldname.
+	// const enableUnitSelection = !themeDisableUnitSelection;
 
-		return (
-			<AggsWrapper
-				dataFields={dataFields}
-				displayName={`${displayName}${displayUnit ? ` (${convert().describe(displayUnit).plural})` : ``}`}
-				{...{ WrapperComponent, collapsible }}
-				theme={themeRangeAggProps}
-			>
+	return (
+		<AggsWrapper
+			dataFields={dataFields}
+			displayName={`${displayName}${displayUnit ? ` (${convert().describe(displayUnit).plural})` : ``}`}
+			{...{ WrapperComponent, collapsible }}
+			theme={themeRangeAggProps}
+		>
 				{hasData ? (
 					<div
 						className="range-wrapper"
@@ -287,7 +297,7 @@ class RangeAgg extends Component {
 											htmlFor={abbr}
 											key={abbr}
 										>
-											<input checked={isActive} id={abbr} onChange={this.setNewUnit} type="radio" value={abbr} />
+											<input checked={isActive} id={abbr} onChange={setNewUnit} type="radio" value={abbr} />
 											{plural}
 										</label>
 									))}
@@ -341,12 +351,12 @@ class RangeAgg extends Component {
 							`}
 						>
 							<RangeLabel isTop {...themeRangeLabelProps}>
-								{this.formatRangeLabel(currentValues.min)}
+								{formatRangeLabel(currentValues.min)}
 							</RangeLabel>
 
 							{!minIsMax && (
 								<RangeLabel isTop isRight {...themeRangeLabelProps}>
-									{this.formatRangeLabel(currentValues.max)}
+									{formatRangeLabel(currentValues.max)}
 								</RangeLabel>
 							)}
 
@@ -356,20 +366,20 @@ class RangeAgg extends Component {
 								className={cx({ disabled: unusable })}
 								disabled={unusable}
 								draggableTrack
-								formatLabel={this.formatRangeLabel}
+								formatLabel={formatRangeLabel}
 								minValue={min}
 								maxValue={max}
-								onChange={this.setNewValue}
-								onChangeComplete={this.onChangeComplete}
+								onChange={setNewValue}
+								onChangeComplete={onChangeComplete}
 								step={rangeStep}
 								value={currentValues}
 							/>
 
-							<RangeLabel {...themeRangeLabelProps}>{this.formatRangeLabel(min)}</RangeLabel>
+							<RangeLabel {...themeRangeLabelProps}>{formatRangeLabel(min)}</RangeLabel>
 
 							{!minIsMax && (
 								<RangeLabel isRight {...themeRangeLabelProps}>
-									{this.formatRangeLabel(max)}
+									{formatRangeLabel(max)}
 								</RangeLabel>
 							)}
 
@@ -401,7 +411,6 @@ class RangeAgg extends Component {
 				)}
 			</AggsWrapper>
 		);
-	}
-}
+};
 
-export default withTheme(RangeAgg);
+export default RangeAgg;
