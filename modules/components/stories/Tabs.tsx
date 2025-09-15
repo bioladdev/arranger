@@ -1,5 +1,4 @@
 import { storiesOf } from '@storybook/react';
-import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import StoryRouter from 'storybook-router';
 
