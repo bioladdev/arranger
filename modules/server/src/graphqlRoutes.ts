@@ -1,6 +1,7 @@
-import { ApolloServer } from 'apollo-server-express';
+import { ApolloServer } from '@apollo/server';
+import { expressMiddleware } from '@as-integrations/express4';
 import type { Client } from '@elastic/elasticsearch';
-import type { Router } from 'express';
+import type { Router, Request, Response } from 'express';
 import { mergeSchemas } from '@graphql-tools/schema';
 
 import getConfigObject, { ENV_CONFIG, initializeSets } from './config/index.js';
@@ -9,6 +10,11 @@ import { extendColumns, extendFacets, flattenMappingToFields } from './mapping/e
 import { addMappingsToTypes, extendFields, fetchMapping } from './mapping/index.js';
 import makeSchema from './schema/index.js';
 import { createSchemaFromNetworkConfig } from './network/index.js';
+
+interface GraphQLContext {
+	esClient: Client;
+	[key: string]: any;
+}
 
 const getESMapping = async (esClient: Client, index: string): Promise<Record<string, any>> => {
 	if (esClient && index) {
@@ -171,10 +177,10 @@ const createEndpoint = async ({ esClient, graphqlOptions = {}, mockSchema, schem
 		// TODO: D.R.Y this thing!
 
 		if (schema) {
-			const buildContext = async (req, res, connection) => {
+			const buildContext = async ({ req, res }: { req: Request; res: Response }): Promise<GraphQLContext> => {
 				const externalContext =
 					typeof graphqlOptions.context === 'function'
-						? await graphqlOptions.context(req, res, connection)
+						? await graphqlOptions.context(req, res)
 						: graphqlOptions.context;
 
 				return {
@@ -183,18 +189,18 @@ const createEndpoint = async ({ esClient, graphqlOptions = {}, mockSchema, schem
 				};
 			};
 
-			const apolloServer = new ApolloServer({
-				cache: 'bounded',
+			const apolloServer = new ApolloServer<GraphQLContext>({
 				schema,
-				context: ({ req, res, con }) => buildContext(req, res, con),
 			});
 
 			await apolloServer.start();
 
-			apolloServer.applyMiddleware({
-				app: router,
-				path: mainPath,
-			});
+			router.use(
+				mainPath,
+				expressMiddleware(apolloServer, {
+					context: buildContext,
+				})
+			);
 
 			console.log(`  - GraphQL endpoint running at ...${mainPath}`);
 		} else {
@@ -202,17 +208,18 @@ const createEndpoint = async ({ esClient, graphqlOptions = {}, mockSchema, schem
 		}
 
 		if (mockSchema) {
-			const apolloMockServer = new ApolloServer({
-				cache: 'bounded',
+			const apolloMockServer = new ApolloServer<GraphQLContext>({
 				schema: mockSchema,
 			});
 
 			await apolloMockServer.start();
 
-			apolloMockServer.applyMiddleware({
-				app: router,
-				path: '/mock/graphql',
-			});
+			router.use(
+				mockPath,
+				expressMiddleware(apolloMockServer, {
+					context: async ({ req, res }) => ({ esClient }),
+				})
+			);
 
 			console.log(`  - GraphQL mock endpoint running at ...${mockPath}`);
 		} else {
