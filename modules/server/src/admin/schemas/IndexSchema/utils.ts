@@ -1,5 +1,5 @@
 import { Client } from '@elastic/elasticsearch';
-import { UserInputError } from 'apollo-server';
+import { GraphQLError } from 'graphql';
 import Qew from 'qew'; // TODO: using 0.9.13 because later versions break the async
 
 import { getEsMapping } from '../../services/elasticsearch';
@@ -54,7 +54,9 @@ export const getProjectStorageMetadata =
       });
       return hits.map(({ _source }) => _source as IProjectIndexMetadata);
     } catch (err) {
-      throw new UserInputError(`cannot find project of id ${projectId}`, err);
+      throw new GraphQLError(`cannot find project of id ${projectId}`, {
+        extensions: { code: 'BAD_USER_INPUT', originalError: err }
+      });
     }
   };
 
@@ -120,7 +122,9 @@ export const createNewIndex =
         graphqlField: serializedGqlField,
       });
     } else {
-      throw new UserInputError(`no project with ID ${projectId} was found`);
+      throw new GraphQLError(`no project with ID ${projectId} was found`, {
+        extensions: { code: 'BAD_USER_INPUT' }
+      });
     }
   };
 
@@ -179,7 +183,9 @@ export const getProjectIndex =
       );
       return output;
     } catch {
-      throw new UserInputError(`could not find index ${graphqlField} of project ${projectId}`);
+      throw new GraphQLError(`could not find index ${graphqlField} of project ${projectId}`, {
+        extensions: { code: 'BAD_USER_INPUT' }
+      });
     }
   };
 
@@ -198,6 +204,8 @@ export const removeProjectIndex =
       });
       return removedIndexMetadata;
     } catch (err) {
-      throw new UserInputError(`could not remove index ${graphqlField} of project ${projectId}`);
+      throw new GraphQLError(`could not remove index ${graphqlField} of project ${projectId}`, {
+        extensions: { code: 'BAD_USER_INPUT' }
+      });
     }
   };

@@ -11,8 +11,11 @@ export const stringToNumber = (str?: string) => Number(str || '');
  * @returns parsed array from string or empty array
  */
 export const stringToArray = (str?: string) => {
+	if (!str || str.trim() === '') {
+		return [];
+	}
 	try {
-		const parsed = JSON.parse(str || '');
+		const parsed = JSON.parse(str);
 		return Array.isArray(parsed) ? parsed : [];
 	} catch (e) {
 		console.error(e);

@@ -1,7 +1,8 @@
 // import { IResolversParameter } from 'graphql-tools';
 import { addMocksToSchema } from '@graphql-tools/mock';
 import { mergeSchemas } from '@graphql-tools/schema';
-import { ApolloServer } from 'apollo-server-express';
+import { ApolloServer } from '@apollo/server';
+import { expressMiddleware } from '@as-integrations/express4';
 import { Client } from '@elastic/elasticsearch';
 import { print } from 'graphql/language/printer';
 import { GraphQLSchema } from 'graphql';
@@ -92,10 +93,7 @@ const initialize = (config: AdminApiConfig): Promise<Client> =>
 
 export default async (config: AdminApiConfig) => {
   const esClient = await initialize(config);
-  return new ApolloServer({
+  return new ApolloServer<IQueryContext>({
     schema: await createSchema(),
-    context: (): IQueryContext => ({
-      es: esClient,
-    }),
   });
 };
