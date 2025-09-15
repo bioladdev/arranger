@@ -1,5 +1,6 @@
 {
   "eslint.validate": ["javascript", "javascriptreact", "typescript", "json"],
   "eslint.workingDirectories": [{ "pattern": "./modules/*/" }],
-  "javascript.implicitProjectConfig.checkJs": true
+  "javascript.implicitProjectConfig.checkJs": true,
+  "kiroAgent.configureMCP": "Disabled"
 }
