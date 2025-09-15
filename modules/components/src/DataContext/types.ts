@@ -4,7 +4,16 @@ import type { Dispatch, SetStateAction } from 'react';
 
 // TODO: This legacyProps import will fail when <Arranger /> is deprecated
 // Should be safe to remove afterwards, if the migration path worked out
-import type { legacyProps } from '#Arranger/Arranger.js';
+// import type { legacyProps } from '#Arranger/Arranger.js';
+
+// Temporary type definition for legacy props during deprecation period
+type LegacyProps = {
+	index?: string;
+	selectedTableRows?: any[];
+	setSelectedTableRows?: (rows: any[]) => void;
+	setSQON?: (sqon: any) => void;
+	sqon?: any;
+};
 import type { UnorderedListStyles } from '#Table/types.js';
 import type { CustomThemeType, ThemeOptions } from '#ThemeContext/types/index.js';
 
@@ -99,7 +108,7 @@ export interface DataProviderProps<Theme = ThemeOptions> {
 	configs?: ConfigsInterface;
 	customFetcher?: APIFetcherFn;
 	documentType: string;
-	legacyProps?: typeof legacyProps; // TODO: deprecate along with <Arranger/>
+	legacyProps?: LegacyProps; // TODO: deprecate along with <Arranger/>
 	theme?: CustomThemeType<Theme>;
 }
 

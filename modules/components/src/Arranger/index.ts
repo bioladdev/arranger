@@ -1,3 +1,5 @@
+// TODO: REMOVE IN v4.0.0 - This component is deprecated
+/** @deprecated Use DataProvider instead. Will be removed in v4.0.0 */
 export { default as Arranger } from './Arranger.js';
 // export { default as Aggregations, AggregationsListDisplay, AggregationsList, AggsWrapper } from './Aggregations.js';
 // export { default as OldTable } from './Table';

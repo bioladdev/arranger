@@ -1,22 +1,55 @@
-import { Children, Component } from 'react';
+import React, { Children, Component } from 'react';
 
 import { DataProvider } from '#DataContext/index.js';
+import type { APIFetcherFn } from '#DataContext/types.js';
 
 import defaultApiFetcher from '../utils/api.js';
 
 // TODO: This is a dummy object, exported for the DataContext's types, to ensure that a TS
 // error comes up when this component is deprecated in a later version, after the rewrite
-export let legacyProps;
+export let legacyProps: any;
+
+interface ArrangerProps {
+	index?: string;
+	documentType: string;
+	children?: React.ReactNode | ((props: any) => React.ReactNode);
+	render?: (props: any) => React.ReactNode;
+	component?: React.ComponentType<any>;
+	apiFetcher?: APIFetcherFn;
+}
+
+interface ArrangerState {
+	selectedTableRows: any[];
+	sqon: any;
+}
 
 /** Arranger Root Component
- * @deprecated
- * This component used to serve as a makeshift context provider in older versions of Arranger.
- *
- * Please review the migration instructions to update your app as soon as possible.
+ * @deprecated since v3.0.0 - Will be removed in v4.0.0
+ * 
+ * ⚠️  MIGRATION REQUIRED ⚠️
+ * This component is deprecated and will be removed in the next major version.
+ * 
+ * Please migrate to the new DataProvider pattern:
+ * 
+ * OLD:
+ * ```jsx
+ * <Arranger documentType="files" apiFetcher={myFetcher}>
+ *   {({ sqon, setSQON }) => <MyComponent sqon={sqon} setSQON={setSQON} />}
+ * </Arranger>
+ * ```
+ * 
+ * NEW:
+ * ```jsx
+ * <DataProvider documentType="files" customFetcher={myFetcher}>
+ *   <MyComponent />
+ * </DataProvider>
+ * ```
+ * 
+ * Use `useDataContext()` hook inside MyComponent to access sqon, setSQON, etc.
  */
 
-class Arranger extends Component {
-	constructor(props) {
+class Arranger extends Component<ArrangerProps, ArrangerState> {
+	constructor(props: ArrangerProps) {
 		super(props);
 
 		this.state = {
@@ -26,6 +59,13 @@ class Arranger extends Component {
 	}
 
 	UNSAFE_componentWillMount() {
+		// Deprecation warning
+		console.warn(
+			'⚠️  DEPRECATION WARNING: <Arranger> component is deprecated and will be removed in v4.0.0.\n' +
+			'Please migrate to <DataProvider> and useDataContext() hook.\n' +
+			'See migration guide: https://github.com/overture-stack/arranger#migration-guide'
+		);
+
 		const hasChildren = this.props.children && Children.count(this.props.children) !== 0;
 
 		if (this.props.component && this.props.render) {
@@ -47,8 +87,8 @@ class Arranger extends Component {
 		}
 	}
 
-	setSelectedTableRows = (selectedTableRows) => this.setState({ selectedTableRows });
-	setSQON = (sqon) => this.setState({ sqon });
+	setSelectedTableRows = (selectedTableRows: any[]) => this.setState({ selectedTableRows });
+	setSQON = (sqon: any) => this.setState({ sqon });
 
 	render() {
 		const { index, documentType, children, render, component, apiFetcher = defaultApiFetcher } = this.props;
@@ -68,7 +108,12 @@ class Arranger extends Component {
 		legacyProps = { index, selectedTableRows, setSelectedTableRows, setSQON, sqon };
 
 		return (
-			<DataProvider customFetcher={apiFetcher} documentType={documentType} legacyProps={legacyProps}>
+			<DataProvider 
+				apiUrl="http://localhost:5050" 
+				customFetcher={apiFetcher} 
+				documentType={documentType} 
+				legacyProps={legacyProps}
+			>
 				{component
 					? React.createElement(component, childProps)
 					: render
