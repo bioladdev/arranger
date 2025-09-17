@@ -53,13 +53,11 @@
 		"react-spinkit": "^3.0.0",
 		"react-table-old": "npm:react-table@^6.11.5",
 		"react-tippy": "^1.4.0",
-		"sqon-builder": "^2.0.1",
 		"url-join": "^4.0.1",
 		"uuid": "^9.0.0"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.2.5",
-
 		"@testing-library/react": "^16.1.0",
 		"@testing-library/jest-dom": "^6.6.3",
 		"@types/color": "^3.0.3",
@@ -73,7 +71,6 @@
 		"eslint-plugin-react-hooks": "^5.2.0",
 		"jsdom": "^25.0.1",
 		"prettier": "^3.4.2",
-
 		"type-fest": "^3.6.1",
 		"typescript": "^5.8.2",
 		"vite": "^6.0.7",
@@ -89,6 +86,5 @@
 		"react": "^17.0.0 || ^18.0.0",
 		"react-dom": "^17.0.0 || ^18.0.0"
 	},
-
 	"version": "0.0.0-dev"
 }
