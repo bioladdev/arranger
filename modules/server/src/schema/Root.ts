@@ -4,75 +4,118 @@ import { GraphQLJSON } from 'graphql-type-json';
 import { startCase } from 'lodash-es';
 import Parallel from 'paralleljs';
 
+import { SchemaBuilder, CORE_SCALARS, CORE_INTERFACES, CORE_ENUMS, AGGREGATION_TYPES, SET_TYPES, SORT_TYPES, CONFIG_TYPES } from '@arranger/schema-builder';
 import { ENV_CONFIG } from '#config/index.js';
 import { createConnectionResolvers, saveSet, mappingToFields } from '#mapping/index.js';
 import { checkESAlias, getESAliases } from '#mapping/utils/fetchMapping.js';
 
-import { typeDefs as AggregationsTypeDefs } from './Aggregations.js';
-import ConfigsTypeDefs from './configQuery.js';
-import { typeDefs as SetTypeDefs } from './Sets.js';
-import { typeDefs as SortTypeDefs } from './Sort.js';
+/**
+ * Creates the root GraphQL schema using SchemaBuilder
+ */
+const createRootSchema = ({ types, rootTypes, scalarTypes }) => {
+	const builder = SchemaBuilder.create();
 
-const RootTypeDefs = ({ types, rootTypes, scalarTypes }) => `
-	scalar JSON
-	scalar Date
-	enum EsRefresh {
-		TRUE
-		FALSE
-		WAIT_FOR
-	}
+	// Add core schema fragments
+	builder
+		.addMultiple([
+			CORE_SCALARS,
+			CORE_INTERFACES, 
+			CORE_ENUMS,
+			AGGREGATION_TYPES,
+			SET_TYPES,
+			SORT_TYPES,
+			CONFIG_TYPES
+		]);
 
-	${scalarTypes.map(([type]) => `scalar ${type}`)}
+	// Add scalar types
+	scalarTypes.forEach(([type]) => {
+		builder.addScalar(`#graphql
+			scalar ${type}
+		`);
+	});
 
-	interface Node {
-		id: ID!
-	}
+	// Add document type enum
+	builder.addEnum(`#graphql
+		enum DocumentType {
+			${types.map(([key, type]) => type.name).join('\n\t\t\t')}
+		}
+	`);
 
-	type FileSize {
-		value: Float
-	}
+	// Add query results type
+	builder.addType(`#graphql
+		type QueryResults {
+			total: Int
+			hits: [Node]
+		}
+	`);
 
-	type QueryResults {
-		total: Int
-		hits: [Node]
-	}
+	// Add file size type
+	builder.addType(`#graphql
+		type FileSize {
+			value: Float
+		}
+	`);
 
-	type Root {
-		node(id: ID!): Node
-		viewer: Root
-		query(query: String, types: [String]): QueryResults
+	// Add root type with dynamic fields
+	const rootFields = [
+		'node(id: ID!): Node',
+		'viewer: Root',
+		'query(query: String, types: [String]): QueryResults',
+		'hasValidConfig(documentType: String!, index: String!): Boolean',
+		...rootTypes.map(([key]) => `${key}: ${startCase(key).replace(/\s/g, '')}`),
+		...types.map(([key, type]) => `${type.name}: ${type.name}`)
+	];
 
-		hasValidConfig(documentType: String!, index: String!): Boolean
+	builder.addType(`#graphql
+		type Root {
+			${rootFields.join('\n\t\t\t')}
+		}
+	`);
 
-		${rootTypes.map(([key]) => `${key}: ${startCase(key).replace(/\s/g, '')}`)}
+	// Add root type definitions
+	rootTypes.forEach(([, type]) => {
+		if (type.typeDefs) {
+			builder.addType(type.typeDefs);
+		}
+	});
 
-		${types.map(([key, type]) => `${type.name}: ${type.name}`)}
-	}
+	// Add mutation type
+	builder.addType(`#graphql
+		type Mutation {
+			saveSet(
+				type: DocumentType!
+				userId: String
+				sqon: JSON!
+				path: String!
+				sort: [Sort]
+				refresh: EsRefresh
+			): Set
+		}
+	`);
 
-	${rootTypes.map(([, type]) => type.typeDefs)}
+	// Add schema definition
+	builder.setSchema(`#graphql
+		schema {
+			query: Root
+			mutation: Mutation
+		}
+	`);
 
-	enum DocumentType {
-		${types.map(([key, type]) => type.name).join('\n')}
-	}
+	return builder;
+};
 
-	type Mutation {
-		saveSet(type: DocumentType! userId: String sqon: JSON! path: String! sort: [Sort] refresh: EsRefresh): Set
-	}
-
-	schema {
-		query: Root
-		mutation: Mutation
-	}
-`;
-
-export const typeDefs = ({ types, rootTypes, scalarTypes }) => [
-	RootTypeDefs({ types, rootTypes, scalarTypes }),
-	AggregationsTypeDefs,
-	SetTypeDefs,
-	SortTypeDefs,
-	ConfigsTypeDefs,
-	...types.map(([key, type]) => mappingToFields({ type, parent: '' })),
-];
+export const typeDefs = ({ types, rootTypes, scalarTypes }) => {
+	const builder = createRootSchema({ types, rootTypes, scalarTypes });
+	
+	// Add mapping-generated types
+	const mappingTypeDefs = types.map(([key, type]) => mappingToFields({ type, parent: '' }));
+	
+	// Combine all type definitions
+	return [
+		builder.build(),
+		...mappingTypeDefs
+	];
+};
 
 const resolveObject = () => ({});
 
