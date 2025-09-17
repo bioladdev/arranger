@@ -3,8 +3,8 @@ import cx from 'classnames';
 import convert from 'convert-units';
 import { debounce, isEqual, isNil } from 'lodash-es';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import InputRange from 'react-input-range'; // TODO: abandoned. use rc-slider instead
-import 'react-input-range/lib/css/index.css';
+import Slider from 'rc-slider';
+import 'rc-slider/assets/index.css';
 
 import { replaceFieldSQON } from '#SQONViewer/utils.js';
 import { useThemeContext } from '#ThemeContext/index.js';
@@ -312,36 +312,27 @@ const RangeAgg = ({
 								font-size: 0.8rem;
 								width: 90%;
 
-								/** InputRange doesn't allow customisation through props
-									* The following classes, and theme overrides are the
-									* only way available for now. May implement our own slider.
-									*/
-								.input-range {
-									background: ${unusable ? themeRangeTrackDisabledBackground : themeRangeTrackBackground};
-
-									.input-range__label {
-										display: none;
+								/** rc-slider styling customization */
+								.rc-slider {
+									.rc-slider-rail {
+										background: ${unusable ? themeRangeTrackDisabledOutBackground : themeRangeTrackOutBackground};
 									}
 
-									.input-range__slider {
+									.rc-slider-track {
+										background: ${unusable ? themeRangeTrackDisabledInBackground : themeRangeTrackInBackground};
+									}
+
+									.rc-slider-handle {
 										background: ${unusable ? themeRangeSliderDisabledBackground : themeRangeSliderBackground};
 										border-color: ${unusable ? themeRangeSliderDisabledBorderColor : themeRangeSliderBorderColor};
-										padding: 0;
 
 										${themeRangeSliderCSS}
 									}
 
-									.input-range__track--background {
-										background: ${unusable ? themeRangeTrackDisabledOutBackground : themeRangeTrackOutBackground};
-
-										.input-range__track--active {
-											background: ${unusable ? themeRangeTrackDisabledInBackground : themeRangeTrackInBackground};
-										}
-									}
-
-									&.input-range--disabled {
-										.input-range__slider,
-										.input-range__track {
+									&.rc-slider-disabled {
+										.rc-slider-handle,
+										.rc-slider-track,
+										.rc-slider-rail {
 											cursor: default;
 										}
 									}
@@ -360,19 +351,27 @@ const RangeAgg = ({
 								</RangeLabel>
 							)}
 
-							<InputRange
-								allowSameValues={true}
-								ariaLabelledby={getLabelId(displayName)}
+							<Slider
+								range
+								allowCross={false}
+								ariaLabelledbyForHandle={getLabelId(displayName)}
 								className={cx({ disabled: unusable })}
 								disabled={unusable}
-								draggableTrack
-								formatLabel={formatRangeLabel}
-								minValue={min}
-								maxValue={max}
-								onChange={setNewValue}
-								onChangeComplete={onChangeComplete}
+								min={min}
+								max={max}
+								onChange={(values) => {
+									if (Array.isArray(values) && values.length === 2) {
+										setNewValue({ min: values[0], max: values[1] });
+									}
+								}}
+								onChangeComplete={(values) => {
+									if (Array.isArray(values) && values.length === 2) {
+										setNewValue({ min: values[0], max: values[1] });
+										onChangeComplete();
+									}
+								}}
 								step={rangeStep}
-								value={currentValues}
+								value={[currentValues.min, currentValues.max]}
 							/>
 
 							<RangeLabel {...themeRangeLabelProps}>{formatRangeLabel(min)}</RangeLabel>

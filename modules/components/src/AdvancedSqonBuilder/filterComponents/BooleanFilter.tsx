@@ -1,4 +1,4 @@
-import { Component } from '@reach/component-component';
+import { Component } from '#utils/Component.js';
 import { get } from 'lodash-es';
 import PropTypes from 'prop-types';
 

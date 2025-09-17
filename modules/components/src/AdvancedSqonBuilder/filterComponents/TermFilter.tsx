@@ -1,4 +1,4 @@
-import { Component } from '@reach/component-component';
+import { Component } from '#utils/Component.js';
 import { sortBy, get } from 'lodash-es';
 
 import TermAgg from '#aggregations/TermAgg.js';
