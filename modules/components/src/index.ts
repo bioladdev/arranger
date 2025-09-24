@@ -1,4 +1,5 @@
 export { Aggregations, AggregationsListDisplay, AggregationsList, AggsWrapper } from './aggregations/index.js';
+// TODO: REMOVE IN v4.0.0 - Arranger component is deprecated
 export * from './Arranger/index.js';
 export {
 	DataContext as ArrangerDataContext,

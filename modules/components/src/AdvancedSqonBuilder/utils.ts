@@ -1,7 +1,12 @@
 import React from 'react';
-import { cloneDeep } from 'lodash-es';
-import { view, set, lensPath as lens } from 'ramda';
-import { flattenDeep } from 'lodash-es';
+import { cloneDeep, flattenDeep, get, set as lodashSet } from 'lodash-es';
+
+/**
+ * Helper functions to replace ramda lens functionality
+ */
+const createLensPath = (path: (string | number)[]): string => path.join('.');
+const viewAtPath = (path: string, obj: any) => get(obj, path);
+const setAtPath = (path: string, value: any, obj: any) => lodashSet(cloneDeep(obj), path, value);
 
 /**
  * todo: these magic sqon values should be centralized across Arranger
@@ -120,25 +125,23 @@ export const getOperationAtPath = (paths) => (sqon) => {
 };
 
 /**
- * Non-mutative removal of an object at location 'paths' in 'sqon', using lens (refer to https://ramdajs.com/docs/#lens)
+ * Non-mutative removal of an object at location 'paths' in 'sqon'
  * @param {[Number]} paths
  * @param {*} sqon
  */
 export const removeSqonPath = (paths) => (sqon) => {
-	// creates the target lens
-	const lensPath = flattenDeep(paths.map((path) => ['content', path]));
-	const targetLens = lens(lensPath);
+	// creates the target path
+	const targetPath = createLensPath(flattenDeep(paths.map((path) => ['content', path])));
 
-	// creates lens to the immediate parent of target
-	const parentPath = flattenDeep(paths.slice(0, paths.length - 1).map((path) => ['content', path]));
-	const parentLens = lens(parentPath);
+	// creates path to the immediate parent of target
+	const parentPath = createLensPath(flattenDeep(paths.slice(0, paths.length - 1).map((path) => ['content', path])));
 
 	// get reference to target and its immediate parent
-	const removeTarget = view(targetLens, sqon);
-	const parent = view(parentLens, sqon);
+	const removeTarget = viewAtPath(targetPath, sqon);
+	const parent = viewAtPath(parentPath, sqon);
 
 	// returns the modified structure with removeTarget filtered out
-	return set(parentLens, { ...parent, content: parent.content.filter((c) => c !== removeTarget) }, sqon);
+	return setAtPath(parentPath, { ...parent, content: parent.content.filter((c) => c !== removeTarget) }, sqon);
 };
 
 export const isIndexReferencedInSqon = (syntheticSqon) => (indexReference) => {
@@ -169,9 +172,8 @@ export const getDependentIndices = (syntheticSqons) => (index) =>
 	}, []);
 
 export const setSqonAtPath = (paths, newSqon) => (sqon) => {
-	const lensPath = flattenDeep(paths.map((path) => ['content', path]));
-	const targetLens = lens(lensPath);
-	return set(targetLens, newSqon, sqon);
+	const targetPath = createLensPath(flattenDeep(paths.map((path) => ['content', path])));
+	return setAtPath(targetPath, newSqon, sqon);
 };
 
 export const DisplayNameMapContext = React.createContext({});

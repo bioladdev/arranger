@@ -1,6 +1,5 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useCallback, useRef, useState } from 'react';
 import { capitalize, difference, get, uniqBy } from 'lodash-es';
-import { compose, withState, withHandlers } from 'recompose';
 import { css } from '@emotion/react';
 
 import Input from '#Input/index.js';
@@ -39,30 +38,30 @@ const layoutStyle = css`
 	}
 `;
 
-const enhance = compose(
-	withState('activeEntityField', 'setActiveEntityField', null),
-	withState('searchTextLoading', 'setSearchTextLoading', false),
-	withState('searchText', 'setSearchText', ''),
-	withHandlers({
-		onEntityChange:
-			({ setActiveEntityField }) =>
-			({ target: { value } }) => {
-				return setActiveEntityField(value);
-			},
-		onTextChange:
-			({ setSearchText }) =>
-			({ target: { value } }) =>
-				setSearchText(value),
-		onFileUpload:
-			({ setSearchText, setSearchTextLoading }) =>
-			async ({ target: { files } }) => {
-				setSearchTextLoading(true);
-				const contents = await parseInputFiles({ files });
-				setSearchText((contents || []).map((f) => f.content).reduce((str, c) => `${str}${c}\n`, ``));
-				setSearchTextLoading(false);
-			},
-	}),
-);
+interface MatchBoxProps {
+	sqon: any;
+	setSQON: (sqon: any) => void;
+	matchHeaderText?: React.ReactNode;
+	instructionText?: string;
+	placeholderText?: string;
+	entitySelectText?: string;
+	entitySelectPlaceholder?: string;
+	matchedTabTitle?: string;
+	unmatchedTabTitle?: string;
+	matchTableColumnHeaders?: {
+		inputId: string;
+		matchedEntity: string;
+		entityId: string;
+	};
+	browseButtonText?: string;
+	ButtonComponent?: React.ComponentType<any>;
+	LoadingComponent?: React.ReactNode;
+	children: (args: { hasResults: boolean; saveSet: (args: any) => Promise<any> }) => React.ReactNode;
+	uploadInstructionText?: string;
+	uploadableFieldNames?: string[] | null;
+	documentType: string;
+	[key: string]: any;
+}
 
 const EntitySelectionSection = ({
 	entitySelectText,
@@ -88,7 +87,6 @@ const EntitySelectionSection = ({
 	</div>
 );
 
-const inputRef = React.createRef();
 const MatchBox = ({
 	sqon,
 	setSQON,
@@ -108,18 +106,29 @@ const MatchBox = ({
 	ButtonComponent = 'button',
 	LoadingComponent = <div>...</div>,
 	children,
-	searchText,
-	searchTextParts,
-	searchTextLoading,
 	uploadInstructionText = 'Or choose file to upload',
-	onTextChange,
-	onFileUpload,
-	onEntityChange,
-	activeEntityField,
 	uploadableFieldNames = null,
-	setActiveEntityField,
 	...props
-}) => {
+}: MatchBoxProps) => {
+	const [activeEntityField, setActiveEntityField] = useState<string | null>(null);
+	const [searchTextLoading, setSearchTextLoading] = useState(false);
+	const [searchText, setSearchText] = useState('');
+	const inputRef = useRef<HTMLInputElement>(null);
+
+	const onEntityChange = useCallback((event: React.ChangeEvent<HTMLSelectElement>) => {
+		setActiveEntityField(event.target.value);
+	}, []);
+
+	const onTextChange = useCallback((event: React.ChangeEvent<HTMLTextAreaElement>) => {
+		setSearchText(event.target.value);
+	}, []);
+
+	const onFileUpload = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
+		setSearchTextLoading(true);
+		const contents = await parseInputFiles({ files: event.target.files });
+		setSearchText((contents || []).map((f) => f.content).reduce((str, c) => `${str}${c}\n`, ''));
+		setSearchTextLoading(false);
+	}, []);
 	const selectableEntityType = !(uploadableFieldNames && (uploadableFieldNames || []).length === 1);
 	return (
 		<div className={`match-box ${layoutStyle}`}>
@@ -185,7 +194,7 @@ const MatchBox = ({
 									multiple
 									onChange={onFileUpload}
 								/>
-								<ButtonComponent disabled={!activeField} type="submit" onClick={() => inputRef.current.click()}>
+								<ButtonComponent disabled={!activeField} type="submit" onClick={() => inputRef.current?.click()}>
 									{searchTextLoading ? LoadingComponent : browseButtonText}
 								</ButtonComponent>
 							</div>
@@ -303,4 +312,4 @@ const MatchBox = ({
 	);
 };
 
-export default enhance(MatchBox);
+export default MatchBox;

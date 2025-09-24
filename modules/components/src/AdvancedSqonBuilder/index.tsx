@@ -1,4 +1,4 @@
-import { Component } from '@reach/component-component';
+import { Component } from '#utils/Component.js';
 import { cloneDeep } from 'lodash-es';
 import { FaPlusCircle, FaRegClone } from 'react-icons/fa';
 

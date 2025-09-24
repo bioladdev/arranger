@@ -1,6 +1,7 @@
-// TODO: for TS, we'll have to update "apollo-server-express" (which relies on graphql updates too)
-import { ApolloServer } from 'apollo-server-express';
-import { Router } from 'express';
+import { ApolloServer } from '@apollo/server';
+import { expressMiddleware } from '@as-integrations/express4';
+import type { Client } from '@elastic/elasticsearch';
+import type { Router, Request, Response } from 'express';
 import { mergeSchemas } from '@graphql-tools/schema';
 
 import getConfigObject, { ENV_CONFIG, initializeSets } from './config/index.js';
@@ -10,7 +11,12 @@ import { addMappingsToTypes, extendFields, fetchMapping } from './mapping/index.
 import makeSchema from './schema/index.js';
 import { createSchemaFromNetworkConfig } from './network/index.js';
 
-const getESMapping = async (esClient, index) => {
+interface GraphQLContext {
+	esClient: Client;
+	[key: string]: any;
+}
+
+const getESMapping = async (esClient: Client, index: string): Promise<Record<string, any>> => {
 	if (esClient && index) {
 		const { mapping } = await fetchMapping({
 			esClient,
@@ -31,7 +37,7 @@ const getESMapping = async (esClient, index) => {
 	throw new Error(`Could not get ES mappings for ${index}`);
 };
 
-const getTypesWithMappings = async (mapping, configs = {}) => {
+const getTypesWithMappings = async (mapping: Record<string, any>, configs: Record<string, any> = {}): Promise<{ fieldsFromMapping: any[]; typesWithMappings: any }> => {
 	if (Object.keys(configs).length > 0) {
 		try {
 			console.log('Now creating a GraphQL mapping based on the ES index:');
@@ -116,7 +122,15 @@ const getTypesWithMappings = async (mapping, configs = {}) => {
 	throw Error('  No configs available at getTypesWithMappings');
 };
 
-const createSchema = async ({ enableAdmin, getServerSideFilter, graphqlOptions = {}, setsIndex, types }) => {
+interface CreateSchemaOptions {
+	enableAdmin: boolean;
+	getServerSideFilter: any;
+	graphqlOptions?: { middleware?: any[] };
+	setsIndex: string;
+	types: any;
+}
+
+const createSchema = async ({ enableAdmin, getServerSideFilter, graphqlOptions = {}, setsIndex, types }: CreateSchemaOptions) => {
 	const schemaBase = {
 		getServerSideFilter,
 		rootTypes: [],
@@ -142,7 +156,7 @@ const createSchema = async ({ enableAdmin, getServerSideFilter, graphqlOptions =
 
 const noSchemaHandler =
 	(endpoint = 'unspecified') =>
-	(req, res) => {
+	(req: any, res: any) => {
 		console.log(`  - Something went wrong initialising a GraphQL endpoint: ${endpoint}`);
 
 		return res.json({
@@ -163,10 +177,10 @@ const createEndpoint = async ({ esClient, graphqlOptions = {}, mockSchema, schem
 		// TODO: D.R.Y this thing!
 
 		if (schema) {
-			const buildContext = async (req, res, connection) => {
+			const buildContext = async ({ req, res }: { req: Request; res: Response }): Promise<GraphQLContext> => {
 				const externalContext =
 					typeof graphqlOptions.context === 'function'
-						? await graphqlOptions.context(req, res, connection)
+						? await graphqlOptions.context(req, res)
 						: graphqlOptions.context;
 
 				return {
@@ -175,18 +189,18 @@ const createEndpoint = async ({ esClient, graphqlOptions = {}, mockSchema, schem
 				};
 			};
 
-			const apolloServer = new ApolloServer({
-				cache: 'bounded',
+			const apolloServer = new ApolloServer<GraphQLContext>({
 				schema,
-				context: ({ req, res, con }) => buildContext(req, res, con),
 			});
 
 			await apolloServer.start();
 
-			apolloServer.applyMiddleware({
-				app: router,
-				path: mainPath,
-			});
+			router.use(
+				mainPath,
+				expressMiddleware(apolloServer, {
+					context: buildContext,
+				})
+			);
 
 			console.log(`  - GraphQL endpoint running at ...${mainPath}`);
 		} else {
@@ -194,17 +208,18 @@ const createEndpoint = async ({ esClient, graphqlOptions = {}, mockSchema, schem
 		}
 
 		if (mockSchema) {
-			const apolloMockServer = new ApolloServer({
-				cache: 'bounded',
+			const apolloMockServer = new ApolloServer<GraphQLContext>({
 				schema: mockSchema,
 			});
 
 			await apolloMockServer.start();
 
-			apolloMockServer.applyMiddleware({
-				app: router,
-				path: '/mock/graphql',
-			});
+			router.use(
+				mockPath,
+				expressMiddleware(apolloMockServer, {
+					context: async ({ req, res }) => ({ esClient }),
+				})
+			);
 
 			console.log(`  - GraphQL mock endpoint running at ...${mockPath}`);
 		} else {
@@ -229,6 +244,16 @@ const createEndpoint = async ({ esClient, graphqlOptions = {}, mockSchema, schem
 	return router;
 };
 
+interface CreateSchemasFromConfigsOptions {
+	configsSource?: string;
+	enableAdmin: boolean;
+	enableNetworkAggregation: boolean;
+	esClient: Client;
+	getServerSideFilter: any;
+	graphqlOptions?: Record<string, any>;
+	setsIndex: string;
+}
+
 export const createSchemasFromConfigs = async ({
 	configsSource = '',
 	enableAdmin,
@@ -237,7 +262,7 @@ export const createSchemasFromConfigs = async ({
 	getServerSideFilter,
 	graphqlOptions = {},
 	setsIndex,
-}) => {
+}: CreateSchemasFromConfigsOptions) => {
 	try {
 		const configsFromFiles = await getConfigObject(configsSource);
 		const mappingFromES = await getESMapping(esClient, configsFromFiles[ConfigProperties.INDEX]);
@@ -301,7 +326,7 @@ export default async ({
 	getServerSideFilter,
 	graphqlOptions = {},
 	setsIndex,
-}) => {
+}: CreateSchemasFromConfigsOptions): Promise<any> => {
 	try {
 		const { fieldsFromMapping, mockSchema, schema, typesWithMappings } = await createSchemasFromConfigs({
 			configsSource,

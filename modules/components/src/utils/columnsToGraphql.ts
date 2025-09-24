@@ -1,10 +1,37 @@
-export function toQuery(column) {
+interface Column {
+	query?: string;
+	accessor?: string;
+	fetch?: boolean;
+	show?: boolean;
+}
+
+interface SortItem {
+	fieldName?: string;
+	order?: string;
+}
+
+interface Config {
+	columns?: Column[];
+	rowIdFieldName?: string;
+}
+
+interface ColumnsToGraphqlProps {
+	config?: Config;
+	documentType?: string;
+	first?: number;
+	offset?: number;
+	queryName?: string;
+	sort?: SortItem[];
+	sqon?: any;
+}
+
+export function toQuery(column: Column): string {
 	return (
 		column.query ||
 		(column.accessor || '')
 			.split('.')
 			.reverse()
-			.reduce((acc, segment, i) => {
+			.reduce((acc: string, segment: string, i: number) => {
 				if (i === 0) {
 					return segment;
 				} else {
@@ -28,7 +55,7 @@ export function toQuery(column) {
  * @param {number} [props.offset]
  * @param {import("#DataContext/types.js").SQONType} [props.sqon] typescript validation placeholder
  *
-*/
+ */
 export default function columnsToGraphql({
 	config = {},
 	documentType = 'unknownField',
@@ -37,12 +64,13 @@ export default function columnsToGraphql({
 	queryName = '',
 	sort = [],
 	sqon = null,
-}) {
+}: ColumnsToGraphqlProps) {
 	const fields = config?.columns
 		?.filter(
-			(column) => !(column.accessor && column.accessor === config.rowIdFieldName) && (column.fetch || column.show),
+			(column: Column) =>
+				!(column.accessor && column.accessor === config?.rowIdFieldName) && (column.fetch || column.show),
 		)
-		.concat(config.rowIdFieldName ? { accessor: config.rowIdFieldName } : [])
+		.concat(config?.rowIdFieldName ? [{ accessor: config.rowIdFieldName }] : [])
 		.map(toQuery)
 		.join('\n');
 
@@ -65,8 +93,8 @@ export default function columnsToGraphql({
 		variables: {
 			sqon,
 			// TODO we may have a graphql field vs arranger fieldname issue here. Must test and validate
-			sort: sort.map((s) => {
-				if (s?.fieldName?.indexOf?.('hits.total') >= 0) {
+			sort: sort.map((s: SortItem) => {
+				if (s?.fieldName && s.fieldName.indexOf('hits.total') >= 0) {
 					return Object.assign({}, s, { fieldName: '_score' });
 				} else {
 					const nested = s?.fieldName?.match?.(/(.*)\.hits\.edges\[\d+\]\.node(.*)/);
@@ -77,12 +105,12 @@ export default function columnsToGraphql({
 			score:
 				sort.length > 0
 					? sort
-						.filter((s) => s?.fieldName?.indexOf?.('hits.total') >= 0)
-						.map((s) => {
-							const match = s?.fieldName?.match?.(/((.*)s)\.hits\.total/);
-							return `${match[1]}.${match[2]}_id`;
-						})
-						.join(',')
+							.filter((s: SortItem) => s?.fieldName && s.fieldName.indexOf('hits.total') >= 0)
+							.map((s: SortItem) => {
+								const match = s?.fieldName?.match?.(/((.*)s)\.hits\.total/);
+								return match ? `${match[1]}.${match[2]}_id` : '';
+							})
+							.join(',')
 					: null,
 			offset,
 			first,

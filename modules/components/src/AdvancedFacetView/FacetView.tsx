@@ -1,5 +1,5 @@
 import { isEqual } from 'lodash-es';
-import { Component } from 'react';
+import React, { forwardRef, memo, useCallback, useEffect, useRef, useState } from 'react';
 
 import aggComponentsMap from '#aggregations/aggComponentsMap.js';
 import TextHighlight from '#TextHighlight/index.js';
@@ -13,47 +13,50 @@ const flattenDisplayTreeData = (displayTreeData) => {
 	);
 };
 
-export default class FacetView extends Component {
-	state = {
-		focusedPath: null,
-	};
-	scrollToPath = ({ path, behavior = 'smooth', block = 'start' }) => {
-		const targetElementId = serializeToDomId(path);
-		const targetElement = this.root?.querySelector(`#${targetElementId}`);
-		if (targetElement) {
-			targetElement.scrollIntoView({ behavior, block });
-		}
-	};
-	componentDidUpdate({ sqon: lastSqon }) {
-		const { focusedPath } = this.state;
-		const { sqon } = this.props;
-		if (!isEqual(lastSqon, sqon) && focusedPath) {
-			this.scrollToPath({
-				path: focusedPath,
-				block: 'start',
-				behavior: 'smooth',
-			});
-			this.setState({
-				focusedPath: null,
-			});
-		}
-	}
-	shouldComponentUpdate(nextProps, nextState) {
-		// performance optimization
-		return !isEqual(nextProps, this.props);
-	}
-	render() {
-		const {
-			aggregations,
-			displayTreeData,
-			onValueChange,
-			sqon = null,
-			extendedMapping,
-			searchString,
-			onTermSelected,
-		} = this.props;
-		return (
-			<div className="facetView" ref={(el) => (this.root = el)}>
+interface FacetViewProps {
+	aggregations: Record<string, any>;
+	displayTreeData: any[];
+	onValueChange: (args: { sqon: any; value: any }) => void;
+	sqon?: any;
+	extendedMapping: any[];
+	searchString?: string;
+	onTermSelected?: (value: any) => void;
+}
+
+const FacetView = memo(
+	forwardRef<{ scrollToPath: (args: { path: string; behavior?: ScrollBehavior; block?: ScrollLogicalPosition }) => void }, FacetViewProps>(
+		({ aggregations, displayTreeData, onValueChange, sqon = null, extendedMapping, searchString, onTermSelected }, ref) => {
+			const [focusedPath, setFocusedPath] = useState<string | null>(null);
+			const rootRef = useRef<HTMLDivElement>(null);
+			const prevSqonRef = useRef(sqon);
+
+			const scrollToPath = useCallback(({ path, behavior = 'smooth', block = 'start' }: { path: string; behavior?: ScrollBehavior; block?: ScrollLogicalPosition }) => {
+				const targetElementId = serializeToDomId(path);
+				const targetElement = rootRef.current?.querySelector(`#${targetElementId}`);
+				if (targetElement) {
+					targetElement.scrollIntoView({ behavior, block });
+				}
+			}, []);
+
+			// Expose scrollToPath method via ref
+			React.useImperativeHandle(ref, () => ({
+				scrollToPath,
+			}), [scrollToPath]);
+
+			useEffect(() => {
+				const lastSqon = prevSqonRef.current;
+				if (!isEqual(lastSqon, sqon) && focusedPath) {
+					scrollToPath({
+						path: focusedPath,
+						block: 'start',
+						behavior: 'smooth',
+					});
+					setFocusedPath(null);
+				}
+				prevSqonRef.current = sqon;
+			}, [sqon, focusedPath, scrollToPath]);
+			return (
+				<div className="facetView" ref={rootRef}>
 				{flattenDisplayTreeData(displayTreeData).map(({ path }) => {
 					const metaData = extendedMapping.find(({ field }) => field === path);
 					const { type } = metaData || {};
@@ -87,15 +90,9 @@ export default class FacetView extends Component {
 							};
 						},
 						onValueChange: ({ sqon, value }) => {
-							this.setState(
-								{
-									focusedPath: path,
-								},
-								() => {
-									onValueChange({ sqon, value });
-									onTermSelected?.(value);
-								},
-							);
+							setFocusedPath(path);
+							onValueChange({ sqon, value });
+							onTermSelected?.(value);
 						},
 						highlightText: searchString,
 						sqon,
@@ -119,7 +116,12 @@ export default class FacetView extends Component {
 						),
 					});
 				})}
-			</div>
-		);
-	}
-}
+				</div>
+			);
+		},
+	),
+);
+
+FacetView.displayName = 'FacetView';
+
+export default FacetView;

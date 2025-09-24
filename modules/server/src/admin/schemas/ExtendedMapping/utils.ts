@@ -1,5 +1,5 @@
 import { Client } from '@elastic/elasticsearch';
-import { UserInputError } from 'apollo-server';
+import { GraphQLError } from 'graphql';
 
 import { extendMapping } from '../../../mapping';
 import { getEsMapping } from '../../services/elasticsearch';
@@ -61,8 +61,9 @@ export const getExtendedMapping =
         return indexMetadata.config.extended.map(assertOutputType);
       }
     } else {
-      throw new UserInputError(
+      throw new GraphQLError(
         `no index found under name ${graphqlField} for project ${projectId}`,
+        { extensions: { code: 'BAD_USER_INPUT' } }
       );
     }
   };
@@ -107,8 +108,9 @@ export const updateFieldExtendedMapping =
 
       return newIndexExtendedMappingFields.find((field) => field.field === mutatedField);
     } else {
-      throw new UserInputError(
+      throw new GraphQLError(
         `no index found under name ${graphqlField} for project ${projectId}`,
+        { extensions: { code: 'BAD_USER_INPUT' } }
       );
     }
   };

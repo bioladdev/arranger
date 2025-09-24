@@ -1,5 +1,5 @@
 import cors from 'cors';
-import express, { json, urlencoded } from 'express';
+import express, { json, urlencoded, type Router } from 'express';
 
 import { ENV_CONFIG } from './config/index.js';
 import arranger from './server.js';
@@ -7,16 +7,12 @@ import arranger from './server.js';
 const app = express();
 app.use(cors());
 
-export default async function (rootPath = '') {
-	global.__basedir = rootPath;
+export default async function App(rootPath = ''): Promise<void> {
+	(global as any).__basedir = rootPath;
 
-	/**
-	 * @param {boolean} enableAdmin
-	 */
 	return arranger({
 		enableAdmin: ENV_CONFIG.ENABLE_ADMIN,
-	}).then((router) => {
-
+	}).then((router: Router) => {
 		app.use(urlencoded({ extended: false, limit: '50mb' }));
 		app.use(json({ limit: '50mb' }));
 		app.use(router);

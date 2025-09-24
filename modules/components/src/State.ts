@@ -1,40 +1,68 @@
-import { Component } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import noopFn from '#utils/noops.js';
 
-class State extends Component {
-	constructor(props) {
-		super(props);
-		console.warn(
-			'[[ DEPRECATION WARNING ]]: the State component has been deprecated in favor of react-component-component',
-		);
-		this.state = props.initial;
-	}
-	componentDidMount() {
-		const { async = noopFn } = this.props;
-		Promise.resolve(async()).then(this.update);
-	}
-	UNSAFE_componentWillReceiveProps(props) {
-		let { onReceiveProps } = props;
-		onReceiveProps && onReceiveProps({ props, state: this.state, update: this.update });
-	}
-	update = (object, onComplete = noopFn) => this.setState((state) => ({ ...state, ...object }), onComplete);
-	componentDidUpdate(prevProps, prevState) {
-		if (this.props.didUpdate) {
-			this.props.didUpdate({
+interface StateProps {
+	initial?: Record<string, any>;
+	async?: () => Promise<any> | any;
+	onReceiveProps?: (args: { props: StateProps; state: any; update: (object: any, onComplete?: () => void) => void }) => void;
+	didUpdate?: (args: { prevProps: StateProps; prevState: any; update: (object: any, onComplete?: () => void) => void; [key: string]: any }) => void;
+	render: (args: { update: (object: any, onComplete?: () => void) => void; [key: string]: any }) => React.ReactNode;
+}
+
+/**
+ * @deprecated This component has been deprecated in favor of react-component-component or custom hooks
+ */
+const State = ({ initial = {}, async = noopFn, onReceiveProps, didUpdate, render }: StateProps) => {
+	console.warn(
+		'[[ DEPRECATION WARNING ]]: the State component has been deprecated in favor of react-component-component or custom hooks',
+	);
+	
+	const [state, setState] = useState(initial);
+	const prevPropsRef = useRef<StateProps>({ initial, async, onReceiveProps, didUpdate, render });
+	const prevStateRef = useRef(initial);
+
+	const update = useCallback((object: any, onComplete: () => void = noopFn) => {
+		setState((prevState) => {
+			const newState = { ...prevState, ...object };
+			// Call onComplete after state update
+			setTimeout(() => onComplete(), 0);
+			return newState;
+		});
+	}, []);
+
+	useEffect(() => {
+		Promise.resolve(async()).then(update);
+	}, [async, update]);
+
+	useEffect(() => {
+		const prevProps = prevPropsRef.current;
+		if (onReceiveProps) {
+			onReceiveProps({ props: { initial, async, onReceiveProps, didUpdate, render }, state, update });
+		}
+		prevPropsRef.current = { initial, async, onReceiveProps, didUpdate, render };
+	}, [initial, async, onReceiveProps, didUpdate, render, state, update]);
+
+	useEffect(() => {
+		const prevProps = prevPropsRef.current;
+		const prevState = prevStateRef.current;
+		
+		if (didUpdate) {
+			didUpdate({
 				prevProps,
 				prevState,
-				update: this.update,
-				...this.state,
+				update,
+				...state,
 			});
 		}
-	}
-	render() {
-		return this.props.render({
-			...this.state,
-			update: this.update,
-		});
-	}
-}
+		
+		prevStateRef.current = state;
+	}, [state, didUpdate, update]);
+
+	return render({
+		...state,
+		update,
+	});
+};
 
 export default State;
