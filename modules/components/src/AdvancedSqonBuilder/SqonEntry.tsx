@@ -1,4 +1,4 @@
-import Component from '@reach/component-component';
+import Component from '#utils/Component.js';
 import { FaRegClone, FaTrashAlt } from 'react-icons/fa';
 
 import defaultApiFetcher from '../utils/api.js';

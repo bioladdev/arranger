@@ -1,4 +1,4 @@
-import Component from '@reach/component-component';
+import Component from '#utils/Component.js';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 
 import defaultApiFetcher from '#utils/api.js';

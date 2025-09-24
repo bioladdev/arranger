@@ -1,9 +1,10 @@
 import React from 'react';
 import { render } from '@testing-library/react';
+import { vi } from 'vitest';
 import Arranger from '../Arranger.js';
 
 // Mock console.warn to test deprecation warnings
-const mockWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+const mockWarn = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
 describe('Arranger (Deprecated)', () => {
 	afterEach(() => {
