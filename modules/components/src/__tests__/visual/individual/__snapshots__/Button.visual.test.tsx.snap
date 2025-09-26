@@ -1,0 +1,11 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Button Visual Tests > renders button variants collection > button-variants-collection.html 1`] = `"<div style="padding: 20px; display: flex; gap: 10px; flex-wrap: wrap;"><div style="display: flex; flex-direction: column; gap: 10px;"><div style="display: flex; gap: 10px;"><button class="css-15fkg0">Normal</button><button disabled="" class="css-15fkg0">Disabled</button><button class="css-poct42">Success</button></div><div style="display: flex; gap: 10px;"><button class="css-1tdldgd">Danger</button><button class="css-clpr1l">Warning</button><button class="css-1099xoz">Transparent</button></div></div></div>"`;
+
+exports[`Button Visual Tests > renders button with custom theme > button-custom-theme.html 1`] = `"<div style="padding: 20px; display: flex; gap: 10px; flex-wrap: wrap;"><button class="css-vx6msn">Custom Button</button></div>"`;
+
+exports[`Button Visual Tests > renders default button > button-default.html 1`] = `"<div style="padding: 20px; display: flex; gap: 10px; flex-wrap: wrap;"><button class="css-15fkg0">Default Button</button></div>"`;
+
+exports[`Button Visual Tests > renders disabled button > button-disabled.html 1`] = `"<div style="padding: 20px; display: flex; gap: 10px; flex-wrap: wrap;"><button disabled="" class="css-15fkg0">Disabled Button</button></div>"`;
+
+exports[`Button Visual Tests > renders transparent button > button-transparent.html 1`] = `"<div style="padding: 20px; display: flex; gap: 10px; flex-wrap: wrap;"><button class="css-1099xoz">Transparent Button</button></div>"`;

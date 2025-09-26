@@ -20,6 +20,9 @@
 		"test": "vitest run",
 		"test:watch": "vitest",
 		"test:ui": "vitest --ui",
+		"test:visual": "vitest run --config=vitest.visual.config.ts",
+		"test:visual:watch": "vitest --config=vitest.visual.config.ts",
+		"test:visual:all": "vitest run --config=vitest.visual.config.ts --browser.name=chromium,firefox,webkit",
 		"typecheck": "tsc --noEmit --skipLibCheck",
 		"clean": "rm -rf dist"
 	},
@@ -70,13 +73,15 @@
 		"eslint-plugin-react": "^7.37.4",
 		"eslint-plugin-react-hooks": "^5.2.0",
 		"jsdom": "^25.0.1",
+		"playwright": "^1.49.1",
 		"prettier": "^3.4.2",
 		"type-fest": "^3.6.1",
 		"typescript": "^5.8.2",
 		"vite": "^6.0.7",
 		"vite-plugin-dts": "^4.3.0",
-		"vitest": "^2.1.8",
-		"@vitest/ui": "^2.1.8"
+		"vitest": "^2.1.9",
+		"@vitest/ui": "^2.1.9",
+		"@vitest/browser": "^2.1.9"
 	},
 	"peerDependencies": {
 		"@emotion/react": "^11.0.0",

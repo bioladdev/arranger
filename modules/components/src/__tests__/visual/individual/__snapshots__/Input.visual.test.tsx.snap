@@ -1,0 +1,11 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Input Visual Tests > renders default input > input-default.html 1`] = `"<div style="padding: 20px; width: 300px;"><div class="inputWrapper css-m3fd9e"><input class="css-h0gvdx" value=""></div></div>"`;
+
+exports[`Input Visual Tests > renders disabled input > input-disabled.html 1`] = `"<div style="padding: 20px; width: 300px;"><div class="inputWrapper disabled css-6dcrnf"><input disabled="" placeholder="Disabled input" class="css-h0gvdx" value=""></div></div>"`;
+
+exports[`Input Visual Tests > renders input variants collection > input-variants-collection.html 1`] = `"<div style="padding: 20px; width: 300px;"><div style="display: flex; flex-direction: column; gap: 15px;"><div class="inputWrapper css-m3fd9e"><input placeholder="Default input" class="css-h0gvdx" value=""></div><div class="inputWrapper disabled css-6dcrnf"><input disabled="" placeholder="Disabled input" class="css-h0gvdx" value=""></div><div class="inputWrapper css-m3fd9e"><input placeholder="Input with clear" class="css-h0gvdx" value=""><button aria-label="Clear text (disabled)" disabled="" title="Clear text (disabled)" class="css-1t1qdfk">X</button></div><div class="inputWrapper css-1cowor9"><input placeholder="Custom styled input" class="css-h0gvdx" value=""></div></div></div>"`;
+
+exports[`Input Visual Tests > renders input with clear button > input-with-clear.html 1`] = `"<div style="padding: 20px; width: 300px;"><div class="inputWrapper css-m3fd9e"><input placeholder="Input with clear button" class="css-h0gvdx" value=""><button aria-label="Clear text (disabled)" disabled="" title="Clear text (disabled)" class="css-1t1qdfk">X</button></div></div>"`;
+
+exports[`Input Visual Tests > renders input with placeholder > input-with-placeholder.html 1`] = `"<div style="padding: 20px; width: 300px;"><div class="inputWrapper css-m3fd9e"><input placeholder="Enter your text here..." class="css-h0gvdx" value=""></div></div>"`;

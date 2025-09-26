@@ -1,0 +1,11 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`BucketCount Visual Tests > renders active bucket count > bucket-count-active.html 1`] = `"<div style="padding: 20px; display: flex; gap: 10px; align-items: center;"><span class="bucket-count active css-1g05shu">156</span></div>"`;
+
+exports[`BucketCount Visual Tests > renders bucket count states collection > bucket-count-states-collection.html 1`] = `"<div style="padding: 20px; display: flex; gap: 10px; align-items: center;"><div style="display: flex; gap: 15px; align-items: center;"><div style="display: flex; flex-direction: column; align-items: center; gap: 5px;"><span class="bucket-count css-1g05shu">42</span><span style="font-size: 12px;">Default</span></div><div style="display: flex; flex-direction: column; align-items: center; gap: 5px;"><span class="bucket-count active css-1g05shu">156</span><span style="font-size: 12px;">Active</span></div><div style="display: flex; flex-direction: column; align-items: center; gap: 5px;"><span class="bucket-count disabled css-1g05shu">0</span><span style="font-size: 12px;">Disabled</span></div><div style="display: flex; flex-direction: column; align-items: center; gap: 5px;"><span class="bucket-count css-u4qapl">234</span><span style="font-size: 12px;">Custom</span></div></div></div>"`;
+
+exports[`BucketCount Visual Tests > renders bucket count with custom theme > bucket-count-custom-theme.html 1`] = `"<div style="padding: 20px; display: flex; gap: 10px; align-items: center;"><span class="bucket-count css-1sm30bw">89</span></div>"`;
+
+exports[`BucketCount Visual Tests > renders default bucket count > bucket-count-default.html 1`] = `"<div style="padding: 20px; display: flex; gap: 10px; align-items: center;"><span class="bucket-count css-1g05shu">42</span></div>"`;
+
+exports[`BucketCount Visual Tests > renders disabled bucket count > bucket-count-disabled.html 1`] = `"<div style="padding: 20px; display: flex; gap: 10px; align-items: center;"><span class="bucket-count disabled css-1g05shu">0</span></div>"`;
