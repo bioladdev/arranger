@@ -1,4 +1,4 @@
-import type { Preview } from '@storybook/react';
+import type { Preview } from '@storybook/react-vite';
 
 // Import global CSS variables for CSS Modules
 import '../src/styles/theme.css';
