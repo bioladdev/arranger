@@ -1,0 +1,125 @@
+/**
+ * Button Component Styles
+ * CSS Module replacing emotion styled components
+ */
+
+/* ==========================================================================
+   Base Button Styles
+   ========================================================================== */
+
+.button {
+	/* Layout */
+	align-items: center;
+	box-sizing: border-box;
+	display: flex;
+	justify-content: center;
+	position: relative;
+
+	/* Appearance */
+	background: var(--button-background);
+	border: var(--button-border-width) solid var(--button-border-color);
+	border-radius: var(--button-border-radius);
+
+	/* Typography */
+	color: var(--button-font-color);
+	font-size: var(--button-font-size);
+	line-height: var(--button-line-height);
+
+	/* Spacing */
+	padding: var(--button-padding-vertical) var(--button-padding-horizontal);
+
+	/* Interaction */
+	cursor: pointer;
+}
+
+/* Cursor: default when no onClick handler */
+.button[data-clickable='false'] {
+	cursor: default;
+}
+
+/* ==========================================================================
+   Button States
+   ========================================================================== */
+
+/* Hover State */
+.button:not([data-disabled='true']):not(:disabled):hover {
+	background: var(--button-hover-background);
+	border-color: var(--button-hover-border-color);
+}
+
+/* Active State */
+.button:not([data-disabled='true']):not(:disabled):active {
+	background: var(--button-active-background);
+	border-color: var(--button-active-border-color);
+}
+
+/* Disabled State */
+.button[data-disabled='true'],
+.button:disabled,
+.button.disabled {
+	background: var(--button-disabled-background);
+	border-color: var(--button-disabled-border-color);
+	color: var(--button-disabled-font-color);
+	cursor: default;
+}
+
+/* Hidden State */
+.button[data-hidden='true'] {
+	pointer-events: none;
+	visibility: hidden;
+}
+
+/* ==========================================================================
+   Transparent Button Variant
+   ========================================================================== */
+
+.transparent {
+	/* Override base styles for transparent variant */
+	background: none;
+	border: none;
+	color: inherit;
+	font-family: inherit;
+	justify-content: flex-start;
+	margin: 0;
+	padding: 0;
+	text-align: left;
+}
+
+/* Transparent with custom border */
+.transparent[data-has-border='true'] {
+	border: 0.1rem solid var(--button-border-color);
+}
+
+/* Transparent hover state - requires custom color handling in JS */
+.transparent:not([data-disabled='true']):hover,
+.transparent:not([data-disabled='true']):focus,
+.transparent.active {
+	/* Color will be set via inline style when needed for dynamic color manipulation */
+	/* Or use a default lightening effect */
+	filter: brightness(1.2);
+}
+
+/* Override filter when custom hover color is set via style */
+.transparent[style*='--hover-color']:not([data-disabled='true']):hover,
+.transparent[style*='--hover-color']:not([data-disabled='true']):focus,
+.transparent[style*='--hover-color'].active {
+	color: var(--hover-color);
+	filter: none;
+}
+
+/* ==========================================================================
+   Optional Theme Properties (via data attributes or inline styles)
+   ========================================================================== */
+
+/* These properties can be customized via inline styles when needed */
+/*
+  Example usage:
+  <button
+    className={styles.button}
+    style={{
+      flex: '1 1 auto',
+      height: '40px',
+      width: '100%'
+    }}
+  >
+*/

@@ -1,56 +1,12 @@
-import isPropValid from '@emotion/is-prop-valid';
-import styled from '@emotion/styled';
 import cx from 'classnames';
 import Color from 'color';
-import { createRef, type ForwardedRef, forwardRef, type MouseEventHandler } from 'react';
+import { createRef, type CSSProperties, type ForwardedRef, forwardRef, type MouseEventHandler } from 'react';
 
-import { useThemeContext } from '#ThemeContext/index.js';
 import { withTooltip } from '#Tooltip/index.js';
 import noopFn, { emptyObj } from '#utils/noops.js';
 
+import styles from './Button.module.css';
 import type { ButtonProps } from './types.js';
-
-const BaseButton = withTooltip(styled('button', {
-	shouldForwardProp: isPropValid,
-})<ButtonProps>`
-	align-items: center;
-	background: ${({ theme: { background } }) => background};
-	box-sizing: border-box;
-	border: ${({ theme: { borderColor } }) => borderColor && `0.08rem solid ${borderColor}`};
-	border-radius: ${({ theme: { borderRadius } }) => borderRadius};
-	color: ${({ theme: { fontColor } }) => fontColor};
-	cursor: ${({ onClick }) => (typeof onClick === 'function' ? 'pointer' : 'default')};
-	display: flex;
-	flex: ${({ theme: { flex } }) => flex};
-	font-family: ${({ theme: { fontFamily } }) => fontFamily};
-	font-size: ${({ theme: { fontSize } }) => fontSize};
-	font-weight: ${({ theme: { fontWeight } }) => fontWeight};
-	height: ${({ theme: { height } }) => height};
-	justify-content: center;
-	letter-spacing: ${({ theme: { letterSpacing } }) => letterSpacing};
-	line-height: ${({ theme: { lineHeight } }) => lineHeight};
-	margin: ${({ theme: { margin } }) => margin};
-	padding: ${({ theme: { padding } }) => padding};
-	pointer-events: ${({ hidden }) => hidden && 'none'};
-	position: ${({ theme: { position = 'relative' } }) => position};
-	text-transform: ${({ theme: { textTransform } }) => textTransform};
-	visibility: ${({ hidden }) => hidden && 'hidden'};
-	white-space: ${({ theme: { whiteSpace } }) => whiteSpace};
-	width: ${({ theme: { width } }) => width};
-
-	&:not(.disabled):not(:disabled):hover {
-		background: ${({ theme: { hoverBackground } }) => hoverBackground};
-	}
-
-	&.disabled,
-	&:disabled {
-		background: ${({ theme: { disabledBackground } }) => disabledBackground};
-		border: ${({ theme: { disabledBorderColor } }) =>
-			disabledBorderColor && `0.08rem solid ${disabledBorderColor}`};
-		color: ${({ theme: { disabledFontColor } }) => disabledFontColor};
-		cursor: default;
-	}
-`);
 
 const propagationStopper =
 	(clickHandler: MouseEventHandler | undefined = noopFn): MouseEventHandler =>
@@ -59,111 +15,115 @@ const propagationStopper =
 		clickHandler?.(event);
 	};
 
+/**
+ * Base button component with tooltip support
+ */
+const BaseButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
+	({ children, className, hidden, onClick, theme = emptyObj, ...props }, ref) => {
+		const {
+			flex,
+			fontFamily,
+			fontWeight,
+			height,
+			letterSpacing,
+			margin,
+			padding,
+			position,
+			textTransform,
+			whiteSpace,
+			width,
+		} = theme;
+
+		// Build inline styles for dynamic properties
+		const inlineStyles: CSSProperties = {
+			...(flex && { flex }),
+			...(fontFamily && { fontFamily }),
+			...(fontWeight && { fontWeight }),
+			...(height && { height }),
+			...(letterSpacing && { letterSpacing }),
+			...(margin && { margin }),
+			...(padding && { padding }),
+			...(position && { position }),
+			...(textTransform && { textTransform }),
+			...(whiteSpace && { whiteSpace }),
+			...(width && { width }),
+		};
+
+		return (
+			<button
+				{...props}
+				ref={ref}
+				className={cx(styles.button, className)}
+				data-clickable={typeof onClick === 'function' ? 'true' : 'false'}
+				data-hidden={hidden ? 'true' : 'false'}
+				onClick={onClick}
+				style={Object.keys(inlineStyles).length > 0 ? inlineStyles : undefined}
+			>
+				{children}
+			</button>
+		);
+	},
+);
+
+BaseButtonComponent.displayName = 'BaseButton';
+
+// Wrap with tooltip HOC
+const BaseButton = withTooltip(BaseButtonComponent);
+
+/**
+ * Standard Button component
+ */
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-	(
-		{
-			children,
-			theme: {
-				background: customBackground,
-				borderColor: customBorderColor,
-				borderRadius: customBorderRadius,
-				disabledBackground: customDisabledBackground,
-				disabledBorderColor: customDisabledBorderColor,
-				disabledFontColor: customDisabledFontColor,
-				fontColor: customFontColor,
-				fontSize: customFontSize,
-				lineHeight: customLineHeight,
-				...customThemeProps
-			} = emptyObj,
-			onClick,
-			...props
-		},
-		ref?: ForwardedRef<HTMLButtonElement>,
-	) => {
-		// manual displayname setting required due to forwardRef
+	({ children, onClick, ...props }, ref?: ForwardedRef<HTMLButtonElement>) => {
 		Button.displayName = 'Button';
 
 		const forwardedRef = ref || createRef();
 
-		const {
-			colors,
-			components: {
-				Button: {
-					background: themeBackground = colors?.grey?.[100],
-					borderColor: themeBorderColor = colors?.grey?.[400],
-					borderRadius: themeBorderRadius = '0.3rem',
-					disabledBackground: themeDisabledBackground = colors?.grey?.[100],
-					disabledBorderColor: themeDisabledBorderColor = colors?.grey?.[300],
-					disabledFontColor: themeDisabledFontColor = colors?.grey?.[300],
-					fontColor: themeFontColor = '0.85rem',
-					fontSize: themeFontSize = '0.85rem',
-					lineHeight: themeLineHeight = '1.3rem',
-					...themeProps
-				} = emptyObj,
-			} = emptyObj,
-		} = useThemeContext({
-			callerName: 'Button',
-		});
-
 		return (
-			<BaseButton
-				theme={{
-					background: customBackground || themeBackground,
-					borderColor: customBorderColor || themeBorderColor,
-					borderRadius: customBorderRadius || themeBorderRadius,
-					disabledBackground: customDisabledBackground || themeDisabledBackground,
-					disabledBorderColor: customDisabledBorderColor || themeDisabledBorderColor,
-					disabledFontColor: customDisabledFontColor || themeDisabledFontColor,
-					fontColor: customFontColor || themeFontColor,
-					fontSize: customFontSize || themeFontSize,
-					lineHeight: customLineHeight || themeLineHeight,
-					...themeProps,
-					...customThemeProps,
-				}}
-				onClick={propagationStopper(onClick)}
-				ref={forwardedRef}
-				{...props}
-			>
+			<BaseButton onClick={propagationStopper(onClick)} ref={forwardedRef} {...props}>
 				{children}
 			</BaseButton>
 		);
 	},
 );
 
-const TransparentButtonBase = styled(BaseButton)<ButtonProps>`
-	background: ${({ theme: { background = 'none' } }) => background};
-	border: ${({ theme: { borderColor } }) => (borderColor ? `0.1rem solid ${borderColor}` : 'none')};
-	color: ${({ theme: { fontColor = 'inherit' } }) => fontColor};
-	font-family: ${({ theme: { fontFamily = 'inherit' } }) => fontFamily};
-	justify-content: flex-start;
-	margin: ${({ theme: { margin = 0 } }) => margin};
-	padding: ${({ theme: { padding = 0 } }) => padding};
-	text-align: left;
-
-	&.active,
-	&:focus,
-	&:hover {
-		color: ${({ theme: { hoverFontColor, fontColor } }) =>
-			hoverFontColor || (fontColor && fontColor !== 'inherit' && Color(fontColor).lighten(0.3).string())};
-	}
-`;
-
+/**
+ * Transparent Button variant
+ */
 export const TransparentButton = ({
 	className,
 	disabled,
 	onClick,
-	theme: { css: themeCSS, ...theme } = emptyObj,
+	theme = emptyObj,
 	...props
 }: ButtonProps & {
 	onClick?: MouseEventHandler<HTMLButtonElement>;
 }) => {
+	const { borderColor, fontColor, hoverFontColor } = theme;
+
+	// Calculate hover color if needed (replicate Color manipulation from original)
+	let calculatedHoverColor: string | undefined;
+	if (!hoverFontColor && fontColor && fontColor !== 'inherit') {
+		try {
+			calculatedHoverColor = Color(fontColor).lighten(0.3).string();
+		} catch {
+			// If color parsing fails, don't set hover color
+		}
+	}
+
+	const inlineStyles: CSSProperties & { '--hover-color'?: string } = {
+		...(calculatedHoverColor && { '--hover-color': calculatedHoverColor }),
+	};
+
 	return (
-		<TransparentButtonBase
-			className={cx(className, disabled && 'disabled')}
-			css={themeCSS}
-			onClick={disabled ? undefined : propagationStopper(onClick)}
-			theme={theme}
+		<BaseButton
 			{...props}
+			className={cx(styles.transparent, className, disabled && 'disabled')}
+			data-disabled={disabled ? 'true' : 'false'}
+			data-has-border={borderColor ? 'true' : 'false'}
+			onClick={disabled ? undefined : propagationStopper(onClick)}
+			style={Object.keys(inlineStyles).length > 0 ? inlineStyles : undefined}
+			theme={theme}
 		/>
 	);
 };
