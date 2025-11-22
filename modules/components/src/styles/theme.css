@@ -1,12 +1,11 @@
 /**
  * Global CSS Variables - Theme System
  * Extracted from ThemeContext for use with CSS Modules
- * Based on Material-UI color system
  */
 
 :root {
 	/* ==========================================================================
-	   Material-UI Color Palette - Grey
+	   Color Palette - Grey
 	   ========================================================================== */
 	--color-grey-50: #fafafa;
 	--color-grey-100: #f5f5f5;
@@ -20,7 +19,7 @@
 	--color-grey-900: #212121;
 
 	/* ==========================================================================
-	   Material-UI Color Palette - Blue
+	   Color Palette - Blue
 	   ========================================================================== */
 	--color-blue-50: #e3f2fd;
 	--color-blue-100: #bbdefb;
@@ -34,7 +33,7 @@
 	--color-blue-900: #0d47a1;
 
 	/* ==========================================================================
-	   Material-UI Color Palette - Red
+	   Color Palette - Red
 	   ========================================================================== */
 	--color-red-300: #e57373;
 	--color-red-400: #ef5350;
@@ -43,7 +42,7 @@
 	--color-red-800: #c62828;
 
 	/* ==========================================================================
-	   Material-UI Color Palette - Green
+	   Color Palette - Green
 	   ========================================================================== */
 	--color-green-300: #81c784;
 	--color-green-400: #66bb6a;
@@ -52,7 +51,7 @@
 	--color-green-900: #1b5e20;
 
 	/* ==========================================================================
-	   Material-UI Color Palette - Orange
+	   Color Palette - Orange
 	   ========================================================================== */
 	--color-orange-300: #ffb74d;
 	--color-orange-400: #ffa726;
@@ -60,7 +59,7 @@
 	--color-orange-900: #e65100;
 
 	/* ==========================================================================
-	   Material-UI Color Palette - Purple
+	   Color Palette - Purple
 	   ========================================================================== */
 	--color-purple-50: #f3e5f5;
 	--color-purple-200: #ce93d8;
