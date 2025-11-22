@@ -1,156 +1,208 @@
-# Arranger Components - Claude Development Guide
+# CLAUDE.md - Arranger Components
 
-## Project Overview
+> **Purpose**: This document helps Claude (AI) understand the `@overture-stack/arranger-components` codebase architecture, patterns, and conventions when working on this module.
 
-`@overture-stack/arranger-components` is a React component library that provides interactive, configurable UI components for building data portal search interfaces. It's part of the larger Arranger ecosystem, which provides a GraphQL search API powered by Elasticsearch.
+## What This Is
 
-## Technology Stack
+A React component library for building data portal search UIs. Works with the Arranger GraphQL API to provide interactive tables, faceted search (aggregations), and query builders for exploring Elasticsearch-indexed data. Part of the Overture genomics data platform.
 
-- **Language**: TypeScript
-- **Framework**: React (17.0+ or 18.0+)
-- **Styling**: Emotion (CSS-in-JS)
-- **Build Tool**: Vite
-- **Testing**: Jest
-- **Package Manager**: npm
+**Tech stack**: TypeScript, React, Emotion (CSS-in-JS), TanStack Table v8, Vite
 
-## Key Components
+## Architecture & Key Concepts
 
-The library exports several main component categories:
+### Component Structure Pattern
 
-1. **Table Components**: Advanced data table with sorting, pagination, filtering
-   - `Table`, `Toolbar`, `Pagination`, `DownloadButton`, `ColumnsSelectButton`, etc.
-   - Uses TanStack React Table v8
-
-2. **Aggregations**: Faceted search components
-   - `Aggregations`, `AggregationsList`, `TermAggs`, `BooleanAggs`
-
-3. **Search**: Quick search functionality
-   - `QuickSearch`
-
-4. **SQON Viewer**: Display and manage search queries
-   - `SQONViewer`, `CurrentSQON`
-
-5. **Theme System**: Customizable theming
-   - `ArrangerThemeProvider`, `useArrangerTheme`
-
-6. **Data Context**: Data fetching and state management
-   - `ArrangerDataProvider`, `useArrangerData`
-
-## Directory Structure
-
+Every component follows this structure:
 ```
-modules/components/
-├── src/
-│   ├── Table/              # Table components and helpers
-│   ├── aggregations/       # Faceted search components
-│   ├── ThemeContext/       # Theme system and base theme
-│   ├── DataContext/        # Data fetching context
-│   ├── Icons/              # Icon components
-│   ├── QuickSearch/        # Quick search component
-│   ├── SQONViewer/         # SQON display component
-│   ├── utils/              # Shared utilities
-│   └── index.ts            # Main exports
-├── stories/                # Storybook stories
-├── __mocks__/              # Jest mocks
-├── public/                 # Static assets
-└── package.json
+ComponentName/
+├── index.ts              # Exports only
+├── ComponentName.tsx     # Implementation
+├── types.ts             # TypeScript types/interfaces
+└── helpers.ts           # Optional: pure functions, utilities
 ```
 
-## Development Commands
+**Important**: The `index.ts` file should ONLY export. Never put implementation in index files.
 
-```bash
-# Build the library
-npm run build
+### Context Providers
 
-# Build in watch mode (for development)
-npm run dev
+This library uses React Context heavily. Three main contexts:
 
-# Run tests
-npm test
+1. **ThemeContext** (`src/ThemeContext/`)
+   - Provides Emotion theme to all components
+   - Base theme in `baseTheme/` with Material-UI-inspired color palette
+   - Consumers use `useArrangerTheme()` hook
 
-# Run tests in watch mode
-npm run test:watch
+2. **DataContext** (`src/DataContext/`)
+   - Handles GraphQL data fetching via Axios
+   - Manages SQON (Search Query Object Notation) state
+   - Consumers use `useArrangerData()` hook
+   - Contains query builders in `dataQueries.ts`
 
-# Type checking
-npm run typecheck
+3. **TableContext** (`src/Table/helpers/context.tsx`)
+   - Manages table state (sorting, pagination, column visibility)
+   - Wraps TanStack Table's state management
+   - Consumers use `useTableContext()` hook
 
-# Clean build artifacts
-npm run clean
-```
+### SQON (Search Query Object Notation)
 
-## Build System
+**Critical concept**: SQON is Arranger's query DSL for representing complex search filters. It's similar to Elasticsearch query DSL but simpler.
 
-- **Vite** handles building and bundling
-- Outputs to `dist/` directory
-- Generates TypeScript declaration files (.d.ts)
-- ESM format (type: "module")
-
-## Testing
-
-- Jest configured with TypeScript support (ts-jest)
-- Uses experimental VM modules for ESM
-- Test files typically colocated with source files or in `__tests__` directories
-
-## Development Notes
-
-### Local Development
-
-When developing locally using `npm link`, ensure client-side projects use:
-```json
+Example:
+```javascript
 {
-  "compilerOptions": {
-    "preserveSymlinks": true
-  }
+  op: "and",
+  content: [
+    { op: "in", content: { field: "status", value: ["active", "pending"] } },
+    { op: ">=", content: { field: "age", value: 18 } }
+  ]
 }
 ```
-This prevents duplicate imports of deep dependencies like `@types/react`.
 
-### Peer Dependencies
+- Found throughout aggregations and table components
+- Managed by `@overture-stack/sqon-builder` package
+- When modifying filters/search, you're usually building/modifying SQON
 
-This package requires the following peer dependencies:
-- React 17.0+ or 18.0+
-- React DOM 17.0+ or 18.0+
-- @emotion/react 11.0+
-- @emotion/styled 11.0+
-- @types/react 17.0+ or 18.0+
-- @types/react-dom 17.0+ or 18.0+
+### Table Implementation
 
-### Code Style
+The Table component (`src/Table/`) is the most complex part:
 
-- TypeScript strict mode enabled
-- ESLint configured with React, JSX a11y, and React Hooks plugins
-- Prettier for code formatting
+- **Uses TanStack Table v8** (recently migrated from react-table v6)
+- **Composable architecture**: `Table` is a wrapper, actual functionality split into:
+  - `Toolbar` - Actions bar (download, column selector, etc.)
+  - `Pagination` - Page navigation
+  - `DownloadButton` - TSV/CSV export
+  - `HeaderRow` - Column headers with sorting
+  - `Row` - Data rows
+  - `Cell` - Individual cells
 
-## Common Tasks
+**Key files**:
+- `Table.tsx` - Main component, minimal logic
+- `Wrapper.tsx` - Handles TanStack Table setup
+- `helpers/columns.tsx` - Column configuration logic
+- `helpers/cells.tsx` - Cell rendering logic
 
-### Adding a New Component
+### Aggregations
 
-1. Create component directory in `src/`
-2. Create component file (`.tsx`)
-3. Create types file (`types.ts`)
-4. Create index file (`index.ts`) for exports
-5. Export from main `src/index.ts`
-6. Add tests
-7. Consider adding Storybook story
+Located in `src/aggregations/`:
 
-### Updating Dependencies
+- **TermAggs**: Faceted filters for categorical data (e.g., "Status: Active (23), Pending (5)")
+- **BooleanAggs**: True/false filters
+- **BucketCount**: Displays count for a single bucket
+- **AggsState.ts**: State management for aggregation interactions
 
-Be mindful of peer dependencies and ensure compatibility with React 17 and 18.
+Pattern: User clicks filter → SQON updated → DataContext refetches → UI updates
 
-### TypeScript Migration
+## TypeScript Migration Notes
 
-This package was recently migrated from JavaScript to TypeScript. Some legacy patterns may exist.
+**Recently migrated from JavaScript to TypeScript**. Some things to know:
 
-## Integration
+1. **`.js` imports in code**: Many files still use `.js` extensions in import statements even though files are `.ts`/`.tsx`. This is intentional for ESM compatibility - leave them as-is.
 
-This component library is designed to work with:
-- `@overture-stack/arranger-server` (GraphQL API)
-- Data sources indexed in Elasticsearch
-- Custom data portals built with the Overture stack
+   Example: `export { Aggregations } from './aggregations/index.js'`
 
-## Resources
+2. **Type coverage is incomplete**: Some areas use `any` or loose types. When working on a component:
+   - Add proper types if missing
+   - Don't break existing type signatures without checking consumers
 
-- [Main Arranger Repo](https://github.com/overture-stack/arranger)
-- [Overture Documentation](https://docs.overture.bio/docs/core-software/Arranger/overview)
-- [TanStack Table Docs](https://tanstack.com/table/v8)
-- [Emotion Docs](https://emotion.sh/docs/introduction)
+3. **Legacy patterns**: May see older React patterns:
+   - `withData`, `withTheme` HOCs (being replaced by hooks)
+   - Some class components (rare)
+
+## Common Gotchas
+
+### 1. Emotion Theming
+- All styled components MUST be wrapped in `ArrangerThemeProvider`
+- Use `useArrangerTheme()` to access theme, not Emotion's `useTheme()`
+- Theme typing: `import type { ArrangerTheme } from './ThemeContext/types'`
+
+### 2. Peer Dependencies
+- React is a peer dependency - never import React types from this package's node_modules
+- Must support both React 17 and 18
+- Emotion is also a peer dependency
+
+### 3. Build Output
+- Outputs to `dist/` as ESM modules
+- `package.json` has `"type": "module"`
+- Vite handles bundling, generates `.d.ts` files via `vite-plugin-dts`
+
+### 4. Testing
+- Jest uses experimental VM modules for ESM support
+- Run via `NODE_OPTIONS="--experimental-vm-modules" jest`
+- Mocks in `__mocks__/` directory
+
+### 5. File Extensions
+- Source files: `.ts` or `.tsx`
+- Imports in code often reference `.js` (correct, don't change)
+- Build outputs `.js` files
+
+## Where to Find Things
+
+| What | Where |
+|------|-------|
+| Component exports | `src/index.ts` |
+| Type definitions | `types.ts` files in each component dir, or `src/types.ts` |
+| Theme colors | `src/ThemeContext/baseTheme/palette/colors/` |
+| GraphQL queries | `src/DataContext/dataQueries.ts` |
+| Table columns logic | `src/Table/helpers/columns.tsx` |
+| Utility functions | `src/utils/` |
+| Test helpers | `__mocks__/` |
+
+## Making Changes Safely
+
+### Adding a Component
+1. Create directory in `src/ComponentName/`
+2. Create `index.ts`, `ComponentName.tsx`, `types.ts`
+3. If needs theme: wrap in `useArrangerTheme()` or style with Emotion
+4. Export from `src/index.ts`
+5. Add tests colocated or in component directory
+6. Consider Storybook story in `stories/`
+
+### Modifying Table Components
+- Table is highly composable - changes to one part may affect others
+- Check `TableContext` state if adding features
+- Test with different data shapes (empty, single row, many rows)
+- Sorting/filtering logic is in TanStack Table config in `Wrapper.tsx`
+
+### Modifying Aggregations
+- Changes to aggregation state → check `AggsState.ts`
+- Changes to SQON generation → verify with `@overture-stack/sqon-builder`
+- Test with real Elasticsearch-style aggregation responses
+
+### Styling Changes
+- Use `useArrangerTheme()` to access theme
+- Define component-specific styles with Emotion's `styled` or `css`
+- Don't hardcode colors - use theme.palette
+- Check both light backgrounds and potential dark mode usage
+
+## Testing Strategy
+
+- **Unit tests**: Component rendering, prop handling
+- **Integration tests**: Context provider interactions
+- **No E2E tests in this package** (handled in consuming apps)
+
+Run tests: `npm test`
+Type check: `npm run typecheck`
+
+## Build & Release
+
+- Build: `npm run build` (outputs to `dist/`)
+- Dev mode: `npm run dev` (watch mode)
+- Published to npm as `@overture-stack/arranger-components`
+- Version managed in `package.json` (currently `0.0.0-dev`)
+
+## External Dependencies to Know
+
+- `@overture-stack/sqon-builder` - SQON manipulation
+- `@tanstack/react-table` v8 - Table logic
+- `axios` - HTTP requests to Arranger API
+- `@emotion/react` & `@emotion/styled` - Styling
+- `react-icons` - Icon components
+- `lodash-es` - Utilities (prefer tree-shakeable imports)
+
+## When You're Unsure
+
+1. **Check existing patterns**: Look at similar components
+2. **Read types**: TypeScript types often explain expected data shapes
+3. **Check exports**: `src/index.ts` shows public API
+4. **Look at stories**: `stories/` directory has usage examples
+5. **Context matters**: Many components depend on ThemeContext or DataContext being present
