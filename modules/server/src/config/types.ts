@@ -104,6 +104,11 @@ export type DownloadsConfigs = {
 	[configProperties.MAX_DOWNLOAD_ROWS]?: number;
 };
 
+export type DownloadsConfigs = {
+	[configProperties.ALLOW_CUSTOM_MAX_DOWNLOAD_ROWS]?: boolean;
+	[configProperties.MAX_DOWNLOAD_ROWS]?: number;
+};
+
 export type DisplayType = 'all' | 'bits' | 'boolean' | 'bytes' | 'date' | 'list' | 'nested' | 'number';
 
 export type ExtendedConfigs = {
