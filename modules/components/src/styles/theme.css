@@ -1,0 +1,211 @@
+/**
+ * Global CSS Variables - Theme System
+ * Extracted from ThemeContext for use with CSS Modules
+ */
+
+:root {
+	/* ==========================================================================
+	   Color Palette - Grey
+	   ========================================================================== */
+	--color-grey-50: #fafafa;
+	--color-grey-100: #f5f5f5;
+	--color-grey-200: #eeeeee;
+	--color-grey-300: #e0e0e0;
+	--color-grey-400: #bdbdbd;
+	--color-grey-500: #9e9e9e;
+	--color-grey-600: #757575;
+	--color-grey-700: #616161;
+	--color-grey-800: #424242;
+	--color-grey-900: #212121;
+
+	/* ==========================================================================
+	   Color Palette - Blue
+	   ========================================================================== */
+	--color-blue-50: #e3f2fd;
+	--color-blue-100: #bbdefb;
+	--color-blue-200: #90caf9;
+	--color-blue-300: #64b5f6;
+	--color-blue-400: #42a5f5;
+	--color-blue-500: #2196f3;
+	--color-blue-600: #1e88e5;
+	--color-blue-700: #1976d2;
+	--color-blue-800: #1565c0;
+	--color-blue-900: #0d47a1;
+
+	/* ==========================================================================
+	   Color Palette - Red
+	   ========================================================================== */
+	--color-red-300: #e57373;
+	--color-red-400: #ef5350;
+	--color-red-500: #f44336;
+	--color-red-700: #d32f2f;
+	--color-red-800: #c62828;
+
+	/* ==========================================================================
+	   Color Palette - Green
+	   ========================================================================== */
+	--color-green-300: #81c784;
+	--color-green-400: #66bb6a;
+	--color-green-500: #4caf50;
+	--color-green-800: #2e7d32;
+	--color-green-900: #1b5e20;
+
+	/* ==========================================================================
+	   Color Palette - Orange
+	   ========================================================================== */
+	--color-orange-300: #ffb74d;
+	--color-orange-400: #ffa726;
+	--color-orange-500: #ff9800;
+	--color-orange-900: #e65100;
+
+	/* ==========================================================================
+	   Color Palette - Purple
+	   ========================================================================== */
+	--color-purple-50: #f3e5f5;
+	--color-purple-200: #ce93d8;
+	--color-purple-300: #ba68c8;
+	--color-purple-500: #9c27b0;
+	--color-purple-700: #7b1fa2;
+
+	/* ==========================================================================
+	   Common Colors
+	   ========================================================================== */
+	--color-white: #fff;
+	--color-black: #000;
+
+	/* ==========================================================================
+	   Semantic Colors - Light Mode (Primary, Secondary, etc.)
+	   ========================================================================== */
+	--color-primary-main: var(--color-grey-700);
+	--color-primary-light: var(--color-grey-400);
+	--color-primary-dark: var(--color-grey-800);
+
+	--color-secondary-main: var(--color-purple-500);
+	--color-secondary-light: var(--color-purple-300);
+	--color-secondary-dark: var(--color-purple-700);
+
+	--color-error-main: var(--color-red-700);
+	--color-error-light: var(--color-red-400);
+	--color-error-dark: var(--color-red-800);
+
+	--color-info-main: var(--color-blue-700);
+	--color-info-light: var(--color-blue-500);
+	--color-info-dark: var(--color-blue-900);
+
+	--color-success-main: var(--color-green-800);
+	--color-success-light: var(--color-green-500);
+	--color-success-dark: var(--color-green-900);
+
+	--color-warning-main: #ed6c02;
+	--color-warning-light: var(--color-orange-500);
+	--color-warning-dark: var(--color-orange-900);
+
+	/* ==========================================================================
+	   Text Colors - Light Mode
+	   ========================================================================== */
+	--text-primary: rgba(0, 0, 0, 0.87);
+	--text-secondary: rgba(0, 0, 0, 0.6);
+	--text-disabled: rgba(0, 0, 0, 0.38);
+
+	/* ==========================================================================
+	   Background Colors - Light Mode
+	   ========================================================================== */
+	--background-paper: var(--color-white);
+	--background-default: var(--color-white);
+
+	/* ==========================================================================
+	   Action Colors - Light Mode
+	   ========================================================================== */
+	--action-active: rgba(0, 0, 0, 0.54);
+	--action-hover: rgba(0, 0, 0, 0.04);
+	--action-selected: rgba(0, 0, 0, 0.08);
+	--action-disabled: rgba(0, 0, 0, 0.26);
+	--action-disabled-background: rgba(0, 0, 0, 0.12);
+	--action-focus: rgba(0, 0, 0, 0.12);
+
+	/* ==========================================================================
+	   Divider
+	   ========================================================================== */
+	--divider: rgba(0, 0, 0, 0.12);
+
+	/* ==========================================================================
+	   Shape
+	   ========================================================================== */
+	--border-radius-default: 4px;
+	--border-radius-small: 0.3rem;
+
+	/* ==========================================================================
+	   Spacing System (8px base)
+	   ========================================================================== */
+	--spacing-unit: 8px;
+	--spacing-0: 0;
+	--spacing-1: 8px; /* 1 * 8px */
+	--spacing-2: 16px; /* 2 * 8px */
+	--spacing-3: 24px; /* 3 * 8px */
+	--spacing-4: 32px; /* 4 * 8px */
+	--spacing-5: 40px; /* 5 * 8px */
+	--spacing-6: 48px; /* 6 * 8px */
+	--spacing-8: 64px; /* 8 * 8px */
+
+	/* Fractional spacing */
+	--spacing-0-5: 4px; /* 0.5 * 8px */
+	--spacing-1-5: 12px; /* 1.5 * 8px */
+
+	/* ==========================================================================
+	   Component: Button
+	   ========================================================================== */
+	--button-background: var(--color-grey-100);
+	--button-border-color: var(--color-grey-400);
+	--button-border-radius: 0.3rem;
+	--button-border-width: 0.08rem;
+
+	--button-font-color: var(--text-primary);
+	--button-font-size: 0.85rem;
+	--button-line-height: 1.3rem;
+
+	--button-padding-vertical: 0.4rem;
+	--button-padding-horizontal: 0.8rem;
+
+	/* Button - Disabled State */
+	--button-disabled-background: var(--color-grey-100);
+	--button-disabled-border-color: var(--color-grey-300);
+	--button-disabled-font-color: var(--color-grey-300);
+
+	/* Button - Hover State */
+	--button-hover-background: var(--color-grey-200);
+	--button-hover-border-color: var(--color-grey-500);
+
+	/* Button - Active State */
+	--button-active-background: var(--color-grey-300);
+	--button-active-border-color: var(--color-grey-600);
+
+	/* ==========================================================================
+	   Component: Input
+	   ========================================================================== */
+	--input-border-color: #cacbcf;
+	--input-border-radius: 5px;
+	--input-padding: 0.375rem 0.5rem;
+	--input-box-shadow-focus: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+
+	--input-disabled-border-color: var(--color-grey-300);
+	--input-disabled-background: var(--color-grey-100);
+
+	/* ==========================================================================
+	   Component: Table
+	   ========================================================================== */
+	--table-background: var(--color-white);
+	--table-border-color: var(--color-grey-300);
+
+	--table-header-background: var(--color-grey-100);
+	--table-header-border-color: var(--color-grey-400);
+
+	--table-row-hover-background: var(--color-grey-50);
+
+	/* ==========================================================================
+	   Z-Index System
+	   ========================================================================== */
+	--z-index-modal: 1300;
+	--z-index-drawer: 1200;
+	--z-index-app-bar: 1100;
+	--z-index-tooltip: 1500;
+}
