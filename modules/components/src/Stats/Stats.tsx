@@ -1,3 +1,5 @@
+import type { ComponentType } from 'react';
+
 import { get } from 'lodash-es';
 import { Fragment } from 'react';
 import Spinner from 'react-spinkit';
@@ -6,12 +8,12 @@ import { AggsState } from '#aggregations/index.js';
 import Query from '#Query.js';
 import formatNumber from '#utils/formatNumber.js';
 
-export const underscoreField = (str) => (str || '').split('.').join('__');
+export const underscoreField = (str: string) => (str || '').split('.').join('__');
 
-export const accessor = ({ aggsField, dataAccessor }) =>
+export const accessor = ({ aggsField, dataAccessor }: any) =>
 	`${underscoreField(aggsField?.fieldName)}.${dataAccessor || (aggsField?.isTerms ? `buckets.length` : `stats.count`)}`;
 
-const constructQuery = ({ documentType, query, resolver = 'aggregations' }) => `
+const constructQuery = ({ documentType, query, resolver = 'aggregations' }: any) => `
 	query($sqon: JSON) {
 		data: ${documentType} {
 			${resolver} (
@@ -38,7 +40,13 @@ const LoadingSpinner = () => (
 	/>
 );
 
-const RootQuery = ({ documentType, render, sqon, ...props }) => (
+interface RootQueryProps {
+	documentType: string;
+	render: any;
+	sqon: any;
+}
+
+const RootQuery = ({ documentType, render, sqon, ...props }: RootQueryProps) => (
 	<Query
 		{...props}
 		endpointTag="Arranger-StatsRoot"
@@ -50,6 +58,16 @@ const RootQuery = ({ documentType, render, sqon, ...props }) => (
 	/>
 );
 
+interface FieldQueryProps {
+	aggsState: any;
+	dataAccessor?: string;
+	documentType: string;
+	fieldName: string;
+	formatResult?: any;
+	render: any;
+	sqon: any;
+}
+
 const FieldQuery = ({
 	aggsState: { aggs },
 	fieldName,
@@ -57,10 +75,10 @@ const FieldQuery = ({
 	sqon,
 	documentType,
 	dataAccessor,
-	formatResult = (x) => x,
-	aggsField = aggs.find((x) => x.fieldName === underscoreField(fieldName)),
+	formatResult = (x: any) => x,
+	aggsField = aggs.find((x: any) => x.fieldName === underscoreField(fieldName)),
 	...props
-}) => (
+}: FieldQueryProps) => (
 	<Query
 		{...props}
 		endpointTag="Arranger-StatsField"
@@ -77,6 +95,14 @@ const FieldQuery = ({
 	/>
 );
 
+interface StatProps {
+	icon?: any;
+	isRoot?: boolean;
+	label?: string;
+	LoadingSpinnerComponent: ComponentType;
+	QueryComponent?: ComponentType<any>;
+}
+
 const Stat = ({
 	icon = '',
 	label = '',
@@ -84,7 +110,7 @@ const Stat = ({
 	LoadingSpinnerComponent,
 	QueryComponent = isRoot ? RootQuery : FieldQuery,
 	...props
-}) => {
+}: StatProps) => {
 	return (
 		<div className="stat-container">
 			{icon}
@@ -96,6 +122,16 @@ const Stat = ({
 	);
 };
 
+interface StatsProps {
+	apiFetcher: any;
+	documentType: string;
+	LoadingSpinnerComponent?: ComponentType;
+	render?: any;
+	small?: boolean;
+	stats: any[];
+	transparent?: boolean;
+}
+
 const Stats = ({
 	apiFetcher,
 	documentType,
@@ -106,7 +142,7 @@ const Stats = ({
 	transparent,
 	LoadingSpinnerComponent = LoadingSpinner,
 	...props
-}) => (
+}: StatsProps) => (
 	<div
 		className={`
 			stats-container

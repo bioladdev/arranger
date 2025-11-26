@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 import { css } from '@emotion/react';
 import cx from 'classnames';
 import { merge } from 'lodash-es';
@@ -13,24 +15,24 @@ import noopFn, { emptyObj } from '#utils/noops.js';
 import strToReg from '#utils/strToReg.js';
 import internalTranslateSQONValue from '#utils/translateSQONValue.js';
 
-/**
- *  * @param {Object} props
- * @param {string} [props.align="right"]
- * @param {boolean} [props.allowControls]
- * @param {boolean} [props.allowSelection]
- * @param {string} [props.buttonAriaLabelClosed]
- * @param {string} [props.buttonAriaLabelOpen]
- * @param {string} [props.className]
- * @param {boolean} [props.disabled]
- * @param {string} [props.itemSelectionLegend]
- * @param {unknown[]} [props.items]
- * @param {function} [props.itemToString]
- * @param {function} [props.onChange]
- * @param {string} [props.resetToDefaultAriaLabel]
- * @param {string} [props.selectAllAriaLabel]
- * @param {Object} [props.theme]
- * @param {React.ReactNode} props.children
- */
+interface DropDownMenuProps {
+	align?: string;
+	allowControls?: boolean;
+	allowSelection?: boolean;
+	buttonAriaLabelClosed?: string;
+	buttonAriaLabelOpen?: string;
+	children: ReactNode;
+	disabled?: boolean;
+	items?: any[];
+	itemSelectionLegend?: string;
+	itemToString?: any;
+	onChange?: any;
+	resetToDefaultAriaLabel?: string;
+	selectAllAriaLabel?: string;
+	selectionProperty?: string;
+	selectionValues?: any[];
+}
+
 const DropDownMenu = ({
 	align = 'right',
 	allowControls = false,
@@ -79,7 +81,7 @@ const DropDownMenu = ({
 		TextFilter: customTextFilterProps,
 		...customDropDownButtonProps
 	} = emptyObj,
-}) => {
+}: DropDownMenuProps) => {
 	const [instanceId] = useState(uuid()); // to prevent ID collisions between different dropdowns
 	const [allSelected, setAllSelected] = useState(null);
 	const [isDisabled, setIsDisabled] = useState(false);

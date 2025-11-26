@@ -1,3 +1,5 @@
+import type { ComponentType } from 'react';
+
 import { css } from '@emotion/react';
 import cx from 'classnames';
 import { sortBy } from 'lodash-es';
@@ -11,7 +13,9 @@ import aggComponents from './aggComponentsMap.js';
 import AggsQuery from './AggsQuery.js';
 import AggsState from './AggsState.js';
 
-const BaseWrapper = ({ className, ...props }) => (
+interface BaseWrapperProps {}
+
+const BaseWrapper = ({ className, ...props }: BaseWrapperProps) => (
 	<section
 		css={css`
 			height: 100%;
@@ -21,6 +25,20 @@ const BaseWrapper = ({ className, ...props }) => (
 		className={cx('aggregations', className)}
 	/>
 );
+
+interface AggregationsListDisplayProps {
+	aggs: any[];
+	componentProps?: any;
+	containerRef?: any;
+	customFacets?: any[];
+	data: any;
+	documentType: string;
+	extendedMapping: any[];
+	getCustomItems: any;
+	onValueChange?: any;
+	setSQON: any;
+	sqon: any;
+}
 
 export const AggregationsListDisplay = ({
 	aggs,
@@ -39,7 +57,7 @@ export const AggregationsListDisplay = ({
 	onValueChange = noopFn,
 	setSQON,
 	sqon,
-}) => {
+}: AggregationsListDisplayProps) => {
 	const aggComponentInstances =
 		data &&
 		aggs
@@ -89,6 +107,22 @@ export const AggregationsListDisplay = ({
 	}
 };
 
+interface AggregationsListProps {
+	aggs?: any[];
+	apiFetcher: any;
+	componentProps?: any;
+	containerRef?: any;
+	customFacets?: any[];
+	debounceTime?: number;
+	documentType: string;
+	extendedMapping: any[];
+	getCustomItems?: any;
+	isLoadingConfigs?: boolean;
+	onValueChange?: any;
+	setSQON: any;
+	sqon: any;
+}
+
 export const AggregationsList = ({
 	aggs = [],
 	apiFetcher,
@@ -108,7 +142,7 @@ export const AggregationsList = ({
 	onValueChange = noopFn,
 	setSQON,
 	sqon,
-}) => (
+}: AggregationsListProps) => (
 	<AggsQuery
 		aggs={aggs}
 		apiFetcher={apiFetcher}
@@ -146,21 +180,21 @@ export const AggregationsList = ({
 	/>
 );
 
-/**
- * @param {Object} props
- * @param {array} props.customFacets Allows custom content to be passed to each facet in the aggregation list.
- *   This can overwrite any property in the agg object in the aggregation list
- *   The structure of this property is:
- *   [
- *     {
- *       content: {
- *         field: 'field_name', // identify which facet this object customizes
- *         displayName: 'New Display Name for This Field', // modify displayName of the facet
- *       },
- *     },
- *   ]
- * @param {import('#types.js').SQONType} props.sqon
- */
+interface AggregationsProps {
+	apiFetcher: any;
+	componentProps?: any;
+	containerRef?: any;
+	customFacets?: any[];
+	documentType?: string;
+	extendedMapping: any[];
+	isLoadingConfigs?: boolean | string;
+	onValueChange?: any;
+	setSQON?: any;
+	sqon?: any;
+	style?: any;
+	Wrapper?: ComponentType<any>;
+}
+
 const Aggregations = ({
 	apiFetcher,
 	className = '',
@@ -180,7 +214,7 @@ const Aggregations = ({
 	sqon = null,
 	style = emptyObj,
 	Wrapper = BaseWrapper,
-}) => {
+}: AggregationsProps) => {
 	return (
 		<Wrapper className={className} style={style}>
 			<AggsState
