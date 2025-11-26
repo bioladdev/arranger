@@ -1,7 +1,13 @@
+import type { ComponentType } from 'react';
+
 import Button from '#Button/index.js';
 import MetaMorphicChild from '#MetaMorphicChild/index.js';
 
-import type { SingleDownloadButtonProps } from './types.js';
+interface SingleDownloadButtonProps {
+	clickHandler?: () => void;
+	disabled: boolean;
+	exporterLabel?: ComponentType | string;
+}
 
 const SingleDownloadButton = ({
 	className,

@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 import { css } from '@emotion/react';
 import cx from 'classnames';
 import ReactTable from 'react-table-old';
@@ -5,7 +7,7 @@ import { compose, withPropsOnChange, withState } from 'recompose';
 
 import Pagination from './Table/index.js';
 
-const enhance = compose(
+const enhance: any = compose(
 	withState('activeTab', 'setActiveTab', null),
 	withPropsOnChange(['tabs'], ({ tabs, activeTab, setActiveTab }) => {
 		const tabsWithKey = tabs.map((x) => ({ ...x, key: x.key || x.title }));
@@ -14,7 +16,13 @@ const enhance = compose(
 	}),
 );
 
-export const TabsTable = ({ className, columns, data, pageSize = 10, ...props }) => (
+interface TabsTableProps {
+	columns: any[];
+	data: any[];
+	pageSize?: number;
+}
+
+export const TabsTable = ({ className, columns, data, pageSize = 10, ...props }: TabsTableProps) => (
 	<ReactTable
 		{...{
 			columns,
@@ -34,7 +42,19 @@ export const TabsTable = ({ className, columns, data, pageSize = 10, ...props })
 	/>
 );
 
-const Tabs = ({ tabs, activeTab, setActiveTab }) =>
+interface Tab {
+	content: ReactNode;
+	key: string;
+	title: string;
+}
+
+interface TabsProps {
+	activeTab: string | null;
+	setActiveTab: (key: string) => void;
+	tabs: Tab[];
+}
+
+const Tabs = ({ tabs, activeTab, setActiveTab }: TabsProps) =>
 	tabs?.length ? (
 		<div className={`tabs`}>
 			<div

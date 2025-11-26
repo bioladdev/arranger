@@ -5,7 +5,15 @@ import Query from '#Query.js';
 
 import { accessor, underscoreField } from './Stats.js';
 
-const CombinedStatsQuery = ({ apiFetcher, documentType, sqon, stats, render }) => (
+interface CombinedStatsQueryProps {
+	apiFetcher: any;
+	documentType: string;
+	render: any;
+	sqon: any;
+	stats: any[];
+}
+
+const CombinedStatsQuery = ({ apiFetcher, documentType, sqon, stats, render }: CombinedStatsQueryProps) => (
 	<AggsState
 		{...{ apiFetcher, documentType }}
 		render={({ aggs }) => {

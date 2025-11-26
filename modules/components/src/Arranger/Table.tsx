@@ -1,3 +1,5 @@
+import type { ComponentType } from 'react';
+
 import Spinner from 'react-spinkit';
 
 import DataTable, { ColumnsState } from '#DataTable/index.js';
@@ -5,10 +7,21 @@ import { withTableContext } from '#Table/index.js';
 import defaultApiFetcher from '#utils/api.js';
 import noopFn from '#utils/noops.js';
 
-/**
- * @param {Object} props
- * @param {import('#types.js').SQONType} props.sqon
- */
+interface TableProps {
+	apiFetcher?: any;
+	customHeaderContent?: any;
+	documentType?: string;
+	fetchData?: any;
+	fieldTypesForFilter?: string[];
+	InputComponent?: ComponentType;
+	onFilterChange?: (value: any) => void;
+	sessionStorage?: boolean;
+	setSQON?: (sqon: any) => void;
+	showFilterInput?: boolean;
+	sqon?: any;
+	storageKey?: string;
+}
+
 const Table = ({
 	onFilterChange = noopFn,
 	documentType = '',
@@ -23,7 +36,7 @@ const Table = ({
 	sessionStorage = false, // Use session storage to save selected columns, page size, and column sort.
 	storageKey = '', // Identifier to use in session storage property name where state info is stored. Use the same save-key in multiple tables to share save state.
 	...props
-}) => {
+}: TableProps) => {
 	return (
 		<ColumnsState
 			documentType={documentType}
