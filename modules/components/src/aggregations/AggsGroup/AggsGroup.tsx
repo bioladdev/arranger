@@ -1,3 +1,5 @@
+import type { ComponentType, ReactNode } from 'react';
+
 import { css } from '@emotion/react';
 import cx from 'classnames';
 import { useState } from 'react';
@@ -7,12 +9,16 @@ import { ArrowIcon, SearchIcon, SortAlphaIcon } from '#Icons/index.js';
 import { useThemeContext } from '#ThemeContext/index.js';
 import noopFn, { emptyObj } from '#utils/noops.js';
 
+interface AggsGroupProps {
+	children?: ReactNode;
+	componentRef?: any;
+	dataFields?: any;
+	filters?: any[];
+	headerRef?: any;
+	stickyHeader?: boolean;
+	WrapperComponent?: ComponentType<any>;
+}
 
-// TODO: redesign modifiers (filter, sort) to be off by default?
-// TODO: temporarily quieting down TS errors to help migration
-/**
- * @param {*} props
- */
 const AggsGroup = ({
 	children,
 	className: aggTypeCustomClassName,
@@ -56,7 +62,7 @@ const AggsGroup = ({
 		} = emptyObj,
 		WrapperComponent,
 	} = emptyObj,
-}) => {
+}: AggsGroupProps) => {
 	const [isCollapsed, setIsCollapsed] = useState(false);
 	const {
 		colors,
