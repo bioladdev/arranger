@@ -1,3 +1,5 @@
+import type { FC } from 'react';
+
 import { css } from '@emotion/react';
 import cx from 'classnames';
 
@@ -5,12 +7,18 @@ import Button from '#Button/index.js';
 import { useThemeContext } from '#ThemeContext/index.js';
 import noopFn, { emptyObj } from '#utils/noops.js';
 
-import type Props from './types.js';
+interface Option {
+	disabled?: boolean;
+	title?: FC<{ toggleStatus?: string } | undefined> | string;
+	value: string;
+}
 
-// TODO: temprorarily quieting down TS errors to help migration
-/**
- * @param {*} props
- */
+interface ToggleButtonProps {
+	onChange?: any;
+	options?: Option[];
+	value?: string;
+}
+
 const ToggleButton = ({
 	className,
 	onChange = noopFn,
@@ -34,7 +42,7 @@ const ToggleButton = ({
 		fontSize: customFontSize,
 		OptionCSS: customOptionCSS,
 	} = emptyObj,
-}: Props) => {
+}: ToggleButtonProps) => {
 	const {
 		colors,
 		components: {

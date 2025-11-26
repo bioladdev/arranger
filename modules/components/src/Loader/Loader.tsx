@@ -1,3 +1,5 @@
+import type { ElementType, PropsWithChildren, ReactNode } from 'react';
+
 import isPropValid from '@emotion/is-prop-valid';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -9,7 +11,18 @@ import Spinkit from 'react-spinkit';
 import { useThemeContext } from '#ThemeContext/index.js';
 import { emptyObj } from '#utils/noops.js';
 
-import type { LoaderContainerProps, LoaderOverlayProps, LoaderProps } from './types.js';
+interface LoaderProps {
+	children?: ReactNode;
+	Component?: ElementType;
+}
+
+interface LoaderContainerProps {
+	children?: ReactNode;
+	disabled?: boolean;
+	isLoading?: boolean;
+}
+
+interface LoaderOverlayProps {}
 
 const DefaultSpinner = ({ color, size }: { color?: string; size?: string | number }) => {
 	return (
