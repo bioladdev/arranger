@@ -1,3 +1,5 @@
+import type { ComponentType } from 'react';
+
 import { css } from '@emotion/react';
 import cx from 'classnames';
 import { isEmpty, merge, orderBy, partition, truncate } from 'lodash-es';
@@ -17,7 +19,7 @@ import translateSQONValue from '#utils/translateSQONValue.js';
 import AggsGroup from '../AggsGroup/index.js';
 import BucketCount from '../BucketCount/index.js';
 
-const generateNextSQON = ({ dotFieldName, bucket, isExclude, sqon }) =>
+const generateNextSQON = ({ dotFieldName, bucket, isExclude, sqon }: any) =>
 	toggleSQON(
 		{
 			op: 'and',
@@ -34,6 +36,16 @@ const generateNextSQON = ({ dotFieldName, bucket, isExclude, sqon }) =>
 		sqon,
 	);
 
+interface IncludeExcludeButtonProps {
+	buckets: any[];
+	dotFieldName: string;
+	handleIncludeExcludeChange: any;
+	isActive: any;
+	isExclude: boolean;
+	ToggleButtonThemeProps: any;
+	updateIsExclude: any;
+}
+
 const IncludeExcludeButton = ({
 	buckets,
 	dotFieldName,
@@ -42,7 +54,7 @@ const IncludeExcludeButton = ({
 	isExclude,
 	ToggleButtonThemeProps,
 	updateIsExclude,
-}) => (
+}: IncludeExcludeButtonProps) => (
 	<ToggleButton
 		onChange={({
 			value,
@@ -70,13 +82,18 @@ const IncludeExcludeButton = ({
 	/>
 );
 
+interface MoreOrLessButtonProps {
+	howManyMore?: number;
+	isShowingMore?: boolean;
+}
+
 const MoreOrLessButton = ({
 	className = '',
 	css: customCSS = '',
 	howManyMore = 0,
 	isShowingMore = false,
 	...props
-}) => (
+}: MoreOrLessButtonProps) => (
 	<TransparentButton
 		className={cx('showMore-wrapper', isShowingMore ? 'less' : 'more', className)}
 		css={[
@@ -92,7 +109,7 @@ const MoreOrLessButton = ({
 	</TransparentButton>
 );
 
-const decorateBuckets = ({ buckets, searchText }) => {
+const decorateBuckets = ({ buckets, searchText }: any) => {
 	const namedFilteredBuckets = buckets
 		// TODO: displayValues may fit here
 		.map((bucket) => ({
@@ -106,11 +123,31 @@ const decorateBuckets = ({ buckets, searchText }) => {
 	return [...orderBy(notMissing, 'doc_count', 'desc'), ...missing];
 };
 
-// TODO: Improve exclusion filter ("not in"), allow mix
-// TODO: temporarily quieting down TS errors to help migration
-/**
- * @param {*} props
- */
+interface TermAggregationsProps {
+	aggHeaderRef?: any;
+	aggWrapperRef?: any;
+	buckets?: any[];
+	constructBucketItemClassName?: any;
+	constructEntryId?: any;
+	containerRef?: any;
+	Content?: ComponentType<any>;
+	displayName?: string;
+	fieldName?: string;
+	handleIncludeExcludeChange?: any;
+	handleValueClick?: any;
+	headerTitle?: any;
+	highlightText?: string;
+	isActive?: any;
+	isExclude?: any;
+	maxTerms?: number;
+	scrollToAgg?: any;
+	searchPlaceholder?: string;
+	showExcludeOption?: boolean;
+	type?: string;
+	valueCharacterLimit?: number;
+	WrapperComponent?: ComponentType<any>;
+}
+
 const TermAggregations = ({
 	aggHeaderRef = createRef(),
 	aggWrapperRef = createRef(),
@@ -160,7 +197,7 @@ const TermAggregations = ({
 	type,
 	valueCharacterLimit,
 	WrapperComponent,
-} = emptyObj) => {
+}: TermAggregationsProps) => {
 	const [isAlphabetized, setIsAlphabetized] = useState(false);
 	const [isShowingMore, setShowingMore] = useState(false);
 	const [stateIsExclude, setIsExclude] = useState(false);

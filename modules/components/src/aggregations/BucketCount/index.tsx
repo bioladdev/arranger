@@ -1,10 +1,14 @@
+import type { ReactNode } from 'react';
+
 import { css } from '@emotion/react';
 import cx from 'classnames';
 
 import { useThemeContext } from '#ThemeContext/index.js';
 import { emptyObj } from '#utils/noops.js';
 
-import type Props from './types.js';
+interface BucketCountProps {
+	children?: ReactNode;
+}
 
 const BucketCount = ({
 	className,
@@ -28,7 +32,7 @@ const BucketCount = ({
 		fontSize,
 	} = emptyObj,
 	...props
-}: Props) => {
+}: BucketCountProps) => {
 	const {
 		colors,
 		components: {

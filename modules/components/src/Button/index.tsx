@@ -1,19 +1,33 @@
 import cx from 'classnames';
 import Color from 'color';
-import { createRef, type CSSProperties, type ForwardedRef, forwardRef, type MouseEventHandler } from 'react';
+import {
+	createRef,
+	type CSSProperties,
+	type ForwardedRef,
+	forwardRef,
+	type MouseEventHandler,
+	type ReactNode,
+	type TouchEventHandler,
+} from 'react';
 
 import { withTooltip } from '#Tooltip/index.js';
 import noopFn, { emptyObj } from '#utils/noops.js';
 
 import styles from './Button.module.css';
-import type { ButtonProps } from './types.js';
 
-const propagationStopper =
-	(clickHandler: MouseEventHandler | undefined = noopFn): MouseEventHandler =>
-	(event) => {
-		event.stopPropagation();
-		clickHandler?.(event);
-	};
+interface ButtonProps {
+	children?: ReactNode;
+	disabled?: boolean;
+	hidden?: boolean;
+	onClick?: MouseEventHandler<HTMLButtonElement>;
+	onMouseDown?: MouseEventHandler<HTMLButtonElement>;
+	onTouchStart?: TouchEventHandler<HTMLButtonElement>;
+}
+
+const propagationStopper: any = (clickHandler: any = noopFn) => (event: any) => {
+	event.stopPropagation();
+	clickHandler?.(event);
+};
 
 /**
  * Base button component with tooltip support
@@ -68,7 +82,7 @@ const BaseButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
 BaseButtonComponent.displayName = 'BaseButton';
 
 // Wrap with tooltip HOC
-const BaseButton = withTooltip(BaseButtonComponent);
+const BaseButton: any = withTooltip(BaseButtonComponent);
 
 /**
  * Standard Button component
@@ -96,9 +110,7 @@ export const TransparentButton = ({
 	onClick,
 	theme = emptyObj,
 	...props
-}: ButtonProps & {
-	onClick?: MouseEventHandler<HTMLButtonElement>;
-}) => {
+}: ButtonProps) => {
 	const { borderColor, fontColor, hoverFontColor } = theme;
 
 	// Calculate hover color if needed (replicate Color manipulation from original)

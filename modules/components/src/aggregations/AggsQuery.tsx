@@ -6,7 +6,14 @@ import { DEBUG } from '#utils/config.js';
 
 import { queryFromAgg } from './AggsState.js';
 
-const AggsQuery = ({ documentType = '', aggs = [], sqon = null, apiFetcher = defaultApiFetcher, ...props }) => {
+interface AggsQueryProps {
+	aggs?: any[];
+	apiFetcher?: any;
+	documentType?: string;
+	sqon?: any;
+}
+
+const AggsQuery = ({ documentType = '', aggs = [], sqon = null, apiFetcher = defaultApiFetcher, ...props }: AggsQueryProps) => {
 	return documentType && aggs.length ? (
 		<Query
 			endpointTag={`Arranger-${capitalize(documentType)}Aggregations`}

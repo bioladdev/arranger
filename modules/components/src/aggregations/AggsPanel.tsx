@@ -4,7 +4,12 @@ import { inCurrentSQON } from '#SQONViewer/utils.js';
 import AggsQuery from './AggsQuery.js';
 import TermAggs from './TermAggs/index.js';
 
-const AggsPanel = ({ index, aggs = [], ...props }) =>
+interface AggsPanelProps {
+	aggs?: any[];
+	index: string;
+}
+
+const AggsPanel = ({ index, aggs = [], ...props }: AggsPanelProps) =>
 	aggs.length ? (
 		<AggsQuery
 			aggs={aggs}

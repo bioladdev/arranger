@@ -7,7 +7,8 @@ import { useThemeContext } from '#ThemeContext/index.js';
 import { emptyObj } from '#utils/noops.js';
 
 import { isPlural } from './helpers.js';
-import type { CountDisplayProps } from './types.js';
+
+interface CountDisplayProps {}
 
 const CountDisplay = ({
 	className: customClassName,

@@ -4,7 +4,16 @@ import TextHighlight from '#TextHighlight/index.js';
 import { useThemeContext } from '#ThemeContext/index.js';
 import { emptyObj } from '#utils/noops.js';
 
-const QuickSearchDropdownItem = ({ entityName, inputValue, onMouseDown, optionIndex, primaryKey, result }) => {
+interface QuickSearchDropdownItemProps {
+	entityName: string;
+	inputValue: string;
+	onMouseDown?: any;
+	optionIndex: number;
+	primaryKey: string;
+	result: string;
+}
+
+const QuickSearchDropdownItem = ({ entityName, inputValue, onMouseDown, optionIndex, primaryKey, result }: QuickSearchDropdownItemProps) => {
 	const {
 		components: {
 			QuickSearch: {

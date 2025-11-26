@@ -10,9 +10,16 @@ import EmptyMessage from './EmptyMessage.js';
 import { Op, SQONGroup, SQONValueGroup, SQONWrapper, useDataBubbles } from './helpers.js';
 import { toggleSQON, replaceFilterSQON } from './utils.js';
 
-/**
- * @param {import('./types.js').SQONViewerProps} props
- */
+interface SQONViewerProps {
+	dateFormat?: string;
+	emptyMessage?: string;
+	onClear?: any;
+	setSQON?: any;
+	sqon?: any;
+	translateSQONValue?: any;
+	valueCharacterLimit?: number;
+}
+
 const SQONViewer = ({
 	dateFormat = undefined,
 	emptyMessage = 'Start by selecting filters',
@@ -21,7 +28,7 @@ const SQONViewer = ({
 	sqon = null, // : GroupSQONInterface;
 	translateSQONValue = undefined,
 	valueCharacterLimit = undefined,
-}) => {
+}: SQONViewerProps) => {
 	const {
 		components: {
 			SQONViewer: {
@@ -157,7 +164,7 @@ const SQONViewer = ({
 
 export default withData(SQONViewer);
 
-export const CurrentSQON = (props) => {
+export const CurrentSQON = (props: SQONViewerProps) => {
 	console.warn(
 		'Arranger deprecation warning --\n This component has been renamed to `SQONViewer` for declarativeness. ' +
 		'Please update your integration accordingly to prevent errors, ' +
