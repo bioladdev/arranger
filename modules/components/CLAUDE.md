@@ -15,13 +15,14 @@ A React component library for building data portal search UIs. Works with the Ar
 Every component follows this structure:
 ```
 ComponentName/
-├── index.ts              # Exports only
-├── ComponentName.tsx     # Implementation
-├── types.ts             # TypeScript types/interfaces
+├── index.tsx            # Implementation with inline types
 └── helpers.ts           # Optional: pure functions, utilities
 ```
 
-**Important**: The `index.ts` file should ONLY export. Never put implementation in index files.
+**Important**:
+- Define prop types inline in the component file (see TypeScript Typing Conventions below)
+- Previously used separate `types.ts` files - these are being phased out
+- If you see legacy `types.ts` files, they should be migrated to inline definitions
 
 ### Context Providers
 
@@ -107,6 +108,78 @@ Pattern: User clicks filter → SQON updated → DataContext refetches → UI up
 3. **Legacy patterns**: May see older React patterns:
    - `withData`, `withTheme` HOCs (being replaced by hooks)
    - Some class components (rare)
+
+### TypeScript Typing Conventions (Updated 2025-11-26)
+
+When adding types to components, follow these guidelines:
+
+**1. Colocate Props Inline**
+- Define prop interfaces directly in the component file, NOT in separate `types.ts` files
+- Place the interface immediately before the component implementation
+
+```typescript
+// ✅ Good - props defined inline
+interface ButtonProps {
+	children?: ReactNode;
+	onClick?: MouseEventHandler<HTMLButtonElement>;
+	[key: string]: any;
+}
+
+const Button = ({ children, onClick }: ButtonProps) => { ... }
+```
+
+```typescript
+// ❌ Bad - separate types.ts file
+import type { ButtonProps } from './types.js';
+```
+
+**2. Ignore Common Props**
+- Do NOT explicitly type `theme` prop (allow via index signature)
+- Do NOT explicitly type `className` prop (allow via index signature)
+- Use `[key: string]: any` index signature to allow these and other spread props
+
+```typescript
+// ✅ Good
+interface ComponentProps {
+	value: string;
+	onChange: (value: string) => void;
+	[key: string]: any; // Allow theme, className, and other props
+}
+```
+
+**3. Mark Complex Types as `any`**
+- Higher-order functions (HOFs) → use `any`
+- Higher-order components (HOCs) → use `any`
+- Complex utility functions → use `any`
+
+```typescript
+// ✅ Good - HOF marked as any
+const propagationStopper: any = (clickHandler: any = noopFn) => (event: any) => {
+	event.stopPropagation();
+	clickHandler?.(event);
+};
+
+// ✅ Good - HOC result marked as any
+const BaseButton: any = withTooltip(BaseButtonComponent);
+```
+
+**4. Type Simple Props Explicitly**
+- Primitive types: `string`, `number`, `boolean`
+- React types: `ReactNode`, `MouseEventHandler`, `CSSProperties`
+- Simple function signatures
+
+```typescript
+interface MyComponentProps {
+	title: string;
+	count: number;
+	isActive: boolean;
+	children?: ReactNode;
+	onClick?: MouseEventHandler<HTMLButtonElement>;
+	[key: string]: any;
+}
+```
+
+**Purpose**: These conventions establish baseline type safety before major refactors while avoiding over-engineering complex types that may change.
 
 ## Common Gotchas
 
