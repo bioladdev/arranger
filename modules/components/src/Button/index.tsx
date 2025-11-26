@@ -22,7 +22,6 @@ interface ButtonProps {
 	onClick?: MouseEventHandler<HTMLButtonElement>;
 	onMouseDown?: MouseEventHandler<HTMLButtonElement>;
 	onTouchStart?: TouchEventHandler<HTMLButtonElement>;
-	[key: string]: any; // Allow theme, className, and other props
 }
 
 const propagationStopper: any = (clickHandler: any = noopFn) => (event: any) => {

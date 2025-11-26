@@ -122,7 +122,6 @@ When adding types to components, follow these guidelines:
 interface ButtonProps {
 	children?: ReactNode;
 	onClick?: MouseEventHandler<HTMLButtonElement>;
-	[key: string]: any;
 }
 
 const Button = ({ children, onClick }: ButtonProps) => { ... }
@@ -134,18 +133,10 @@ import type { ButtonProps } from './types.js';
 ```
 
 **2. Ignore Common Props**
-- Do NOT explicitly type `theme` prop (allow via index signature)
-- Do NOT explicitly type `className` prop (allow via index signature)
-- Use `[key: string]: any` index signature to allow these and other spread props
-
-```typescript
-// ✅ Good
-interface ComponentProps {
-	value: string;
-	onChange: (value: string) => void;
-	[key: string]: any; // Allow theme, className, and other props
-}
-```
+- Do NOT explicitly type `theme` prop
+- Do NOT explicitly type `className` prop
+- It's OK if TypeScript shows errors for these - they will be addressed later
+- Do NOT use `[key: string]: any` index signatures
 
 **3. Mark Complex Types as `any`**
 - Higher-order functions (HOFs) → use `any`
@@ -175,11 +166,10 @@ interface MyComponentProps {
 	isActive: boolean;
 	children?: ReactNode;
 	onClick?: MouseEventHandler<HTMLButtonElement>;
-	[key: string]: any;
 }
 ```
 
-**Purpose**: These conventions establish baseline type safety before major refactors while avoiding over-engineering complex types that may change.
+**Purpose**: These conventions establish baseline type safety before major refactors while avoiding over-engineering complex types that may change. Keep TypeScript strict - errors for `theme`, `className`, and spread props are acceptable and will be resolved in future refactoring.
 
 ## Common Gotchas
 
