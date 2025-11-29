@@ -34,6 +34,7 @@
 	},
 	"homepage": "https://github.com/overture-stack/arranger#readme",
 	"dependencies": {
+		"@apollo/client": "^4.0.9",
 		"@emotion/react": "^11.0.0",
 		"@emotion/styled": "^11.0.0",
 		"@overture-stack/sqon-builder": "^1.1.0",
@@ -46,6 +47,7 @@
 		"date-fns": "^2.29.3",
 		"downshift": "^1.23.2",
 		"filesize": "^10.0.6",
+		"graphql": "^16.12.0",
 		"jsonpath-plus": "^10.3.0",
 		"lodash": "^4.17.21",
 		"lodash-es": "^4.17.21",
@@ -60,6 +62,7 @@
 		"react-table-old": "npm:react-table@^6.11.5",
 		"react-tippy": "^1.4.0",
 		"recompose": "^0.30.0",
+		"rxjs": "^7.8.2",
 		"sqon-builder": "^2.0.1",
 		"url-join": "^4.0.1",
 		"uuid": "^9.0.0"

@@ -12,8 +12,47 @@ import { emptyObj } from '#utils/noops.js';
 
 import { useConfigs, useDataFetcher } from './helpers.js';
 import type { DataContextInterface, DataProviderProps, SQONType, UseDataContextProps } from './types.js';
+import { client } from '#State/apollo.js';
+import { gql } from '@apollo/client';
 
-export const DataContext = createContext<DataContextInterface>({
+export const DataContext = createContext({ data: {} });
+
+interface DataProviderProps {
+	config: { url: string; documentType: string };
+	debug: boolean;
+}
+export const DataProvider = ({ config, children, debug }: DataProviderProps) => {
+	const [data, setData] = useState({});
+	useEffect(() => {
+		client
+			.query({
+				query: gql`
+					query GetLocations {
+						__schema {
+							queryType {
+								name
+							}
+							types {
+								name
+								kind
+							}
+						}
+					}
+				`,
+			})
+			.then((data) => setData(data));
+	}, []);
+
+	return (
+		<DataContext.Provider value={{ data }}>
+			<h1>Arranger</h1>
+			{children}
+		</DataContext.Provider>
+	);
+};
+
+// ---
+export const LegacyDataContext = createContext<DataContextInterface>({
 	documentType: '',
 	missingProvider: 'DataContext',
 } as DataContextInterface);
@@ -26,7 +65,7 @@ export const DataContext = createContext<DataContextInterface>({
  * @param {Theme} [theme] allows giving the provider a custom version of the theme for the consumers.
  * @param {string} [url] customises where requests should be made by the data fetcher.
  */
-export const DataProvider = ({
+export const LegacyDataProvider = ({
 	apiUrl = ARRANGER_API,
 	children,
 	customFetcher: apiFetcher = defaultApiFetcher,
@@ -34,6 +73,27 @@ export const DataProvider = ({
 	legacyProps,
 	theme,
 }: DataProviderProps): ReactElement<DataContextInterface> => {
+	client
+		.query({
+			query: gql`
+				query GetLocations {
+					locations {
+						id
+
+						name
+
+						description
+
+						photo
+					}
+				}
+			`,
+		})
+		.then((result) => console.log('res', result));
+
+	// data provider
+	console.log('data provider');
+
 	const [sqon, setSQON] = useState<SQONType>(null);
 
 	useEffect(() => {
