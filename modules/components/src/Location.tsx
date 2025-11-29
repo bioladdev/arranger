@@ -1,4 +1,4 @@
-import { parse } from 'query-string';
+import parse from 'query-string';
 import { Route } from 'react-router-dom';
 
 const Location = (props) => (

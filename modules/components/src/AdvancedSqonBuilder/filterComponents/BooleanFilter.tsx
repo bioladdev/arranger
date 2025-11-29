@@ -15,12 +15,12 @@ const getFieldDisplayName = (fieldDisplayNameMap, initialFieldSqon) => {
 	return fieldDisplayNameMap[initialFieldSqon.content.fieldName] || initialFieldSqon.content.fieldName;
 };
 
-const AggsWrapper = ({ children }) => <div className="aggregation-group">{children}</div>;
+export const AggsWrapper = ({ children }) => <div className="aggregation-group">{children}</div>;
 
 export const BooleanFilterUI = (props) => {
 	const {
-		onSubmit = (sqon) => { },
-		onCancel = () => { },
+		onSubmit = (sqon) => {},
+		onCancel = () => {},
 		ContainerComponent = FilterContainer,
 		sqonPath = [],
 		initialSqon = {},
@@ -42,40 +42,49 @@ export const BooleanFilterUI = (props) => {
 
 	const onSelectionChange =
 		(s) =>
-			({ value }) => {
-				setTimeout(() => {
-					const newOp = {
-						op: IN_OP,
-						content: {
-							fieldName,
-							value: [value.key_as_string],
-						},
-					};
+		({ value }) => {
+			setTimeout(() => {
+				const newOp = {
+					op: IN_OP,
+					content: {
+						fieldName,
+						value: [value.key_as_string],
+					},
+				};
 
-					s.setState({
-						localSqon: setSqonAtPath(sqonPath, newOp)(s.state.localSqon),
-					});
-				}, 0);
-			};
+				s.setState({
+					localSqon: setSqonAtPath(sqonPath, newOp)(s.state.localSqon),
+				});
+			}, 0);
+		};
 
 	const isActive =
 		(s) =>
-			({ value }) => {
-				const op = getOperationAtPath(sqonPath)(s.state.localSqon);
-				return value === (op && op.content.value[0]);
-			};
+		({ value }) => {
+			const op = getOperationAtPath(sqonPath)(s.state.localSqon);
+			return value === (op && op.content.value[0]);
+		};
 
 	const fieldDisplayName = getFieldDisplayName(fieldDisplayNameMap, initialFieldSqon);
 
 	return (
 		<Component initialState={initialState}>
 			{(s) => (
-				<ContainerComponent onSubmit={onSqonSubmit(s)} onCancel={onCancel}>
+				<ContainerComponent
+					onSubmit={onSqonSubmit(s)}
+					onCancel={onCancel}
+				>
 					<>
-						<div key="header" className="contentSection headerContainer">
+						<div
+							key="header"
+							className="contentSection headerContainer"
+						>
 							<span>{`${fieldDisplayName}?`}</span>
 						</div>
-						<div key="body" className="contentSection bodyContainer">
+						<div
+							key="body"
+							className="contentSection bodyContainer"
+						>
 							<BooleanAggs
 								WrapperComponent={AggsWrapper}
 								fieldName={initialFieldSqon.content.fieldName}
@@ -145,7 +154,10 @@ const BooleanFilter = (props) => {
 			render={({ data, loading, error }) => (
 				<BooleanFilterUI
 					ContainerComponent={({ children, ...props }) => (
-						<ContainerComponent {...props} loading={loading}>
+						<ContainerComponent
+							{...props}
+							loading={loading}
+						>
 							{children}
 						</ContainerComponent>
 					)}
