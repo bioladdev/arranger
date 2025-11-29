@@ -2,14 +2,20 @@
 import './styles/theme.css';
 
 // Provider
-export { DataProvider as ArrangerDataProvider, DataContext as ArrangerDataContext } from './DataContext/index.js';
+export {
+	DataProvider as ArrangerDataProvider,
+	DataContext as ArrangerDataContext,
+	initArranger as initArranger,
+	useData as useArrangerData,
+} from './DataContext/index.js';
+export { Aggregations } from './aggregations/new/Aggregations';
 //
-export { Aggregations, AggregationsListDisplay, AggregationsList } from './aggregations/index.js';
+export { AggregationsListDisplay, AggregationsList } from './aggregations/index.js';
 export * from './Arranger/index.js';
 export {
 	LegacyDataContext as LegacyArrangerDataContext,
 	LegacyDataProvider as LegacyArrangerDataProvider,
-	useDataContext as useArrangerData,
+	//useDataContext as useArrangerData,
 	withData as withArrangerData,
 } from './DataContext/index.js';
 export { default as Query, withQuery } from './Query.js';
