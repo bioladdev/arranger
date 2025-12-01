@@ -11,9 +11,64 @@ import missingProviderHandler from '#utils/missingProvider.js';
 import { emptyObj } from '#utils/noops.js';
 
 import { useConfigs, useDataFetcher } from './helpers.js';
-import type { DataContextInterface, DataProviderProps, SQONType, UseDataContextProps } from './types.js';
+import type { DataContextInterface, SQONType, UseDataContextProps } from './types.js';
+import { ApolloClient, gql, HttpLink, InMemoryCache } from '@apollo/client';
+import { ApolloProvider, useQuery } from '@apollo/client/react';
+import { queries } from './queries/index.js';
+import { configQuery } from './queries/configs.js';
 
-export const DataContext = createContext<DataContextInterface>({
+// so we can have singleton client
+export const initArranger = ({ url, documentType, debug }) => {
+	const client = new ApolloClient({
+		link: new HttpLink({ uri: 'http://localhost:5173/graphql' }),
+		cache: new InMemoryCache(),
+		devtools: {
+			enabled: debug,
+			name: 'Arranger',
+		},
+	});
+
+	return { client, documentType: 'file', index: 'file_centric' };
+};
+
+export const DataContext = createContext({ data: {} });
+
+// const ArrangerProvider = ({children}) => {
+// 	return <DataProvider>{children}</DataProvider>
+// }
+
+export const useData = () => {
+	return useQuery;
+};
+
+interface DataProviderProps {
+	config: { client: ApolloClient; documentType: string };
+	debug: boolean;
+}
+export const DataProvider = ({ config, children, debug }: DataProviderProps) => {
+	console.log(config);
+	const client = config.client;
+	// init apollo state with Arranger config queries
+	useEffect(() => {
+		const queryConfigs = async () => {
+			const res = await client.query({
+				query: configQuery(config.documentType),
+			});
+			console.log('res', res);
+		};
+		queryConfigs();
+	}, [config]);
+
+	return (
+		<ApolloProvider client={client}>
+			<h1>Arranger</h1>
+			{children}
+		</ApolloProvider>
+	);
+};
+
+// ---
+export const LegacyDataContext = createContext<DataContextInterface>({
 	documentType: '',
 	missingProvider: 'DataContext',
 } as DataContextInterface);
@@ -26,7 +81,7 @@ export const DataContext = createContext<DataContextInterface>({
  * @param {Theme} [theme] allows giving the provider a custom version of the theme for the consumers.
  * @param {string} [url] customises where requests should be made by the data fetcher.
  */
-export const DataProvider = ({
+export const LegacyDataProvider = ({
 	apiUrl = ARRANGER_API,
 	children,
 	customFetcher: apiFetcher = defaultApiFetcher,
@@ -34,6 +89,27 @@ export const DataProvider = ({
 	legacyProps,
 	theme,
 }: DataProviderProps): ReactElement<DataContextInterface> => {
+	client
+		.query({
+			query: gql`
+				query GetLocations {
+					locations {
+						id
+
+						name
+
+						description
+
+						photo
+					}
+				}
+			`,
+		})
+		.then((result) => console.log('res', result));
+
+	// data provider
+	console.log('data provider');
+
 	const [sqon, setSQON] = useState<SQONType>(null);
 
 	useEffect(() => {

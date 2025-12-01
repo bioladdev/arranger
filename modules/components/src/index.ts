@@ -1,12 +1,21 @@
 // Import global CSS variables for CSS Modules migration
 import './styles/theme.css';
 
-export { Aggregations, AggregationsListDisplay, AggregationsList } from './aggregations/index.js';
+// Provider
+export {
+	DataProvider as ArrangerDataProvider,
+	DataContext as ArrangerDataContext,
+	initArranger as initArranger,
+	useData as useArrangerData,
+} from './DataContext/index.js';
+export { Aggregations } from './aggregations/new/Aggregations';
+//
+export { AggregationsListDisplay, AggregationsList } from './aggregations/index.js';
 export * from './Arranger/index.js';
 export {
-	DataContext as ArrangerDataContext,
-	DataProvider as ArrangerDataProvider,
-	useDataContext as useArrangerData,
+	LegacyDataContext as LegacyArrangerDataContext,
+	LegacyDataProvider as LegacyArrangerDataProvider,
+	//useDataContext as useArrangerData,
 	withData as withArrangerData,
 } from './DataContext/index.js';
 export { default as Query, withQuery } from './Query.js';
