@@ -159,28 +159,25 @@ const AggsGroup = ({
 	const sortingDisabled = !sortable || isCollapsed;
 
 	return WrapperComponent ? (
-		<WrapperComponent {...{ collapsible, displayName, componentRef, headerRef }} {...dataFields}>
+		<WrapperComponent
+			{...{ collapsible, displayName, componentRef, headerRef }}
+			{...dataFields}
+		>
 			{children}
 		</WrapperComponent>
 	) : (
 		<article
-			className={cx(styles.aggregationGroup, 'aggregation-group', themeAggsGroupClassName, customClassName)}
-			css={themeAggsGroupCSS}
-			data-iscollapsed={isCollapsed.toString()}
+			className={cx(styles.aggregationGroup)}
+			data-iscollapsed={isCollapsed}
 			ref={componentRef}
 			{...aggsGroupTheme}
 			{...dataFields}
 		>
 			<header
-				className={cx(styles.header, 'header', {
-					[styles.collapsed]: isCollapsed,
-					collapsed: isCollapsed,
-					[styles.sticky]: stickyHeader || themeAggsHeaderSticky,
-					sticky: stickyHeader || themeAggsHeaderSticky,
-				})}
+				className={cx([styles.header, { [styles.sticky]: stickyHeader }])}
 				ref={headerRef}
 			>
-				<div className={cx(styles.titleWrapper, 'title-wrapper', { collapsed: isCollapsed })}>
+				<div className={cx(styles.titleWrapper)}>
 					<div className={styles.titleWrapperInner}>
 						{collapsible ? (
 							<CollapsableButton
@@ -223,7 +220,10 @@ const AggsGroup = ({
 							filter,
 							index, // safe "key": expected to be consistent throughout the runtime lifetime of the app
 						) => (
-							<div key={index} className="filter">
+							<div
+								key={index}
+								className="filter"
+							>
 								{filter}
 							</div>
 						),
@@ -231,9 +231,7 @@ const AggsGroup = ({
 			</header>
 
 			{!isCollapsed && (
-				<section className={cx(styles.bucket, 'bucket', { collapsed: isCollapsed })}>
-					{children}
-				</section>
+				<section className={cx(styles.bucket, 'bucket', { collapsed: isCollapsed })}>{children}</section>
 			)}
 		</article>
 	);
