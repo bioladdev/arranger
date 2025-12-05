@@ -8,6 +8,7 @@ import { TransparentButton } from '#Button/index.js';
 import { ArrowIcon, SearchIcon, SortAlphaIcon } from '#Icons/index.js';
 import { useThemeContext } from '#ThemeContext/index.js';
 import { emptyObj } from '#utils/noops.js';
+import styles from './AggsGroup.module.css';
 
 interface CollapsableButtonProps {
 	displayName: string;
@@ -163,51 +164,24 @@ const AggsGroup = ({
 		</WrapperComponent>
 	) : (
 		<article
-			className={cx('aggregation-group', themeAggsGroupClassName, customClassName)}
-			css={[
-				themeAggsGroupCSS,
-				css`
-					border-bottom: 0.05rem solid transparent;
-					border-color: ${themeAggsGroupDividerColor};
-					box-sizing: border-box;
-					padding-bottom: ${isCollapsed ? 0 : '0.3rem'};
-				`,
-			]}
+			className={cx(styles.aggregationGroup, 'aggregation-group', themeAggsGroupClassName, customClassName)}
+			css={themeAggsGroupCSS}
+			data-iscollapsed={isCollapsed.toString()}
 			ref={componentRef}
 			{...aggsGroupTheme}
 			{...dataFields}
 		>
 			<header
-				className={cx('header', { collapsed: isCollapsed })}
-				css={css`
-					background: ${themeAggsHeaderBackground};
-					box-sizing: border-box;
-					padding: 0 6px;
-					position: ${stickyHeader || themeAggsHeaderSticky ? `sticky` : `relative`};
-					top: 0px;
-
-					&.collapsed {
-						background: ${themeCollapsedAggsGroupBackground};
-					}
-				`}
+				className={cx(styles.header, 'header', {
+					[styles.collapsed]: isCollapsed,
+					collapsed: isCollapsed,
+					[styles.sticky]: stickyHeader || themeAggsHeaderSticky,
+					sticky: stickyHeader || themeAggsHeaderSticky,
+				})}
 				ref={headerRef}
 			>
-				<div
-					className={cx('title-wrapper', { collapsed: isCollapsed })}
-					css={css`
-						align-items: center;
-						border-bottom: 0.1rem solid ${themeAggsHeaderDividerColor};
-						box-sizing: border-box;
-						display: flex;
-						padding: 6px 0 4px;
-					`}
-				>
-					<div
-						css={css`
-							padding: 2px 0;
-							width: 100%;
-						`}
-					>
+				<div className={cx(styles.titleWrapper, 'title-wrapper', { collapsed: isCollapsed })}>
+					<div className={styles.titleWrapperInner}>
 						{collapsible ? (
 							<CollapsableButton
 								displayName={displayName}
@@ -216,28 +190,12 @@ const AggsGroup = ({
 								onClick={toggleCollapse}
 							/>
 						) : (
-							<span
-								className="title"
-								css={css`
-									color: ${themeAggsHeaderFontColor || 'inherit'};
-									font-size: 0.9rem;
-									margin-left: 0.5rem;
-								`}
-							>
-								{displayName}
-							</span>
+							<span className={cx(styles.title, 'title')}>{displayName}</span>
 						)}
 					</div>
 
 					{sortable && (
-						<div
-							css={css`
-								cursor: pointer;
-								margin-left: 0.4rem;
-								margin-top: 0.1rem;
-								padding: 0.2rem;
-							`}
-						>
+						<div className={styles.iconWrapper}>
 							<SortButton
 								displayName={displayName}
 								disabled={sortingDisabled}
@@ -248,14 +206,7 @@ const AggsGroup = ({
 					)}
 
 					{filterable && (
-						<div
-							css={css`
-								cursor: pointer;
-								margin-left: 0.4rem;
-								margin-top: 0.1rem;
-								padding: 0.2rem;
-							`}
-						>
+						<div className={styles.iconWrapper}>
 							<FilterButton
 								displayName={displayName}
 								disabled={filteringDisabled}
@@ -280,15 +231,7 @@ const AggsGroup = ({
 			</header>
 
 			{!isCollapsed && (
-				<section
-					className={cx('bucket', { collapsed: isCollapsed })}
-					css={css`
-						align-items: flex-end;
-						display: flex;
-						flex-direction: column;
-						padding: 0.1rem 0.3rem;
-					`}
-				>
+				<section className={cx(styles.bucket, 'bucket', { collapsed: isCollapsed })}>
 					{children}
 				</section>
 			)}
