@@ -7,63 +7,129 @@ import { useState } from 'react';
 import { TransparentButton } from '#Button/index.js';
 import { ArrowIcon, SearchIcon, SortAlphaIcon } from '#Icons/index.js';
 import { useThemeContext } from '#ThemeContext/index.js';
-import noopFn, { emptyObj } from '#utils/noops.js';
+import { emptyObj } from '#utils/noops.js';
+
+interface CollapsableButtonProps {
+	displayName: string;
+	disabled: boolean;
+	isCollapsed: boolean;
+	onClick: () => void;
+}
+
+const CollapsableButton = (props: CollapsableButtonProps) => {
+	const { displayName, disabled, isCollapsed, onClick } = props;
+	const hoverText = `${displayName} (${
+		disabled
+			? `${isCollapsed ? 'Expanding' : 'Collapsing'} disabled`
+			: `Click to ${isCollapsed ? 'expand' : 'collapse'} group`
+	})`;
+
+	return (
+		<TransparentButton
+			className="title-control"
+			disabled={disabled}
+			onClick={disabled ? undefined : onClick}
+			title={hoverText}
+		>
+			<ArrowIcon
+				isTreeJoint
+				size={9}
+				pointUp={!isCollapsed}
+			/>
+			<span className="title">{displayName}</span>
+		</TransparentButton>
+	);
+};
+
+interface FilterButtonProps {
+	displayName: string;
+	disabled: boolean;
+	isActive: boolean;
+	onClick: () => void;
+}
+
+const FilterButton = (props: FilterButtonProps) => {
+	const { displayName, disabled, isActive, onClick } = props;
+	const hoverText = `${displayName} (${
+		disabled ? 'Filtering disabled' : `Click to ${isActive ? 'hide' : 'show'} filters box`
+	})`;
+
+	return (
+		<TransparentButton
+			className={cx('filter-icon', { active: isActive })}
+			disabled={disabled}
+			onClick={disabled ? undefined : onClick}
+			title={hoverText}
+		>
+			<SearchIcon size="14" />
+		</TransparentButton>
+	);
+};
+
+interface SortButtonProps {
+	displayName: string;
+	disabled: boolean;
+	isActive: boolean;
+	onClick: () => void;
+}
+
+const SortButton = (props: SortButtonProps) => {
+	const { displayName, disabled, isActive, onClick } = props;
+	const hoverText = `${displayName} (${
+		disabled ? 'Sorting disabled' : `Click to sort ${isActive ? 'by score' : 'alphabetically'}`
+	})`;
+
+	return (
+		<TransparentButton
+			className={cx('sorting-icon', { active: isActive })}
+			disabled={disabled}
+			onClick={disabled ? undefined : onClick}
+			title={hoverText}
+		>
+			<SortAlphaIcon size="14" />
+		</TransparentButton>
+	);
+};
 
 interface AggsGroupProps {
 	children?: ReactNode;
+	className?: string;
+	collapsible?: boolean;
 	componentRef?: any;
 	dataFields?: any;
+	displayName?: string;
+	filterable?: boolean;
 	filters?: any[];
 	headerRef?: any;
+	isFiltered?: boolean;
+	isSorted?: boolean;
+	onFilterClick?: () => void;
+	onSortClick?: () => void;
+	sortable?: boolean;
 	stickyHeader?: boolean;
 	WrapperComponent?: ComponentType<any>;
 }
 
 const AggsGroup = ({
 	children,
-	className: aggTypeCustomClassName,
+	className: customClassName,
+	collapsible = true,
 	componentRef,
 	dataFields = emptyObj,
+	displayName = 'Unnamed Field',
+	filterable = true,
 	filters,
 	headerRef,
-	stickyHeader,
-	theme: {
-		css: customAggsWrapperCSS,
-		collapsing: customCollapsing,
-		collapsing: {
-			className: customCollapsingIconClassName,
-			disabled: customCollapsingDisabled,
-			hoverText: customCollapsingIconHoverText,
-			Icon: customCollapsingIcon,
-			onClick: customCollapsingIconHandler,
-			size: customCollapsingIconSize,
-			...customCollapsingIconProps
-		} = emptyObj,
-		displayName,
-		filtering: customFiltering,
-		filtering: {
-			className: customFilteringIconClassName,
-			disabled: customFilteringDisabled,
-			hoverText: customFilteringIconHoverText,
-			Icon: customFilteringIcon,
-			onClick: customFilteringIconHandler,
-			size: customFilteringIconSize,
-			...customFilteringIconProps
-		} = emptyObj,
-		sorting: customSorting,
-		sorting: {
-			className: customSortingIconClassName,
-			disabled: customSortingDisabled,
-			hoverText: customSortingIconHoverText,
-			Icon: customSortingIcon,
-			onClick: customSortingIconHandler,
-			size: customSortingIconSize,
-			...customSortingIconProps
-		} = emptyObj,
-		WrapperComponent,
-	} = emptyObj,
+	isFiltered = false,
+	isSorted = false,
+	onFilterClick,
+	onSortClick,
+	sortable = true,
+	stickyHeader = false,
+	WrapperComponent,
 }: AggsGroupProps) => {
 	const [isCollapsed, setIsCollapsed] = useState(false);
+
 	const {
 		colors,
 		components: {
@@ -72,155 +138,24 @@ const AggsGroup = ({
 					className: themeAggsGroupClassName,
 					css: themeAggsGroupCSS,
 					collapsedBackground: themeCollapsedAggsGroupBackground = colors?.grey?.[200],
-					collapsing: {
-						className: themeCollapsingIconClassName,
-						disabled: themeCollapsingDisabled,
-						hoverText: themeCollapsingIconHoverText,
-						Icon: themeCollapsingIcon = ArrowIcon,
-						onClick: themeCollapsingIconHandler = noopFn,
-						size: themeCollapsingIconSize = 9,
-						...themeCollapsingIconProps
-					} = emptyObj,
-					filtering: {
-						className: themeFilteringIconClassName,
-						disabled: themeFilteringDisabled,
-						hoverText: themeFilteringIconHoverText,
-						Icon: themeFilteringIcon = SearchIcon,
-						onClick: themeFilteringIconHandler = noopFn,
-						size: themeFilteringIconSize = '14',
-						...themeFilteringIconProps
-					} = emptyObj,
-					groupDividerColor: ThemeAggsGroupDividerColor = colors?.grey?.[300],
+					groupDividerColor: themeAggsGroupDividerColor = colors?.grey?.[300],
 					headerBackground: themeAggsHeaderBackground = colors?.common?.white,
 					headerDividerColor: themeAggsHeaderDividerColor = colors?.grey?.[200],
 					headerFontColor: themeAggsHeaderFontColor = colors?.grey?.[900],
 					headerSticky: themeAggsHeaderSticky = false,
-					sorting: {
-						className: themeSortingIconClassName,
-						descending: themeSortingIconDescending,
-						disabled: themeSortingDisabled,
-						hoverText: themeSortingIconHoverText,
-						Icon: themeSortingIcon = SortAlphaIcon,
-						onClick: themeSortingIconHandler = noopFn,
-						size: themeSortingIconSize = '14',
-						...themeSortingIconProps
-					} = emptyObj,
 					...aggsGroupTheme
 				} = emptyObj,
 			} = emptyObj,
 		} = emptyObj,
 	} = useThemeContext({ callerName: 'AggsGroup' });
 
-
-	// TODO: abstract all this noise into their own components/hooks/files
-
-	const collapsible = customCollapsing !== false;
-	const collapsingDisabled = customCollapsingDisabled || themeCollapsingDisabled || !collapsible;
-	const collapsingHandler = (event) => {
-		customCollapsingIconHandler?.(event);
-		themeCollapsingIconHandler?.(event);
+	const toggleCollapse = () => {
 		setIsCollapsed(!isCollapsed);
 	};
-	const CollapsingIcon = customCollapsingIcon || themeCollapsingIcon;
-	const collapsingIconClassName = cx(
-		'collapsing-icon',
-		customCollapsingIconClassName,
-		themeCollapsingIconClassName
-	);
-	const collapsingIconHoverText = customCollapsingIconHoverText || themeCollapsingIconHoverText ||
-		`${displayName}${collapsible
-			? ` (${collapsingDisabled
-				? `${isCollapsed ? 'Expanding' : 'Collapsing'} disabled`
-				: `Click to ${isCollapsed ? 'expand' : 'collapse'} group`
-			})`
-			: ''
-		}`;
-	const collapsingIconSize = customCollapsingIconSize || themeCollapsingIconSize;
-	const collapsingIconProps = {
-		className: collapsingIconClassName,
-		disabled: collapsingDisabled,
-		isTreeJoint: true,
-		pointUp: !isCollapsed,
-		theme: {
-			onClick: collapsingHandler,
-			size: collapsingIconSize,
-			...themeCollapsingIconProps,
-			...customCollapsingIconProps,
-		},
-	};
 
-	const filterable = customFiltering !== false;
-	const filteringDisabled = customFilteringDisabled || themeFilteringDisabled || !filterable || isCollapsed;
-	const filteringHandler = (event) => {
-		customFilteringIconHandler?.(event);
-		themeFilteringIconHandler?.(event);
-	};
-
-	const FilteringIcon = customFilteringIcon ?? themeFilteringIcon;
-	const filteringIconClassName = cx(
-		'filtering-icon',
-		customFilteringIconClassName,
-		themeFilteringIconClassName,
-	);
-	const isFiltered = filteringIconClassName
-		.split(' ')
-		.includes('active');
-	const filteringIconHoverText = customFilteringIconHoverText || themeFilteringIconHoverText ||
-		`${displayName}${filterable
-			? ` (${filteringDisabled
-				? 'Filtering disabled'
-				: `Click to ${isFiltered ? 'hide' : 'show'} filters box`
-			})`
-			: ''
-		}`;
-	const filteringIconSize = customFilteringIconSize || themeFilteringIconSize;
-	const filteringIconProps = {
-		className: filteringIconClassName,
-		disabled: filteringDisabled,
-		theme: {
-			size: filteringIconSize,
-			...themeFilteringIconProps,
-			...customFilteringIconProps,
-		},
-	};
-
-	const sortable = customSorting !== false;
-	const sortingDisabled = customSortingDisabled || themeSortingDisabled || !sortable || isCollapsed;
-	const sortingHandler = (event) => {
-		customSortingIconHandler?.(event);
-		themeSortingIconHandler?.(event);
-	};
-	const SortingIcon = customSortingIcon ?? themeSortingIcon;
-	const sortingIconClassName = cx(
-		'sorting-icon',
-		customSortingIconClassName,
-		themeSortingIconClassName,
-	);
-	const isSorted = sortingIconClassName
-		.split(' ')
-		.includes('active');
-	const sortingIconHoverText = customSortingIconHoverText || themeSortingIconHoverText ||
-		`${displayName}${sortable
-			? ` (${sortingDisabled
-				? 'Sorting disabled'
-				: `Click to sort ${isSorted ? 'by score' : 'alphabetically'}`
-			})`
-			: ''
-		}`;
-	const sortingIconSize = customSortingIconSize || themeSortingIconSize;
-	const sortingIconProps = {
-		className: sortingIconClassName,
-		descending: themeSortingIconDescending,
-		disabled: sortingDisabled,
-		theme: {
-			size: sortingIconSize,
-			...themeSortingIconProps,
-			...customSortingIconProps,
-		},
-	};
-
-
-	const hasModifiers = filterable || sortable;
+	const collapsingDisabled = !collapsible;
+	const filteringDisabled = !filterable || isCollapsed;
+	const sortingDisabled = !sortable || isCollapsed;
 
 	return WrapperComponent ? (
 		<WrapperComponent {...{ collapsible, displayName, componentRef, headerRef }} {...dataFields}>
@@ -228,16 +163,15 @@ const AggsGroup = ({
 		</WrapperComponent>
 	) : (
 		<article
-			className={cx('aggregation-group', themeAggsGroupClassName || aggTypeCustomClassName)}
+			className={cx('aggregation-group', themeAggsGroupClassName, customClassName)}
 			css={[
 				themeAggsGroupCSS,
 				css`
 					border-bottom: 0.05rem solid transparent;
-					border-color: ${ThemeAggsGroupDividerColor};
+					border-color: ${themeAggsGroupDividerColor};
 					box-sizing: border-box;
 					padding-bottom: ${isCollapsed ? 0 : '0.3rem'};
 				`,
-				customAggsWrapperCSS,
 			]}
 			ref={componentRef}
 			{...aggsGroupTheme}
@@ -268,71 +202,67 @@ const AggsGroup = ({
 						padding: 6px 0 4px;
 					`}
 				>
-					<TransparentButton
-						className="title-control"
+					<div
 						css={css`
 							padding: 2px 0;
 							width: 100%;
 						`}
-						disabled={collapsingDisabled}
-						onClick={collapsingDisabled ? undefined : collapsingHandler}
-						title={collapsingIconHoverText}
 					>
-						{collapsible && (
-							<CollapsingIcon
-								{...collapsingIconProps}
+						{collapsible ? (
+							<CollapsableButton
+								displayName={displayName}
+								disabled={collapsingDisabled}
+								isCollapsed={isCollapsed}
+								onClick={toggleCollapse}
 							/>
+						) : (
+							<span
+								className="title"
+								css={css`
+									color: ${themeAggsHeaderFontColor || 'inherit'};
+									font-size: 0.9rem;
+									margin-left: 0.5rem;
+								`}
+							>
+								{displayName}
+							</span>
 						)}
-
-						<span
-							className="title"
-							css={css`
-								color: ${themeAggsHeaderFontColor || 'inherit'};
-								font-size: 0.9rem;
-								margin-left: 0.5rem;
-								${hasModifiers && `padding-right: 1rem;`}
-							`}
-						>
-							{displayName}
-						</span>
-					</TransparentButton>
+					</div>
 
 					{sortable && (
-						<TransparentButton
-							className="sorting-icon"
+						<div
 							css={css`
 								cursor: pointer;
 								margin-left: 0.4rem;
 								margin-top: 0.1rem;
 								padding: 0.2rem;
 							`}
-							disabled={sortingDisabled}
-							onClick={sortingDisabled ? undefined : sortingHandler}
-							title={sortingIconHoverText}
 						>
-							<SortingIcon
-								{...sortingIconProps}
+							<SortButton
+								displayName={displayName}
+								disabled={sortingDisabled}
+								isActive={isSorted}
+								onClick={onSortClick || (() => {})}
 							/>
-						</TransparentButton>
+						</div>
 					)}
 
 					{filterable && (
-						<TransparentButton
-							className="filter-icon"
+						<div
 							css={css`
 								cursor: pointer;
 								margin-left: 0.4rem;
 								margin-top: 0.1rem;
 								padding: 0.2rem;
 							`}
-							disabled={filteringDisabled}
-							onClick={filteringDisabled ? undefined : filteringHandler}
-							title={filteringIconHoverText}
 						>
-							<FilteringIcon
-								{...filteringIconProps}
+							<FilterButton
+								displayName={displayName}
+								disabled={filteringDisabled}
+								isActive={isFiltered}
+								onClick={onFilterClick || (() => {})}
 							/>
-						</TransparentButton>
+						</div>
 					)}
 				</div>
 

@@ -173,27 +173,6 @@ const TermAggregations = ({
 	},
 	searchPlaceholder = 'Search',
 	showExcludeOption = false, // "exclude" selected fields (invert functionality)
-	theme: {
-		collapsing: {
-			className: customCollapsingIconClassName,
-			disabled: customCollapsingDisabled,
-			onClick: customCollapsingIconHandler,
-			...customCollapsingIconProps
-		} = emptyObj,
-		filtering: {
-			className: customFilteringIconClassName,
-			disabled: customFilteringDisabled,
-			inputField: { Component: customFilteringInputFieldComponent, ...customFilteringInputFieldProps } = emptyObj,
-			onClick: customFilteringIconHandler,
-			...customFilteringIconProps
-		} = emptyObj,
-		sorting: {
-			className: customSortingIconClassName,
-			disabled: customSortingDisabled,
-			onClick: customSortingIconHandler,
-			...customSortingIconProps
-		} = emptyObj,
-	} = emptyObj,
 	type,
 	valueCharacterLimit,
 	WrapperComponent,
@@ -217,114 +196,58 @@ const TermAggregations = ({
 		...(type && { 'data-type': type }),
 	};
 
-	// TODO: (THEME) refactor to separate internal components into their own files
-	// that will allow chunking apart this gigantic destructuring pattern
 	const {
 		colors,
 		components: {
 			Aggregations: {
-				collapsing: {
-					className: themeAggregationsCollapsingIconClassName,
-					disabled: themeAggregationsCollapsingDisabled,
-					onClick: themeAggregationsCollapsingIconHandler,
-					...themeAggregationsCollapsingIconProps
-				} = emptyObj,
-				filtering: {
-					className: themeAggregationsFilteringIconClassName,
-					disabled: themeAggregationsFilteringDisabled,
-					inputField: {
-						Component: themeAggregationsFilteringInputField = TextFilter,
-						...themeAggregationsFilteringInputFieldProps
-					} = emptyObj,
-					onClick: themeAggregationsFilteringIconHandler,
-					...themeAggregationsFilteringIconProps
-				} = emptyObj,
 				MoreOrLessButton: themeAggregationsMoreOrLessButtonProps = emptyObj,
 				NoDataContainer: {
 					fontColor: themeNoDataFontColor = colors?.grey?.[600],
 					fontSize: themeNoDataFontSize = '0.8em',
 				} = emptyObj,
-				sorting: {
-					className: themeAggregationsSortingIconClassName,
-					descending: themeAggregationsSortingIconDescending,
-					disabled: themeAggregationsSortingDisabled,
-					Icon: themeAggregationsSortingIcon,
-					onClick: themeAggregationsSortingIconHandler,
-					size: themeAggregationsSortingIconSize,
-					...themeAggregationsSortingIconProps
-				} = emptyObj,
 				TermAggregation: {
 					BucketCount: { className: themeBucketCountClassName, ...bucketCountTheme } = emptyObj,
-					collapsing: {
-						className: themeTermAggregationsCollapsingIconClassName,
-						disabled: themeTermAggregationsCollapsingDisabled,
-						onClick: themeTermAggregationsCollapsingIconHandler,
-						...themeTermAggregationsCollapsingIconProps
-					} = emptyObj,
-					filtering: {
-						className: themeTermAggregationsFilteringIconClassName,
-						disabled: themeTermAggregationsFilteringDisabled,
-						inputField: {
-							Component: themeTermAggregationsFilteringInputField = TextFilter,
-							...themeTermAggregationsFilteringInputFieldProps
-						} = emptyObj,
-						onClick: themeTermAggregationsFilteringIconHandler,
-						...themeTermAggregationsFilteringIconProps
-					} = emptyObj,
 					IncludeExcludeButton: ToggleButtonThemeProps = emptyObj,
 					MoreOrLessButton: themeTermAggMoreOrLessButtonProps = emptyObj,
-					sorting: {
-						className: themeTermAggregationsSortingIconClassName,
-						disabled: themeTermAggregationsSortingDisabled,
-						onClick: themeTermAggregationsSortingIconHandler,
-						...themeTermAggregationsSortingIconProps
-					} = emptyObj,
 				} = emptyObj,
 			} = emptyObj,
 		} = emptyObj,
 	} = useThemeContext({ callerName: 'TermAgg' });
 
-	const FilteringInputField = customFilteringInputFieldComponent || themeAggregationsFilteringInputField;
 	const filteringInputFieldProps = {
 		onChange: ({ value }) => setSearchText(value || ''),
 		theme: {
 			altText: 'Search data',
 			placeholder: searchPlaceholder,
-			...themeAggregationsFilteringInputFieldProps,
-			...themeTermAggregationsFilteringInputFieldProps,
 		},
 		value: searchText,
 	};
 
-	const handleCollapsingIconClick = (event) => {
-		customCollapsingIconHandler?.(event, fieldName);
-		themeAggregationsCollapsingIconHandler?.(event, fieldName);
-		themeTermAggregationsCollapsingIconHandler?.(event, fieldName);
-	};
-
-	// TODO: (THEME) allow sorting customizations
-	const handleFilteringIconClick = (event) => {
+	const handleFilterClick = () => {
 		setShowingSearch(!isShowingSearch);
-		customFilteringIconHandler?.(event, fieldName);
-		themeAggregationsFilteringIconHandler?.(event, fieldName);
-		themeTermAggregationsFilteringIconHandler?.(event, fieldName);
 	};
 
-	const handleSortingIconClick = (event) => {
+	const handleSortClick = () => {
 		setIsAlphabetized(!isAlphabetized);
-		customSortingIconHandler?.(event, fieldName);
-		themeAggregationsSortingIconHandler?.(event, fieldName);
-		themeTermAggregationsSortingIconHandler?.(event, fieldName);
 	};
 	return (
 		<AggsGroup
+			displayName={displayName}
+			collapsible={true}
+			filterable={hasData}
+			sortable={hasData}
+			isFiltered={isShowingSearch}
+			isSorted={isAlphabetized}
+			onFilterClick={handleFilterClick}
+			onSortClick={handleSortClick}
+			WrapperComponent={WrapperComponent}
 			componentRef={aggWrapperRef}
 			dataFields={dataFields}
 			headerRef={aggHeaderRef}
 			filters={[
 				isShowingSearch && (
 					<>
-						<FilteringInputField {...filteringInputFieldProps} />
+						<TextFilter {...filteringInputFieldProps} />
 
 						{showingMore && isMoreEnabled && (
 							<MoreOrLessButton
@@ -354,59 +277,6 @@ const TermAggregations = ({
 				),
 			].filter((filter) => !!filter)}
 			stickyHeader
-			theme={{
-				collapsing: {
-					className: cx(
-						customCollapsingIconClassName,
-						themeTermAggregationsCollapsingIconClassName,
-						themeAggregationsCollapsingIconClassName,
-					),
-					disabled:
-						customCollapsingDisabled ||
-						themeTermAggregationsCollapsingDisabled ||
-						themeAggregationsCollapsingDisabled,
-					onClick: handleCollapsingIconClick,
-					...themeAggregationsCollapsingIconProps,
-					...themeTermAggregationsCollapsingIconProps,
-					...customCollapsingIconProps,
-				},
-				displayName,
-				filtering: {
-					className: cx(
-						isShowingSearch && 'active',
-						customFilteringIconClassName,
-						themeTermAggregationsFilteringIconClassName,
-						themeAggregationsFilteringIconClassName,
-					),
-					disabled:
-						customFilteringDisabled ||
-						themeTermAggregationsFilteringDisabled ||
-						themeAggregationsFilteringDisabled ||
-						!hasData,
-					onClick: handleFilteringIconClick,
-					...themeAggregationsFilteringIconProps,
-					...themeTermAggregationsFilteringIconProps,
-					...customFilteringIconProps,
-				},
-				sorting: hasData && {
-					className: cx(
-						isAlphabetized && 'active',
-						customSortingIconClassName,
-						themeTermAggregationsSortingIconClassName,
-						themeAggregationsSortingIconClassName,
-					),
-					disabled:
-						customSortingDisabled ||
-						themeTermAggregationsSortingDisabled ||
-						themeAggregationsSortingDisabled ||
-						!hasData,
-					onClick: handleSortingIconClick,
-					...themeAggregationsSortingIconProps,
-					...themeTermAggregationsSortingIconProps,
-					...customSortingIconProps,
-				},
-				WrapperComponent,
-			}}
 		>
 			{headerTitle && (
 				<div
