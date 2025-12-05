@@ -1,6 +1,5 @@
 import type { ComponentType } from 'react';
 
-import { css } from '@emotion/react';
 import cx from 'classnames';
 import { isEmpty, merge, orderBy, partition, truncate } from 'lodash-es';
 import { createRef, useState } from 'react';
@@ -9,7 +8,6 @@ import { TransparentButton } from '#Button/index.js';
 import { removeSQON, toggleSQON } from '#SQONViewer/utils.js';
 import TextFilter from '#TextFilter/index.js';
 import TextHighlight from '#TextHighlight/index.js';
-import { useThemeContext } from '#ThemeContext/index.js';
 import ToggleButton from '#ToggleButton/index.js';
 import formatNumber from '#utils/formatNumber.js';
 import noopFn, { emptyObj, emptyStrFn } from '#utils/noops.js';
@@ -57,10 +55,7 @@ const IncludeExcludeButton = ({
 	updateIsExclude,
 }: IncludeExcludeButtonProps) => (
 	<ToggleButton
-		onChange={({
-			value,
-			isExclude = value === 'exclude',
-		}) => {
+		onChange={({ value, isExclude = value === 'exclude' }) => {
 			const activeBuckets = buckets.filter((b) => isActive({ fieldName: dotFieldName, value: b.name }));
 
 			handleIncludeExcludeChange({
@@ -150,7 +145,6 @@ const TermAggregations = ({
 	constructBucketItemClassName = emptyStrFn,
 	constructEntryId = ({ value }) => value,
 	containerRef,
-	Content = 'div',
 	displayName = 'Unnamed Field',
 	fieldName = '',
 	handleIncludeExcludeChange = noopFn,
@@ -190,24 +184,6 @@ const TermAggregations = ({
 		...(fieldName && { 'data-fieldname': fieldName }),
 		...(type && { 'data-type': type }),
 	};
-
-	const {
-		colors,
-		components: {
-			Aggregations: {
-				MoreOrLessButton: themeAggregationsMoreOrLessButtonProps = emptyObj,
-				NoDataContainer: {
-					fontColor: themeNoDataFontColor = colors?.grey?.[600],
-					fontSize: themeNoDataFontSize = '0.8em',
-				} = emptyObj,
-				TermAggregation: {
-					BucketCount: { className: themeBucketCountClassName, ...bucketCountTheme } = emptyObj,
-					IncludeExcludeButton: ToggleButtonThemeProps = emptyObj,
-					MoreOrLessButton: themeTermAggMoreOrLessButtonProps = emptyObj,
-				} = emptyObj,
-			} = emptyObj,
-		} = emptyObj,
-	} = useThemeContext({ callerName: 'TermAgg' });
 
 	const filteringInputFieldProps = {
 		onChange: ({ value }) => setSearchText(value || ''),
@@ -273,18 +249,14 @@ const TermAggregations = ({
 			].filter((filter) => !!filter)}
 			stickyHeader
 		>
-			{headerTitle && (
-				<div className={cx(styles.header, 'header')}>
-					{headerTitle}
-				</div>
-			)}
+			{headerTitle && <div className={cx(styles.header, 'header')}>{headerTitle}</div>}
 
 			{hasData ? (
 				<div className={styles.container}>
 					{(isAlphabetized ? alphabetizedBuckets : decoratedBuckets)
 						.slice(0, showingMore ? Infinity : maxTerms)
 						.map((bucket, i, array) => (
-							<Content
+							<div
 								id={constructEntryId({
 									value: `${fieldName}--${bucket.name.replace(/\s/g, '-')}`,
 								})}
@@ -299,10 +271,6 @@ const TermAggregations = ({
 										showingMore,
 									}),
 								)}
-								content={{
-									fieldName: dotFieldName,
-									value: bucket.name,
-								}}
 								onClick={() =>
 									handleValueClick({
 										fieldName: dotFieldName,
@@ -313,10 +281,7 @@ const TermAggregations = ({
 									})
 								}
 							>
-								<span
-									className={cx(styles.bucketLink, 'bucket-link')}
-									merge="toggle"
-								>
+								<span className={cx(styles.bucketLink, 'bucket-link')}>
 									<input
 										aria-label={`Select ${bucket.name}`}
 										checked={isActive({
@@ -348,13 +313,11 @@ const TermAggregations = ({
 										{formatNumber(bucket.doc_count)}
 									</BucketCount>
 								)}
-							</Content>
+							</div>
 						))}
 				</div>
 			) : (
-				<span className={cx(styles.noData, 'no-data')}>
-					No data available
-				</span>
+				<span className={cx(styles.noData, 'no-data')}>No data available</span>
 			)}
 
 			{isMoreEnabled && (
