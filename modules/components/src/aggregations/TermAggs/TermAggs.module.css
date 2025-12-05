@@ -1,0 +1,35 @@
+.showMoreWrapper {
+	margin-left: 0.5rem;
+	text-decoration: underline;
+}
+
+.header {
+	text-align: right;
+}
+
+.container {
+	width: 100%;
+}
+
+.bucketItem {
+	cursor: pointer;
+	display: flex;
+	font-size: 0.8rem;
+	justify-content: space-between;
+	margin: 0.15rem 0;
+}
+
+.bucketLink {
+	display: flex;
+}
+
+.checkbox {
+	cursor: pointer;
+	margin: 0.2rem 0.3rem 0 0;
+}
+
+.noData {
+	color: #757575;
+	display: block;
+	font-size: 0.8em;
+}

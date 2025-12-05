@@ -18,6 +18,7 @@ import translateSQONValue from '#utils/translateSQONValue.js';
 
 import AggsGroup from '../AggsGroup/index.js';
 import BucketCount from '../BucketCount/index.js';
+import styles from './TermAggs.module.css';
 
 const generateNextSQON = ({ dotFieldName, bucket, isExclude, sqon }: any) =>
 	toggleSQON(
@@ -95,14 +96,8 @@ const MoreOrLessButton = ({
 	...props
 }: MoreOrLessButtonProps) => (
 	<TransparentButton
-		className={cx('showMore-wrapper', isShowingMore ? 'less' : 'more', className)}
-		css={[
-			css`
-				margin-left: 0.5rem;
-				text-decoration: underline;
-			`,
-			customCSS,
-		]}
+		className={cx(styles.showMoreWrapper, 'showMore-wrapper', isShowingMore ? 'less' : 'more', className)}
+		css={customCSS}
 		{...props}
 	>
 		{isShowingMore ? 'Less' : `${howManyMore} More`}
@@ -279,22 +274,13 @@ const TermAggregations = ({
 			stickyHeader
 		>
 			{headerTitle && (
-				<div
-					className="header"
-					css={css`
-						text-align: right;
-					`}
-				>
+				<div className={cx(styles.header, 'header')}>
 					{headerTitle}
 				</div>
 			)}
 
 			{hasData ? (
-				<div
-					css={css`
-						width: 100%;
-					`}
-				>
+				<div className={styles.container}>
 					{(isAlphabetized ? alphabetizedBuckets : decoratedBuckets)
 						.slice(0, showingMore ? Infinity : maxTerms)
 						.map((bucket, i, array) => (
@@ -304,6 +290,7 @@ const TermAggregations = ({
 								})}
 								key={bucket.name}
 								className={cx(
+									styles.bucketItem,
 									'bucket-item',
 									constructBucketItemClassName({
 										bucket,
@@ -316,13 +303,6 @@ const TermAggregations = ({
 									fieldName: dotFieldName,
 									value: bucket.name,
 								}}
-								css={css`
-									cursor: pointer;
-									display: flex;
-									font-size: 0.8rem;
-									justify-content: space-between;
-									margin: 0.15rem 0;
-								`}
 								onClick={() =>
 									handleValueClick({
 										fieldName: dotFieldName,
@@ -334,10 +314,7 @@ const TermAggregations = ({
 								}
 							>
 								<span
-									className="bucket-link"
-									css={css`
-										display: flex;
-									`}
+									className={cx(styles.bucketLink, 'bucket-link')}
 									merge="toggle"
 								>
 									<input
@@ -346,10 +323,7 @@ const TermAggregations = ({
 											fieldName: dotFieldName,
 											value: bucket.name,
 										})}
-										css={css`
-											cursor: pointer;
-											margin: 0.2rem 0.3rem 0 0;
-										`}
+										className={styles.checkbox}
 										id={`input-${fieldName}-${bucket.name.replace(/\s/g, '-')}`}
 										name={`input-${fieldName}-${bucket.name.replace(/\s/g, '-')}`}
 										readOnly
@@ -378,14 +352,7 @@ const TermAggregations = ({
 						))}
 				</div>
 			) : (
-				<span
-					className="no-data"
-					css={css`
-						color: ${themeNoDataFontColor};
-						display: block;
-						font-size: ${themeNoDataFontSize};
-					`}
-				>
+				<span className={cx(styles.noData, 'no-data')}>
 					No data available
 				</span>
 			)}
