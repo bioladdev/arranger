@@ -96,12 +96,10 @@ interface AggsGroupProps {
 	children?: ReactNode;
 	className?: string;
 	collapsible?: boolean;
-	componentRef?: any;
 	dataFields?: any;
 	displayName?: string;
 	filterable?: boolean;
 	filters?: any[];
-	headerRef?: any;
 	isFiltered?: boolean;
 	isSorted?: boolean;
 	onFilterClick?: () => void;
@@ -115,12 +113,10 @@ const AggsGroup = ({
 	children,
 	className: customClassName,
 	collapsible = true,
-	componentRef,
 	dataFields = emptyObj,
 	displayName = 'Unnamed Field',
 	filterable = true,
 	filters,
-	headerRef,
 	isFiltered = false,
 	isSorted = false,
 	onFilterClick,
@@ -160,7 +156,7 @@ const AggsGroup = ({
 
 	return WrapperComponent ? (
 		<WrapperComponent
-			{...{ collapsible, displayName, componentRef, headerRef }}
+			{...{ collapsible, displayName }}
 			{...dataFields}
 		>
 			{children}
@@ -169,14 +165,10 @@ const AggsGroup = ({
 		<article
 			className={cx(styles.aggregationGroup)}
 			data-iscollapsed={isCollapsed}
-			ref={componentRef}
 			{...aggsGroupTheme}
 			{...dataFields}
 		>
-			<header
-				className={cx([styles.header, { [styles.sticky]: stickyHeader }])}
-				ref={headerRef}
-			>
+			<header className={cx([styles.header, { [styles.sticky]: stickyHeader }])}>
 				<div className={cx(styles.titleWrapper)}>
 					<div className={styles.titleWrapperInner}>
 						{collapsible ? (
