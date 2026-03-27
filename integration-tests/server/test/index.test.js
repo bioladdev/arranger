@@ -1,15 +1,12 @@
 import { after, before, suite } from 'node:test';
+import path from 'path';
 
 import { Client } from '@elastic/elasticsearch';
-import Arranger from '@overture-stack/arranger-server';
-import ajax from '@overture-stack/arranger-server/dist/utils/ajax.js';
-import express from 'express';
+import { ajax } from '@overture-stack/arranger-graphql-router/utils';
+import ArrangerServer from '@overture-stack/arranger-search-server';
+import { stringToNumber } from '@overture-stack/arranger-types/tools';
+import dotenv from 'dotenv';
 
-// import { print } from 'graphql';
-// import gql from 'graphql-tag';
-// import Arranger, { adminGraphql } from '../../../modules/server/dist';
-
-// test modules
 import data from './assets/model_centric.data.json';
 import mappings from './assets/model_centric.mappings.json';
 import manageSets from './manageSets.js';
@@ -18,37 +15,46 @@ import readMetadata from './readMetadata.js';
 import readSearchData from './readSearchData.js';
 import checkBaseEndpoints from './spinupActive.js';
 
-const DEBUG = (process.env.DEBUG || '').toLowerCase() === 'true';
-const enableAdmin = (process.env.ENABLE_ADMIN || '').toLowerCase() === 'true';
+dotenv.config({ path: path.resolve('../../.env.test') });
+
+const documentType = 'model';
 const esHost = process.env.ES_HOST || 'http://127.0.0.1:9200';
 const esIndex = process.env.ES_INDEX || 'testing-models_1.0';
-const setsIndex = process.env.ES_ARRANGER_SET_INDEX || 'arranger-sets-testing';
-const esPwd = process.env.ES_PASS;
+const esPass = process.env.ES_PASS;
 const esUser = process.env.ES_USER;
-const port = process.env.PORT || 5678;
+const setsIndex = process.env.ES_ARRANGER_SETS_INDEX || 'arranger-sets-testing';
+const setsType = process.env.ES_ARRANGER_SETS_TYPE || 'arranger-sets-testing';
+const serverPort = stringToNumber(process.env.SERVER_PORT, 5678);
 
-const useAuth = !!esPwd && !!esUser;
-
-const app = express();
-
-const api = ajax(`http://localhost:${port}`, {
-	debugAll: DEBUG,
+const consumerMockApi = ajax(`http://localhost:${serverPort}`, {
+	// NOTE: useful to see response details. can be loud
+	debugAll: false,
 	endpoint: '/graphql',
 });
 
+const useESAuth = !!esPass && !!esUser;
 const esClient = new Client({
-	...(useAuth && {
+	...(useESAuth && {
 		auth: {
+			password: esPass,
 			username: esUser,
-			password: esPwd,
 		},
 	}),
 	node: esHost,
 });
 
-const cleanup = () => {
+// TODOL need a new suite specifically for aggressively adversarial tests.
+// the purpose is to try and break the server.
+
+const env = {
+	api: consumerMockApi,
+	documentType,
+};
+
+const cleanup = ({ esIndex, setsIndex }) => {
 	return Promise.all([
 		esClient.indices.delete({
+			// TODO: will need to map through catalogs when multicatalog is implemented
 			index: esIndex,
 		}),
 		esClient.indices.delete({
@@ -58,135 +64,89 @@ const cleanup = () => {
 };
 
 suite('integration-tests/server', () => {
-	let server;
-	const documentType = 'model';
+	let serverApp;
 
-	before(async () => {
-		console.log('\n(Initializing Elasticsearch and Arranger)');
+	before(
+		async () => {
+			console.log('\n(Initializing Elasticsearch and Arranger)\n');
 
-		try {
-			await cleanup();
-		} catch (err) {
-			//
-		}
+			try {
+				await cleanup({ esIndex, setsIndex });
+			} catch (err) {
+				// console.log('err before', err);
+			}
 
-		await esClient.indices.create({
-			index: esIndex,
-			body: mappings,
-		});
-
-		for (const datum of data) {
-			await esClient.index({
+			await esClient.indices.create({
 				index: esIndex,
-				id: datum._id,
-				body: datum._source,
-				refresh: 'wait_for',
-			});
-		}
-
-		try {
-			const router = await Arranger({
-				// needed to see the mapping
-				enableAdmin,
-				// This may be useful when troubleshooting tests
-				enableLogs: true,
-				esHost,
-				getServerSideFilter: () => ({
-					op: 'not',
-					content: [
-						{
-							op: 'in',
-							content: {
-								fieldName: 'access_denied',
-								value: ['true'],
-							},
-						},
-					],
-				}),
-				setsIndex,
+				body: mappings,
 			});
 
-			app.use(router);
-
-			// TODO: reenable once Admin is back online
-			// const adminApp = await adminGraphql({ esHost });
-			// adminApp.applyMiddleware({ app, path: adminPath });
-
-			await new Promise((resolve) => {
-				server = app.listen(port, () => {
-					resolve(null);
+			for (const datum of data) {
+				await esClient.index({
+					index: esIndex,
+					id: datum._id,
+					body: datum._source,
+					refresh: 'wait_for',
 				});
-			});
+			}
 
-			// TODO: reenable once Admin is back online
-			// /**
-			//  * uses the admin API to adds some metadata
-			//  */
-			// await api.post({
-			//   endpoint: adminPath,
-			//   body: {
-			//     query: print(gql`
-			//       mutation($projectId: String!) {
-			//         newProject(id: $projectId) {
-			//           id
-			//           __typename
-			//         }
-			//       }
-			//     `),
-			//     variables: {
-			//       projectId,
-			//     },
-			//   },
-			// });
+			try {
+				serverApp = await ArrangerServer({
+					disableDownloads: false,
+					disableFilters: false,
+					disablePlayground: false,
+					disableSets: false,
+					enableAdmin: true, // needed to see the introspection and mapping
+					enableDebug: true,
+					enableLogs: false, // helpful to see test calls, etc.
+					enableNetworkAggregation: undefined,
+					esClient,
+					// FIXME: not fully integrated yet
+					// should merge across catalogs with their own serverside filters
+					filters: () => ({
+						op: 'not',
+						content: [
+							{
+								op: 'in',
+								content: {
+									fieldName: 'access_denied',
+									value: ['true'],
+								},
+							},
+						],
+					}),
+					serverPort,
+					setsIndex,
+					setsType,
+				});
 
-			// await api.post({
-			//   endpoint: adminPath,
-			//   body: {
-			//     query: print(gql`
-			//       mutation($projectId: String!, $documentType: String!, $esIndex: String!) {
-			//         newIndex(projectId: $projectId, documentType: $documentType, esIndex: $esIndex) {
-			//           id
-			//         }
-			//       }
-			//     `),
-			//     variables: {
-			//       projectId,
-			//       documentType,
-			//       esIndex,
-			//     },
-			//   },
-			// });
-
-			console.log('******* Starting tests *******');
-		} catch (err) {
-			console.error('error:', err);
-			throw err;
-		}
-	}, {
-		timeout: 10000,
-	});
+				console.log('\n\n******* Starting tests *******');
+			} catch (err) {
+				console.error('error:', err);
+				throw 'Could not start Arranger Server to run tests';
+			}
+		},
+		{
+			timeout: 10000,
+		},
+	);
 
 	after(async () => {
 		try {
-			await cleanup();
-			server?.close();
-			console.log('\n(Cleared Elasticsearch and stopped Arranger Server)');
+			await cleanup({ esIndex, setsIndex });
+			serverApp.close();
+			console.log('\n(Cleared Elasticsearch and stopped Arranger Server)\n');
 		} catch (err) {
-			//
+			// console.log('err after', err);
 		}
 	});
 
-	const env = {
-		api,
-		documentType,
-	};
-
-	suite('basic endpoints functional', () => {
-		checkBaseEndpoints({ ...env, server });
+	suite('functional endpoints', () => {
+		checkBaseEndpoints({ ...env, serverApp });
 	});
 
 	suite('metadata/configs reading', () => {
-		readMetadata({ ...env, enableAdmin });
+		readMetadata({ ...env, enableAdmin: true });
 	});
 
 	suite('search data reading', () => {
@@ -197,7 +157,7 @@ suite('integration-tests/server', () => {
 		readAggregation(env);
 	});
 
-	suite('manages sets', () => {
+	suite('sets management', () => {
 		manageSets(env);
 	});
 });
