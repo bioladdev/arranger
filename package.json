@@ -57,6 +57,7 @@
 		"modules/charts",
 		"modules/components",
 		"modules/graphql-router",
+		"modules/headless",
 		"modules/sqon",
 		"modules/types"
 	]
