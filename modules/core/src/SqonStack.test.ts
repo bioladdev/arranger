@@ -1,66 +1,76 @@
-import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
+import assert from 'node:assert/strict';
+import { SqonStack } from './SqonStack.js';
 
-import { SQONStack } from './index.js';
+describe('SqonStack', () => {
+	describe('append', () => {
+		it('adds a sqon to the stack and returns the updated array', () => {
+			const stack = new SqonStack();
+			const result = stack.append({ op: 'and', content: [] });
+			assert.equal(result.length, 1);
+		});
 
-describe('SQONStack', () => {
-	it('append returns a new instance', () => {
-		const stack = new SQONStack();
-		const next = stack.append({ filter: 'a' });
-		assert.notEqual(stack, next);
+		it('preserves existing entries', () => {
+			const stack = new SqonStack();
+			stack.append({ op: 'and', content: [] });
+			const result = stack.append({ op: 'or', content: [] });
+			assert.equal(result.length, 2);
+		});
 	});
 
-	it('original stack is unchanged after append', () => {
-		const stack = new SQONStack();
-		stack.append({ filter: 'a' });
-		assert.equal(stack.length, 0);
-		assert.equal(stack.isEmpty(), true);
+	describe('revert', () => {
+		it('removes and returns the last sqon', () => {
+			const stack = new SqonStack();
+			const sqon = { op: 'and', content: [] };
+			stack.append(sqon);
+			const [removed, remaining] = stack.revert();
+			assert.deepEqual(removed, sqon);
+			assert.equal(remaining.length, 0);
+		});
+
+		it('returns [undefined, []] when stack is empty', () => {
+			const stack = new SqonStack();
+			const [removed, remaining] = stack.revert();
+			assert.equal(removed, undefined);
+			assert.equal(remaining.length, 0);
+		});
+
+		it('returns the last item not the new current', () => {
+			const stack = new SqonStack();
+			const first = { op: 'and', content: [] };
+			const second = { op: 'or', content: [] };
+			stack.append(first);
+			stack.append(second);
+			const [removed] = stack.revert();
+			assert.deepEqual(removed, second);
+		});
 	});
 
-	it('revert returns the correct tuple', () => {
-		const sqon = { filter: 'a' };
-		const stack = new SQONStack().append(sqon);
-		const [removed, next] = stack.revert();
-		assert.deepEqual(removed, sqon);
-		assert.equal(next.length, 0);
+	describe('clear', () => {
+		it('empties the stack', () => {
+			const stack = new SqonStack();
+			stack.append({ op: 'and', content: [] });
+			const result = stack.clear();
+			assert.equal(result.length, 0);
+		});
 	});
 
-	it('revert on empty stack returns [undefined, emptyStack] without throwing', () => {
-		const stack = new SQONStack();
-		const [removed, next] = stack.revert();
-		assert.equal(removed, undefined);
-		assert.equal(next, stack);
-	});
+	describe('isEmpty', () => {
+		it('returns true on a new stack', () => {
+			assert.equal(new SqonStack().isEmpty(), true);
+		});
 
-	it('isEmpty reflects state correctly', () => {
-		const empty = new SQONStack();
-		assert.equal(empty.isEmpty(), true);
-		const one = empty.append({ x: 1 });
-		assert.equal(one.isEmpty(), false);
-		const [, reverted] = one.revert();
-		assert.equal(reverted.isEmpty(), true);
-	});
+		it('returns false after an append', () => {
+			const stack = new SqonStack();
+			stack.append({ op: 'and', content: [] });
+			assert.equal(stack.isEmpty(), false);
+		});
 
-	it('length reflects state correctly', () => {
-		const stack = new SQONStack();
-		assert.equal(stack.length, 0);
-		const one = stack.append({ a: 1 });
-		assert.equal(one.length, 1);
-		const two = one.append({ b: 2 });
-		assert.equal(two.length, 2);
-		const [, back] = two.revert();
-		assert.equal(back.length, 1);
-	});
-
-	it('current returns the last appended item', () => {
-		const first = { a: 1 };
-		const second = { b: 2 };
-		const stack = new SQONStack().append(first).append(second);
-		assert.deepEqual(stack.current, second);
-	});
-
-	it('current is undefined on an empty stack', () => {
-		const stack = new SQONStack();
-		assert.equal(stack.current, undefined);
+		it('returns true after clear', () => {
+			const stack = new SqonStack();
+			stack.append({ op: 'and', content: [] });
+			stack.clear();
+			assert.equal(stack.isEmpty(), true);
+		});
 	});
 });

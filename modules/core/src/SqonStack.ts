@@ -19,7 +19,7 @@ class SqonStack {
 	#sqons: Array<SqonNode>;
 
 	/**
-	 * Creates a new `SQONStack`.
+	 * Creates a new `SqonStack`.
 	 *
 	 * @param initial - Optional array of {@link SqonNode} objects to initialise the stack with.
 	 *                  Defaults to an empty stack if not provided.
