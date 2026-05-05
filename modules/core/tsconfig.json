@@ -1,0 +1,23 @@
+{
+	"$schema": "https://json.schemastore.org/tsconfig",
+	"extends": "@tsconfig/node22/tsconfig.json",
+	"compilerOptions": {
+		"declaration": true,
+		"erasableSyntaxOnly": true,
+		"forceConsistentCasingInFileNames": true,
+		"inlineSourceMap": true,
+		"module": "nodenext",
+		"moduleResolution": "nodenext",
+		"noFallthroughCasesInSwitch": true,
+		"noImplicitReturns": true,
+		"noUncheckedIndexedAccess": true,
+		"outDir": "./dist",
+		"rootDir": "./src",
+		"skipLibCheck": true,
+		"strict": true,
+		"target": "esnext",
+		"verbatimModuleSyntax": true
+	},
+	"include": ["src/**/*"],
+	"exclude": ["dist/**/*"]
+}

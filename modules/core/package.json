@@ -1,0 +1,20 @@
+{
+	"name": "arranger-core",
+	"version": "0.0.0-dev",
+	"private": true,
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"scripts": {
+		"build": "tsc --project tsconfig.release.json",
+		"clear:dist": "rm -rf dist",
+		"test": "tsx --test",
+		"test:watch": "npm test -- --watch",
+		"watch": "npm run clear:dist && npm run build -- --watch"
+	},
+	"devDependencies": {
+		"@tsconfig/node22": "^22.0.0",
+		"tsx": "^4.19.2",
+		"typescript": "^5.8.2"
+	}
+}
