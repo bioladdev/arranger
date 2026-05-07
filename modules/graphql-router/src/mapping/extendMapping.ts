@@ -1,4 +1,5 @@
 import type {
+	AggsType,
 	ColumnConfigs,
 	ExtendedConfigs,
 	FacetsConfigs,
@@ -14,6 +15,25 @@ import { startCase } from 'lodash-es';
 import flattenMapping from './flattenMapping.js';
 import type { FieldFromMapping } from './types.js';
 import { toQuery } from './utils/columnsToGraphql.js';
+
+export const esTypeToAggsType = (esType: string): AggsType => {
+	switch (esType) {
+		case 'boolean':
+			return 'boolean';
+		case 'byte':
+		case 'date':
+		case 'double':
+		case 'float':
+		case 'half_float':
+		case 'integer':
+		case 'long':
+		case 'scaled_float':
+		case 'unsigned_long':
+			return 'range';
+		default:
+			return 'term';
+	}
+};
 
 export const extendColumns = (tableConfig: TableConfigs, extendedFields: ExtendedConfigs[]): TableConfigs => {
 	const columnsFromConfig = tableConfig?.[tableProperties.COLUMNS];
@@ -175,6 +195,7 @@ export const extendFacets = (facetsConfig: FacetsConfigs, extendedFields: Extend
 export const extendFields = (mappingFields: FieldFromMapping[], extendedFromFile: ExtendedConfigs[]) => {
 	return mappingFields.map(({ fieldName, type, ...rest }) => {
 		const {
+			aggsType: configAggsType,
 			displayName = startCase(fieldName.replace(/\./g, ' ')),
 			displayType = type,
 			displayValues = {},
@@ -186,7 +207,10 @@ export const extendFields = (mappingFields: FieldFromMapping[], extendedFromFile
 			unit = null,
 		} = extendedFromFile.find((customData) => customData.fieldName === fieldName) || {};
 
+		const aggsType: AggsType = configAggsType ?? esTypeToAggsType(type);
+
 		return {
+			aggsType,
 			displayName,
 			displayType,
 			displayValues,

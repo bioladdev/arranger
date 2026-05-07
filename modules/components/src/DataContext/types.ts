@@ -8,6 +8,8 @@ import type { legacyProps } from '#Arranger/Arranger.js';
 import type { UnorderedListStyles } from '#Table/types.js';
 import type { CustomThemeType, ThemeOptions } from '#ThemeContext/types/index.js';
 
+export type AggsType = 'term' | 'range' | 'boolean';
+
 export type DisplayType = 'all' | 'bits' | 'boolean' | 'bytes' | 'date' | 'list' | 'nested' | 'number';
 
 export type ColumnCustomiserFn = <Output>(input: ExtendedMappingInterface) => Output;
@@ -36,6 +38,7 @@ export interface ColumnSortingInterface {
 }
 
 export interface ExtendedMappingInterface {
+	aggsType?: AggsType;
 	displayName: string;
 	displayType: string;
 	displayValues: Record<string, string>;

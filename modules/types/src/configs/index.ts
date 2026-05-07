@@ -63,10 +63,13 @@ export type DownloadsConfigs = {
 	[downloadProperties.STREAM_BUFFER_SIZE]?: number;
 };
 
+export type AggsType = 'term' | 'range' | 'boolean';
+
 // TODO: make this a union of types
 export type DisplayType = 'all' | 'bits' | 'boolean' | 'bytes' | 'date' | 'list' | 'nested' | 'number';
 
 export type ExtendedConfigs = {
+	aggsType?: AggsType;
 	[dataFieldProperties.DISPLAY_NAME]: string;
 	[dataFieldProperties.DISPLAY_TYPE]: string;
 	[dataFieldProperties.DISPLAY_VALUES]: Record<string, any>; // TODO: not "any"
