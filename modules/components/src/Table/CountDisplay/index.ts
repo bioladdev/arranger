@@ -1,1 +1,1 @@
-export { default } from './CountDisplay.js';
+export { default } from './CountDisplay';

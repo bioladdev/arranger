@@ -1,1 +1,1 @@
-export type { default as ArrowIconProps, ArrowIconThemeProps } from './ArrowIcon/types.js';
+export type { default as ArrowIconProps, ArrowIconThemeProps } from './ArrowIcon/types';

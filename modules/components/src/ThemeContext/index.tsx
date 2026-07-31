@@ -10,11 +10,11 @@ import {
 	useState,
 } from 'react';
 
-import getComponentDisplayName from '#utils/getComponentDisplayName.js';
-import missingProviderHandler from '#utils/missingProvider.js';
-import noopFn, { emptyObj } from '#utils/noops.js';
+import getComponentDisplayName from '#utils/getComponentDisplayName';
+import missingProviderHandler from '#utils/missingProvider';
+import noopFn, { emptyObj } from '#utils/noops';
 
-import arrangerBaseTheme from './baseTheme/index.js';
+import arrangerBaseTheme from './baseTheme/index';
 import type {
 	BaseThemeInterface,
 	CustomThemeType,
@@ -25,8 +25,8 @@ import type {
 	ThemeProviderProps,
 	UseThemeContextProps,
 	WithThemeProps,
-} from './types/index.js';
-import { isProviderNested, mergeThemes } from './utils.js';
+} from './types/index';
+import { isProviderNested, mergeThemes } from './utils';
 
 export const ThemeContext = createContext<ThemeContextInterface<ThemeOptions>>({
 	missingProvider: 'ThemeContext',
@@ -122,5 +122,5 @@ if (process.env.NODE_ENV === 'development') {
 	ThemeProvider.displayName = 'ArrangerThemeProvider';
 }
 
-export * as arrangerTheme from './baseTheme/index.js';
-export * as themeUtils from './utils.js';
+export * as arrangerTheme from './baseTheme/index';
+export * as themeUtils from './utils';

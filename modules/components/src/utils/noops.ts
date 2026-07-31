@@ -1,4 +1,4 @@
-import { debugLogs } from './debugging.js';
+import { debugLogs } from './debugging';
 
 export type GenericFn = (..._arg: unknown[]) => unknown;
 

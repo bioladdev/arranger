@@ -1,9 +1,9 @@
-import type { RecursivePartial } from '#utils/types.js';
+import type { RecursivePartial } from '#utils/types';
 
-import type { Components } from './components.js';
-import type { Colors, Palette } from './palette.js';
-import type { Shape } from './shape.js';
-import type { Spacing } from './spacing.js';
+import type { Components } from './components';
+import type { Colors, Palette } from './palette';
+import type { Shape } from './shape';
+import type { Spacing } from './spacing';
 
 export interface BaseThemeInterface {
 	colors: Colors;
@@ -55,4 +55,4 @@ export interface WithThemeProps<Theme = ThemeOptions> {
 	theme?: RecursivePartial<Theme>;
 }
 
-export type * as ThemeCommon from './common.js';
+export type * as ThemeCommon from './common';

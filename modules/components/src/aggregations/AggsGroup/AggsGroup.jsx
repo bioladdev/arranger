@@ -1,11 +1,10 @@
-import { css } from '@emotion/react';
 import cx from 'classnames';
 import { useState } from 'react';
 
-import { TransparentButton } from '#Button/index.js';
-import { ArrowIcon, SearchIcon, SortAlphaIcon } from '#Icons/index.js';
-import { useThemeContext } from '#ThemeContext/index.js';
-import noopFn, { emptyObj } from '#utils/noops.js';
+import { TransparentButton } from '#Button/index';
+import { ArrowIcon, SearchIcon, SortAlphaIcon } from '#Icons/index';
+import { useThemeContext } from '#ThemeContext/index';
+import noopFn, { emptyObj } from '#utils/noops';
 
 
 // TODO: redesign modifiers (filter, sort) to be off by default?
@@ -22,7 +21,7 @@ const AggsGroup = ({
 	headerRef,
 	stickyHeader,
 	theme: {
-		css: customAggsWrapperCSS,
+		style: customAggsWrapperCSS,
 		collapsing: customCollapsing,
 		collapsing: {
 			className: customCollapsingIconClassName,
@@ -64,7 +63,7 @@ const AggsGroup = ({
 			Aggregations: {
 				AggsGroup: {
 					className: themeAggsGroupClassName,
-					css: themeAggsGroupCSS,
+					style: themeAggsGroupCSS,
 					collapsedBackground: themeCollapsedAggsGroupBackground = colors?.grey?.[200],
 					collapsing: {
 						className: themeCollapsingIconClassName,
@@ -223,51 +222,23 @@ const AggsGroup = ({
 	) : (
 		<article
 			className={cx('aggregation-group', themeAggsGroupClassName || aggTypeCustomClassName)}
-			css={[
-				themeAggsGroupCSS,
-				css`
-					border-bottom: 0.05rem solid transparent;
-					border-color: ${ThemeAggsGroupDividerColor};
-					box-sizing: border-box;
-					padding-bottom: ${isCollapsed ? 0 : '0.3rem'};
-				`,
-				customAggsWrapperCSS,
-			]}
+			style={{ borderBottom: '0.05rem solid transparent', borderColor: ThemeAggsGroupDividerColor, boxSizing: 'border-box', paddingBottom: isCollapsed ? 0 : '0.3rem', ...themeAggsGroupCSS, ...customAggsWrapperCSS }}
 			ref={componentRef}
 			{...aggsGroupTheme}
 			{...dataFields}
 		>
 			<header
 				className={cx('header', { collapsed: isCollapsed })}
-				css={css`
-					background: ${themeAggsHeaderBackground};
-					box-sizing: border-box;
-					padding: 0 6px;
-					position: ${stickyHeader || themeAggsHeaderSticky ? `sticky` : `relative`};
-					top: 0px;
-
-					&.collapsed {
-						background: ${themeCollapsedAggsGroupBackground};
-					}
-				`}
+				style={{ background: themeAggsHeaderBackground, boxSizing: 'border-box', padding: '0 6px', position: stickyHeader || themeAggsHeaderSticky ? 'sticky' : 'relative', top: '0px' }}
 				ref={headerRef}
 			>
 				<div
 					className={cx('title-wrapper', { collapsed: isCollapsed })}
-					css={css`
-						align-items: center;
-						border-bottom: 0.1rem solid ${themeAggsHeaderDividerColor};
-						box-sizing: border-box;
-						display: flex;
-						padding: 6px 0 4px;
-					`}
+					style={{ alignItems: 'center', borderBottom: `0.1rem solid ${themeAggsHeaderDividerColor}`, boxSizing: 'border-box', display: 'flex', padding: '6px 0 4px' }}
 				>
 					<TransparentButton
 						className="title-control"
-						css={css`
-							padding: 2px 0;
-							width: 100%;
-						`}
+						style={{ padding: '2px 0', width: '100%' }}
 						disabled={collapsingDisabled}
 						onClick={collapsingDisabled ? undefined : collapsingHandler}
 						title={collapsingIconHoverText}
@@ -280,12 +251,7 @@ const AggsGroup = ({
 
 						<span
 							className="title"
-							css={css`
-								color: ${themeAggsHeaderFontColor || 'inherit'};
-								font-size: 0.9rem;
-								margin-left: 0.5rem;
-								${hasModifiers && `padding-right: 1rem;`}
-							`}
+							style={{ color: themeAggsHeaderFontColor || 'inherit', fontSize: '0.9rem', marginLeft: '0.5rem', ...(hasModifiers && { paddingRight: '1rem' }) }}
 						>
 							{displayName}
 						</span>
@@ -294,12 +260,7 @@ const AggsGroup = ({
 					{sortable && (
 						<TransparentButton
 							className="sorting-icon"
-							css={css`
-								cursor: pointer;
-								margin-left: 0.4rem;
-								margin-top: 0.1rem;
-								padding: 0.2rem;
-							`}
+							style={{ cursor: 'pointer', marginLeft: '0.4rem', marginTop: '0.1rem', padding: '0.2rem' }}
 							disabled={sortingDisabled}
 							onClick={sortingDisabled ? undefined : sortingHandler}
 							title={sortingIconHoverText}
@@ -313,12 +274,7 @@ const AggsGroup = ({
 					{filterable && (
 						<TransparentButton
 							className="filter-icon"
-							css={css`
-								cursor: pointer;
-								margin-left: 0.4rem;
-								margin-top: 0.1rem;
-								padding: 0.2rem;
-							`}
+							style={{ cursor: 'pointer', marginLeft: '0.4rem', marginTop: '0.1rem', padding: '0.2rem' }}
 							disabled={filteringDisabled}
 							onClick={filteringDisabled ? undefined : filteringHandler}
 							title={filteringIconHoverText}
@@ -346,12 +302,7 @@ const AggsGroup = ({
 			{!isCollapsed && (
 				<section
 					className={cx('bucket', { collapsed: isCollapsed })}
-					css={css`
-						align-items: flex-end;
-						display: flex;
-						flex-direction: column;
-						padding: 0.1rem 0.3rem;
-					`}
+					style={{ alignItems: 'flex-end', display: 'flex', flexDirection: 'column', padding: '0.1rem 0.3rem' }}
 				>
 					{children}
 				</section>

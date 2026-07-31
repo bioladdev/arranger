@@ -1,1 +1,1 @@
-export { default } from './DownloadButton.js';
+export { default } from './DownloadButton';

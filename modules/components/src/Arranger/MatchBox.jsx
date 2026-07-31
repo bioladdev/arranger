@@ -1,43 +1,29 @@
 import React, { Fragment } from 'react';
 import { capitalize, difference, get, uniqBy } from 'lodash-es';
-import { compose, withState, withHandlers } from 'recompose';
-import { css } from '@emotion/react';
 
-import Input from '#Input/index.js';
-import { toggleSQON } from '#SQONViewer/utils.js';
+import Input from '#Input/index';
+import { toggleSQON } from '#SQONViewer/utils';
 
-import Tabs, { TabsTable } from '../Tabs.js';
-import { MatchBoxState, MATCHBOX_CHILD } from '../MatchBox/index.js';
-import saveSet from '../utils/saveSet.js';
-import formatNumber from '../utils/formatNumber.js';
-import parseInputFiles from '../utils/parseInputFiles.js';
+import Tabs, { TabsTable } from '../Tabs';
+import { MatchBoxState, MATCHBOX_CHILD } from '../MatchBox/index';
+import saveSet from '../utils/saveSet';
+import formatNumber from '../utils/formatNumber';
+import parseInputFiles from '../utils/parseInputFiles';
 
-import QuickSearchQuery from '../QuickSearch/QuickSearchQuery.js';
+import QuickSearchQuery from '../QuickSearch/QuickSearchQuery';
 
-const layoutStyle = css`
-	&.match-box {
-		display: flex;
-		flex-direction: column;
-		.match-box-results-table {
-			display: flex;
-			flex-direction: column;
-		}
-		.tabs {
-			display: flex;
-			flex-direction: column;
-		}
-		.tabs .tabs-content {
-			display: flex;
-			flex-direction: column;
-		}
-		.tabs .tabs-titles {
-			display: block;
-		}
-		.tabs .tabs-titles .tabs-title {
-			float: left;
-		}
-	}
-`;
+const compose = (...fns) => (Component) => fns.reduceRight((acc, fn) => fn(acc), Component);
+const withState = (key, setKey, initial) => (Component) => (props) => {
+	const [value, setValue] = React.useState(initial);
+	return <Component {...props} {...{ [key]: value, [setKey]: setValue }} />;
+};
+const withHandlers = (handlerCreators) => (Component) => (props) => {
+	const handlers = Object.keys(handlerCreators).reduce((acc, key) => {
+		acc[key] = (...args) => handlerCreators[key](props)(...args);
+		return acc;
+	}, {});
+	return <Component {...props} {...handlers} />;
+};
 
 const enhance = compose(
 	withState('activeEntityField', 'setActiveEntityField', null),
@@ -122,7 +108,7 @@ const MatchBox = ({
 }) => {
 	const selectableEntityType = !(uploadableFieldNames && (uploadableFieldNames || []).length === 1);
 	return (
-		<div className={`match-box ${layoutStyle}`}>
+		<div className="match-box">
 			<MatchBoxState
 				{...props}
 				onInitialLoaded={({ activeFields }) => {
@@ -167,18 +153,10 @@ const MatchBox = ({
 								value={searchText}
 							/>
 							<div className="match-box-upload-instruction-text">{uploadInstructionText}</div>
-							<div
-								className={css`
-									display: flex;
-								`}
-							>
+							<div style={{ display: 'flex' }}>
 								<input
 									type="file"
-									className={css`
-										position: absolute;
-										top: -10000px;
-										left: 0px;
-									`}
+									style={{ position: 'absolute', top: '-10000px', left: '0px' }}
 									aria-label={`File upload`}
 									accept=".tsv,.csv,text/*"
 									ref={inputRef}

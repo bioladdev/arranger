@@ -1,6 +1,6 @@
 import { Component } from 'react';
 
-import noopFn from '#utils/noops.js';
+import noopFn from '#utils/noops';
 
 class State extends Component {
 	constructor(props) {

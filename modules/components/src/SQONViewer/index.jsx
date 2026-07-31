@@ -1,17 +1,16 @@
-import { css } from '@emotion/react';
 import cx from 'classnames';
 import { take } from 'lodash-es';
 
-import { withData } from '#DataContext/index.js';
-import { useThemeContext } from '#ThemeContext/index.js';
-import noopFn, { emptyObj } from '#utils/noops.js';
+import { withData } from '#DataContext/index';
+import { useThemeContext } from '#ThemeContext/index';
+import noopFn, { emptyObj } from '#utils/noops';
 
-import EmptyMessage from './EmptyMessage.js';
-import { Op, SQONGroup, SQONValueGroup, SQONWrapper, useDataBubbles } from './helpers.js';
-import { toggleSQON, replaceFilterSQON } from './utils.js';
+import EmptyMessage from './EmptyMessage';
+import { Op, SQONGroup, SQONValueGroup, SQONWrapper, useDataBubbles } from './helpers';
+import { toggleSQON, replaceFilterSQON } from './utils';
 
 /**
- * @param {import('./types.js').SQONViewerProps} props
+ * @param {import('./types').SQONViewerProps} props
  */
 const SQONViewer = ({
 	dateFormat = undefined,
@@ -66,12 +65,7 @@ const SQONViewer = ({
 
 						return (
 							<SQONGroup
-								css={css`
-									min-height: 1.2em;
-									margin: ${themeSQONGroupMargin};
-									padding: ${themeSQONGroupPadding};
-									width: fit-content;
-								`}
+								style={{ minHeight: '1.2em', margin: themeSQONGroupMargin, padding: themeSQONGroupPadding, width: 'fit-content' }}
 								key={`${fieldName || fieldNames?.join()}.${op}.${value.join()}`}
 								{...themeSQONGroupProps}
 							>
@@ -80,9 +74,7 @@ const SQONViewer = ({
 								})}
 
 								<Op
-									css={css`
-										margin-right: 0.3rem;
-									`}
+									style={{ marginRight: '0.3rem' }}
 									{...themeSQONOpProps}
 								>
 									{(op === 'in' && hasMultipleValues) || op !== 'in' ? op : 'is'}
@@ -169,4 +161,4 @@ export const CurrentSQON = (props) => {
 
 export const SQONView = CurrentSQON;
 
-export { Bubble, FieldName, Op, SQONGroup, SQONWrapper, useDataBubbles, Value } from './helpers.js';
+export { Bubble, FieldName, Op, SQONGroup, SQONWrapper, useDataBubbles, Value } from './helpers';

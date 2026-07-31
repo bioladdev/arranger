@@ -2,15 +2,15 @@ import cx from 'classnames';
 import { merge } from 'lodash-es';
 import { type ChangeEvent, useCallback, useEffect, useState } from 'react';
 
-import type { ColumnMappingInterface } from '#DataContext/types.js';
-import MultiSelectDropDown from '#DropDown/MultiSelectDropDown.js';
-import MetaMorphicChild from '#MetaMorphicChild/index.js';
-import { columnsArrayToDictionary, getColumnsByAttribute, useTableContext } from '#Table/helpers/index.js';
-import type { ColumnsDictionary } from '#Table/types.js';
-import { useThemeContext } from '#ThemeContext/index.js';
-import { emptyObj } from '#utils/noops.js';
+import type { ColumnMappingInterface } from '#DataContext/types';
+import MultiSelectDropDown from '#DropDown/MultiSelectDropDown';
+import MetaMorphicChild from '#MetaMorphicChild/index';
+import { columnsArrayToDictionary, getColumnsByAttribute, useTableContext } from '#Table/helpers/index';
+import type { ColumnsDictionary } from '#Table/types';
+import { useThemeContext } from '#ThemeContext/index';
+import { emptyObj } from '#utils/noops';
 
-import type { ColumnSelectButtonProps } from './types.js';
+import type { ColumnSelectButtonProps } from './types';
 
 const getShowableColumns = (columnsDict = emptyObj as ColumnsDictionary) =>
 	getColumnsByAttribute(Object.values(columnsDict), 'canChangeShow');

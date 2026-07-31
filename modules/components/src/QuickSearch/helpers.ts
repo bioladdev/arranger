@@ -1,10 +1,10 @@
 import { isEmpty, uniq } from 'lodash-es';
 
-import { useDataContext } from '#DataContext/index.js';
-import type { ExtendedMappingInterface } from '#DataContext/types.js';
+import { useDataContext } from '#DataContext/index';
+import type { ExtendedMappingInterface } from '#DataContext/types';
 
-import { decorateFieldWithColumnsState } from './QuickSearchQuery.js';
-import type { SearchFieldNames, UseSearchFieldsProps } from './types.js';
+import { decorateFieldWithColumnsState } from './QuickSearchQuery';
+import type { SearchFieldNames, UseSearchFieldsProps } from './types';
 
 /** Gathers the fieldnames relevant to the specific QuickSearch instance */
 export const getQuickSearchFieldsById = ({

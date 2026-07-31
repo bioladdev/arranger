@@ -1,10 +1,10 @@
-import { currentFieldValue, fieldInCurrentSQON, inCurrentSQON } from '#SQONViewer/utils.js';
-import noopFn from '#utils/noops.js';
+import { currentFieldValue, fieldInCurrentSQON, inCurrentSQON } from '#SQONViewer/utils';
+import noopFn from '#utils/noops';
 
-import BooleanAggs from './BooleanAggs/index.js';
-import DatesAggs from './DatesAgg.js';
-import RangeAggs from './RangeAgg.js';
-import TermAggs from './TermAggs/index.js';
+import BooleanAggs from './BooleanAggs/index';
+import DatesAggs from './DatesAgg';
+import RangeAggs from './RangeAgg';
+import TermAggs from './TermAggs/index';
 
 // TODO: should these "isActive" functions be renamed to "getWhatever"?
 // what does "active" mean, practically, in this context?

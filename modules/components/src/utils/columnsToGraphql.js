@@ -26,7 +26,7 @@ export function toQuery(column) {
  * @param {Object[]} [props.sort]
  * @param {number} [props.first]
  * @param {number} [props.offset]
- * @param {import("#DataContext/types.js").SQONType} [props.sqon] typescript validation placeholder
+ * @param {import("#DataContext/types").SQONType} [props.sqon] typescript validation placeholder
  *
 */
 export default function columnsToGraphql({

@@ -1,5 +1,5 @@
-import createPalette, { colors } from './palette/index.js';
-import shape from './shape.js';
+import createPalette, { colors } from './palette/index';
+import shape from './shape';
 
 export default {
 	colors,
@@ -7,4 +7,4 @@ export default {
 	shape,
 };
 
-export * as paletteItems from './palette/index.js';
+export * as paletteItems from './palette/index';

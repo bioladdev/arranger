@@ -1,22 +1,21 @@
-import { css } from '@emotion/react';
 import { useRef, useState } from 'react';
 import { FaSearch } from 'react-icons/fa';
 
-import { useDataContext } from '#DataContext/index.js';
-import type { SQONType } from '#DataContext/types.js';
-import { MATCHBOX_CHILD } from '#MatchBox/index.js';
-import { Value as SQONBubble } from '#SQONViewer/index.js';
-import { currentFieldValue, toggleSQON } from '#SQONViewer/utils.js';
-import TextFilter from '#TextFilter/index.js';
-import { useThemeContext } from '#ThemeContext/index.js';
-import { emptyObj } from '#utils/noops.js';
-import internalTranslateSQONValue from '#utils/translateSQONValue.js';
+import { useDataContext } from '#DataContext/index';
+import type { SQONType } from '#DataContext/types';
+import { MATCHBOX_CHILD } from '#MatchBox/index';
+import { Value as SQONBubble } from '#SQONViewer/index';
+import { currentFieldValue, toggleSQON } from '#SQONViewer/utils';
+import TextFilter from '#TextFilter/index';
+import { useThemeContext } from '#ThemeContext/index';
+import { emptyObj } from '#utils/noops';
+import internalTranslateSQONValue from '#utils/translateSQONValue';
 
-import { useSearchFields } from './helpers.js';
-import DropdownItem from './QuickSearchDropdown.js';
-import QuickSearchQuery from './QuickSearchQuery.js';
-import QuickSearchWrapper from './QuickSearchWrapper.js';
-import type { QuickSearchProps, SearchResult } from './types.js';
+import { useSearchFields } from './helpers';
+import DropdownItem from './QuickSearchDropdown';
+import QuickSearchQuery from './QuickSearchQuery';
+import QuickSearchWrapper from './QuickSearchWrapper';
+import type { QuickSearchProps, SearchResult } from './types';
 
 const currentValues = ({
 	displayField,
@@ -84,7 +83,7 @@ const QuickSearch = ({
 				headerTitle: themeHeaderTitle,
 				placeholder: themePlaceholder = 'Quick Search',
 
-				DropDownItems: { DropdownItemComponent = DropdownItem, css: themeDropDownItemsCSS = emptyObj } = emptyObj,
+				DropDownItems: { DropdownItemComponent = DropdownItem, style: themeDropDownItemsCSS = emptyObj } = emptyObj,
 				FilterInput: {
 					Icon = FaSearch,
 					InputComponent = TextFilter,
@@ -100,7 +99,7 @@ const QuickSearch = ({
 				PinnedValues: {
 					disabled: themePinnedValuesDisabled,
 					PinnedValueComponent = SQONBubble,
-					css: themePinnedValuesCSS,
+					style: themePinnedValuesCSS,
 					...themePinnedValuesTheme
 				} = emptyObj,
 			} = emptyObj,
@@ -179,12 +178,7 @@ const QuickSearch = ({
 						{isDropdownOpen && !searchDisabled && (
 							<div
 								className="quick-search-results"
-								css={[
-									themeDropDownItemsCSS,
-									css`
-										margin-bottom: 0.2rem;
-									`,
-								]}
+								style={{ marginBottom: '0.2rem', ...themeDropDownItemsCSS }}
 							>
 								{searchResults.length ? (
 									searchResults?.map(
@@ -235,10 +229,7 @@ const QuickSearch = ({
 						{showPinnedValues && (
 							<div
 								className="quick-search-pinned-values"
-								css={css`
-									display: flex;
-									flex-wrap: wrap;
-								`}
+								style={{ display: 'flex', flexWrap: 'wrap' }}
 							>
 								{currentValues({
 									displayField,
@@ -247,9 +238,9 @@ const QuickSearch = ({
 									(
 										primaryKey: string, ////////////
 									) => (
-										<div className="quick-search-pinned-value" key={primaryKey} css={css``}>
+										<div className="quick-search-pinned-value" key={primaryKey}>
 											<PinnedValueComponent
-												css={themePinnedValuesCSS}
+												style={themePinnedValuesCSS}
 												theme={themePinnedValuesTheme}
 												onClick={() =>
 													setSQON(

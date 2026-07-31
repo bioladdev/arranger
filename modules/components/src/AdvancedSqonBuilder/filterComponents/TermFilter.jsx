@@ -1,16 +1,16 @@
-import { Component } from '@reach/component-component';
+import { useState } from 'react';
 import { sortBy, get } from 'lodash-es';
 
-import { TermAggs } from '#aggregations/index.js';
-import Query from '#Query.js';
-import { inCurrentSQON } from '#SQONViewer/utils.js';
-import TextFilter from '#TextFilter/index.js';
-import defaultApiFetcher from '#utils/api.js';
-import noopFn from '#utils/noops.js';
+import { TermAggs } from '#aggregations/index';
+import Query from '#Query';
+import { inCurrentSQON } from '#SQONViewer/utils';
+import TextFilter from '#TextFilter/index';
+import defaultApiFetcher from '#utils/api';
+import noopFn from '#utils/noops';
 
-import { getOperationAtPath, setSqonAtPath, FIELD_OP_DISPLAY_NAME, TERM_OPS, IN_OP, AND_OP } from '../utils.js';
+import { getOperationAtPath, setSqonAtPath, FIELD_OP_DISPLAY_NAME, TERM_OPS, IN_OP, AND_OP } from '../utils';
 
-import { FilterContainer } from './common.js';
+import { FilterContainer } from './common';
 import './FilterContainerStyle.css';
 
 const AggsWrapper = ({ children }) => <div className="aggregation-group">{children}</div>;
@@ -39,21 +39,20 @@ export const TermFilterUI = (props) => {
 		op: IN_OP,
 		content: { value: [], fieldName },
 	};
-	const initialState = { searchString: '', localSqon: initialSqon };
-	const onSearchChange = (s) => (e) => {
-		s.setState({ searchString: e.value });
-	};
-	const isFilterActive = (s) => (field) =>
+	const [searchString, setSearchString] = useState('');
+	const [localSqon, setLocalSqon] = useState(initialSqon);
+	const onSearchChange = (e) => setSearchString(e.value);
+	const isFilterActive = (field) =>
 		inCurrentSQON({
 			value: field.value,
 			dotFieldName: field.fieldName,
-			currentSQON: getOperationAtPath(sqonPath)(s.state.localSqon),
+			currentSQON: getOperationAtPath(sqonPath)(localSqon),
 		});
-	const getCurrentFieldOp = (s) => getOperationAtPath(sqonPath)(s.state.localSqon);
-	const onSqonSubmit = (s) => () => onSubmit(s.state.localSqon);
-	const computeBuckets = (s, buckets) =>
+	const getCurrentFieldOp = () => getOperationAtPath(sqonPath)(localSqon);
+	const onSqonSubmit = () => onSubmit(localSqon);
+	const computeBuckets = (buckets) =>
 		sortBy(
-			filterStringsCaseInsensitive(buckets, s.state.searchString, 'key'),
+			filterStringsCaseInsensitive(buckets, searchString, 'key'),
 			(bucket) =>
 				!inCurrentSQON({
 					value: bucket.key,
@@ -61,109 +60,97 @@ export const TermFilterUI = (props) => {
 					currentSQON: getOperationAtPath(sqonPath)(initialSqon),
 				}),
 		);
-	const onOptionTypeChange = (s) => (e) => {
-		const currentFieldSqon = getCurrentFieldOp(s);
-		s.setState({
-			localSqon: setSqonAtPath(sqonPath, {
-				...currentFieldSqon,
-				op: e.target.value,
-			})(s.state.localSqon),
-		});
+	const onOptionTypeChange = (e) => {
+		const currentFieldSqon = getCurrentFieldOp();
+		setLocalSqon(setSqonAtPath(sqonPath, {
+			...currentFieldSqon,
+			op: e.target.value,
+		})(localSqon));
 	};
-	const onSelectAllClick = (s) => () => {
-		const currentFieldSqon = getCurrentFieldOp(s);
-		s.setState({
-			localSqon: setSqonAtPath(sqonPath, {
-				...currentFieldSqon,
-				content: {
-					...currentFieldSqon.content,
-					value: filterStringsCaseInsensitive(
-						buckets.map(({ key }) => key),
-						s.state.searchString,
-					),
-				},
-			})(s.state.localSqon),
-		});
+	const onSelectAllClick = () => {
+		const currentFieldSqon = getCurrentFieldOp();
+		setLocalSqon(setSqonAtPath(sqonPath, {
+			...currentFieldSqon,
+			content: {
+				...currentFieldSqon.content,
+				value: filterStringsCaseInsensitive(
+					buckets.map(({ key }) => key),
+					searchString,
+				),
+			},
+		})(localSqon));
 	};
-	const onClearClick = (s) => () => {
-		const currentFieldSqon = getCurrentFieldOp(s);
-		s.setState({
-			localSqon: setSqonAtPath(sqonPath, {
-				...currentFieldSqon,
-				content: {
-					...currentFieldSqon.content,
-					value: [],
-				},
-			})(s.state.localSqon),
-		});
+	const onClearClick = () => {
+		const currentFieldSqon = getCurrentFieldOp();
+		setLocalSqon(setSqonAtPath(sqonPath, {
+			...currentFieldSqon,
+			content: {
+				...currentFieldSqon.content,
+				value: [],
+			},
+		})(localSqon));
 	};
-	const onFilterClick =
-		(s) =>
-			({ generateNextSQON }) => {
-				setTimeout(() => {
-					// state change in the same tick somehow results in this component dismounting (probably  something to do with TermAggs' click event, needs investigation)
-					const deltaSqon = generateNextSQON();
-					const deltaFiterObjContentValue = deltaSqon.content[0].content.value;
-					// we're only interested in the new field operation's content value
-					const currentFieldSqon = getCurrentFieldOp(s);
-					const existingValue = (currentFieldSqon.content.value || []).find((v) => deltaFiterObjContentValue.includes(v));
-					const newFieldSqon = {
-						...currentFieldSqon,
-						content: {
-							...currentFieldSqon.content,
-							value: [
-								...(currentFieldSqon.content.value || []).filter((v) => v !== existingValue),
-								...(existingValue ? [] : deltaFiterObjContentValue),
-							],
-						},
-					};
-					s.setState({
-						localSqon: setSqonAtPath(sqonPath, newFieldSqon)(s.state.localSqon),
-					});
-				}, 0);
-			};
+	const onFilterClick = ({ generateNextSQON }) => {
+		setTimeout(() => {
+			// state change in the same tick somehow results in this component dismounting (probably  something to do with TermAggs' click event, needs investigation)
+			const deltaSqon = generateNextSQON();
+			const deltaFiterObjContentValue = deltaSqon.content[0].content.value;
+			// we're only interested in the new field operation's content value
+			setLocalSqon((prev) => {
+				const currentFieldSqon = getOperationAtPath(sqonPath)(prev);
+				const existingValue = (currentFieldSqon.content.value || []).find((v) => deltaFiterObjContentValue.includes(v));
+				const newFieldSqon = {
+					...currentFieldSqon,
+					content: {
+						...currentFieldSqon.content,
+						value: [
+							...(currentFieldSqon.content.value || []).filter((v) => v !== existingValue),
+							...(existingValue ? [] : deltaFiterObjContentValue),
+						],
+					},
+				};
+				return setSqonAtPath(sqonPath, newFieldSqon)(prev);
+			});
+		}, 0);
+	};
 	return (
-		<Component initialState={initialState}>
-			{(s) => (
-				<ContainerComponent onSubmit={onSqonSubmit(s)} onCancel={onCancel}>
-					<div className="contentSection">
-						<span>{fieldDisplayNameMap[initialFieldSqon.content.fieldName] || initialFieldSqon.content.fieldName}</span>{' '}
-						is{' '}
-						<span className="select">
-							<select onChange={onOptionTypeChange(s)} value={getCurrentFieldOp(s).op}>
-								{TERM_OPS.map((option) => (
-									<option key={option} value={option}>
-										{opDisplayNameMap[option]}
-									</option>
-								))}
-							</select>
-						</span>
-					</div>
-					<div className="contentSection searchInputContainer">
-						<InputComponent value={s.state.searchString} onChange={onSearchChange(s)} />
-					</div>
-					<div className="contentSection termFilterActionContainer">
-						<span className={`aggsFilterAction selectAll`} onClick={onSelectAllClick(s)}>
-							Select All
-						</span>
-						<span className={`aggsFilterAction clear`} onClick={onClearClick(s)}>
-							Clear
-						</span>
-					</div>
-					<div className="contentSection termAggsContainer">
-						<TermAggs
-							WrapperComponent={AggsWrapper}
-							field={initialFieldSqon.content.field}
-							displayName="Disease Type"
-							buckets={computeBuckets(s, buckets)}
-							handleValueClick={onFilterClick(s)}
-							isActive={isFilterActive(s)}
-							maxTerms={5}
-						/>
-					</div>
-				</ContainerComponent>
-			)}
-		</Component>
+		<ContainerComponent onSubmit={onSqonSubmit} onCancel={onCancel}>
+			<div className="contentSection">
+				<span>{fieldDisplayNameMap[initialFieldSqon.content.fieldName] || initialFieldSqon.content.fieldName}</span>{' '}
+				is{' '}
+				<span className="select">
+					<select onChange={onOptionTypeChange} value={getCurrentFieldOp().op}>
+						{TERM_OPS.map((option) => (
+							<option key={option} value={option}>
+								{opDisplayNameMap[option]}
+							</option>
+						))}
+					</select>
+				</span>
+			</div>
+			<div className="contentSection searchInputContainer">
+				<InputComponent value={searchString} onChange={onSearchChange} />
+			</div>
+			<div className="contentSection termFilterActionContainer">
+				<span className={`aggsFilterAction selectAll`} onClick={onSelectAllClick}>
+					Select All
+				</span>
+				<span className={`aggsFilterAction clear`} onClick={onClearClick}>
+					Clear
+				</span>
+			</div>
+			<div className="contentSection termAggsContainer">
+				<TermAggs
+					WrapperComponent={AggsWrapper}
+					field={initialFieldSqon.content.field}
+					displayName="Disease Type"
+					buckets={computeBuckets(buckets)}
+					handleValueClick={onFilterClick}
+					isActive={isFilterActive}
+					maxTerms={5}
+				/>
+			</div>
+		</ContainerComponent>
 	);
 };
 

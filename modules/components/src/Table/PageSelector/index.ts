@@ -1,1 +1,1 @@
-export { default } from './PageSelector.js';
+export { default } from './PageSelector';

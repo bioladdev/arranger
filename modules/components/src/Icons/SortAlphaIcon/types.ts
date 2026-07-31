@@ -1,4 +1,4 @@
-import type { ThemeCommon } from '#ThemeContext/types/index.js';
+import type { ThemeCommon } from '#ThemeContext/types/index';
 
 export type SortAlphaIconThemeProps = ThemeCommon.CustomCSS & {
 	activeFill: string;

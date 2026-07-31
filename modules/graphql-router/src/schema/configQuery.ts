@@ -3,6 +3,7 @@
 
 const FacetsConfigTypeDefs = `
   type AggregationMapping {
+    aggsType: String
     displayName: String
     displayType: String
     fieldName: String

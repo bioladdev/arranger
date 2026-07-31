@@ -1,9 +1,8 @@
-import { css } from '@emotion/react';
 import cx from 'classnames';
 
-import TextHighlight from '#TextHighlight/index.js';
+import TextHighlight from '#TextHighlight/index';
 
-import ReactTreeView from './ReactTreeView.js';
+import ReactTreeView from './ReactTreeView';
 import './style.css';
 
 const NestedTreeView = ({
@@ -25,11 +24,8 @@ const NestedTreeView = ({
 				key={path}
 				nodeLabel={({ open }) => (
 					<div
-						className={`label ${css`
-							display: inline-block;
-							cursor: pointer;
-							padding-left: ${labelPadding}px;
-						`}`}
+						className="label"
+						style={{ display: 'inline-block', cursor: 'pointer', paddingLeft: `${labelPadding}px` }}
 						onClick={(e) => {
 							onLeafSelect(id || title);
 							open();
@@ -46,9 +42,8 @@ const NestedTreeView = ({
 					path,
 				})}
 				collapsed={shouldCollapse({ depth, title, id, children, path })}
-				itemClassName={`NestedTreeViewNode nested ${depthClass} ${selectedClass} ${css`
-					padding-left: ${indentationPx * depth}px;
-				`}`}
+				itemClassName={cx('NestedTreeViewNode', 'nested', depthClass, selectedClass)}
+				itemStyle={{ paddingLeft: `${indentationPx * depth}px` }}
 			>
 				<NestedTreeView
 					onLeafSelect={onLeafSelect}
@@ -66,11 +61,7 @@ const NestedTreeView = ({
 				key={path}
 				className={cx('NestedTreeViewNode', 'tree-view_children', 'leaf', depthClass, selectedClass)}
 			>
-				<div
-					css={css`
-						padding-left: ${indentationPx * depth + labelPadding}px;
-					`}
-				>
+				<div style={{ paddingLeft: `${indentationPx * depth + labelPadding}px` }}>
 					<TextHighlight content={title} highlightText={searchString} />
 				</div>
 			</div>

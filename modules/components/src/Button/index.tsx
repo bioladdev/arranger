@@ -1,56 +1,12 @@
-import isPropValid from '@emotion/is-prop-valid';
-import styled from '@emotion/styled';
 import cx from 'classnames';
 import Color from 'color';
-import { createRef, type ForwardedRef, forwardRef, type MouseEventHandler } from 'react';
+import { createRef, type CSSProperties, type ForwardedRef, forwardRef, type MouseEventHandler, useState } from 'react';
 
-import { useThemeContext } from '#ThemeContext/index.js';
-import { withTooltip } from '#Tooltip/index.js';
-import noopFn, { emptyObj } from '#utils/noops.js';
+import { useThemeContext } from '#ThemeContext/index';
+import { withTooltip } from '#Tooltip/index';
+import noopFn, { emptyObj } from '#utils/noops';
 
-import type { ButtonProps } from './types.js';
-
-const BaseButton = withTooltip(styled('button', {
-	shouldForwardProp: isPropValid,
-})<ButtonProps>`
-	align-items: center;
-	background: ${({ theme: { background } }) => background};
-	box-sizing: border-box;
-	border: ${({ theme: { borderColor } }) => borderColor && `0.08rem solid ${borderColor}`};
-	border-radius: ${({ theme: { borderRadius } }) => borderRadius};
-	color: ${({ theme: { fontColor } }) => fontColor};
-	cursor: ${({ onClick }) => (typeof onClick === 'function' ? 'pointer' : 'default')};
-	display: flex;
-	flex: ${({ theme: { flex } }) => flex};
-	font-family: ${({ theme: { fontFamily } }) => fontFamily};
-	font-size: ${({ theme: { fontSize } }) => fontSize};
-	font-weight: ${({ theme: { fontWeight } }) => fontWeight};
-	height: ${({ theme: { height } }) => height};
-	justify-content: center;
-	letter-spacing: ${({ theme: { letterSpacing } }) => letterSpacing};
-	line-height: ${({ theme: { lineHeight } }) => lineHeight};
-	margin: ${({ theme: { margin } }) => margin};
-	padding: ${({ theme: { padding } }) => padding};
-	pointer-events: ${({ hidden }) => hidden && 'none'};
-	position: ${({ theme: { position = 'relative' } }) => position};
-	text-transform: ${({ theme: { textTransform } }) => textTransform};
-	visibility: ${({ hidden }) => hidden && 'hidden'};
-	white-space: ${({ theme: { whiteSpace } }) => whiteSpace};
-	width: ${({ theme: { width } }) => width};
-
-	&:not(.disabled):not(:disabled):hover {
-		background: ${({ theme: { hoverBackground } }) => hoverBackground};
-	}
-
-	&.disabled,
-	&:disabled {
-		background: ${({ theme: { disabledBackground } }) => disabledBackground};
-		border: ${({ theme: { disabledBorderColor } }) =>
-			disabledBorderColor && `0.08rem solid ${disabledBorderColor}`};
-		color: ${({ theme: { disabledFontColor } }) => disabledFontColor};
-		cursor: default;
-	}
-`);
+import type { ButtonProps } from './types';
 
 const propagationStopper =
 	(clickHandler: MouseEventHandler | undefined = noopFn): MouseEventHandler =>
@@ -58,6 +14,97 @@ const propagationStopper =
 		event.stopPropagation();
 		clickHandler?.(event);
 	};
+
+interface BaseButtonInnerProps extends ButtonProps {
+	forwardedRef?: ForwardedRef<HTMLButtonElement>;
+}
+
+const BaseButtonInner = ({
+	children,
+	className,
+	disabled,
+	forwardedRef,
+	hidden,
+	onClick,
+	style: customStyle,
+	theme: {
+		background = undefined,
+		borderColor = undefined,
+		borderRadius = undefined,
+		disabledBackground = undefined,
+		disabledBorderColor = undefined,
+		disabledFontColor = undefined,
+		flex = undefined,
+		fontColor = undefined,
+		fontFamily = undefined,
+		fontSize = undefined,
+		fontWeight = undefined,
+		height = undefined,
+		hoverBackground = undefined,
+		letterSpacing = undefined,
+		lineHeight = undefined,
+		margin = undefined,
+		padding = undefined,
+		position = 'relative',
+		textTransform = undefined,
+		whiteSpace = undefined,
+		width = undefined,
+	} = emptyObj,
+	...rest
+}: BaseButtonInnerProps) => {
+	const [isHovered, setIsHovered] = useState(false);
+	const isDisabled = disabled || className?.split(' ').includes('disabled');
+
+	const style: CSSProperties = {
+		alignItems: 'center',
+		background: isDisabled ? disabledBackground : isHovered ? hoverBackground : background,
+		boxSizing: 'border-box',
+		border: isDisabled
+			? disabledBorderColor
+				? `0.08rem solid ${disabledBorderColor}`
+				: undefined
+			: borderColor
+				? `0.08rem solid ${borderColor}`
+				: undefined,
+		borderRadius,
+		color: isDisabled ? disabledFontColor : fontColor,
+		cursor: typeof onClick === 'function' ? 'pointer' : 'default',
+		display: 'flex',
+		flex,
+		fontFamily,
+		fontSize,
+		fontWeight,
+		height,
+		justifyContent: 'center',
+		letterSpacing,
+		lineHeight,
+		margin,
+		padding,
+		pointerEvents: hidden ? 'none' : undefined,
+		position,
+		textTransform: textTransform as CSSProperties['textTransform'],
+		visibility: hidden ? 'hidden' : undefined,
+		whiteSpace: whiteSpace as CSSProperties['whiteSpace'],
+		width,
+		...customStyle,
+	};
+
+	return (
+		<button
+			className={className}
+			disabled={disabled}
+			onMouseEnter={() => setIsHovered(true)}
+			onMouseLeave={() => setIsHovered(false)}
+			ref={forwardedRef as React.Ref<HTMLButtonElement>}
+			style={style}
+			{...rest}
+		>
+			{children}
+		</button>
+	);
+};
+
+const BaseButtonWithTooltip = withTooltip(BaseButtonInner);
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 	(
@@ -106,7 +153,9 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 		});
 
 		return (
-			<BaseButton
+			<BaseButtonWithTooltip
+				forwardedRef={forwardedRef}
+				onClick={propagationStopper(onClick)}
 				theme={{
 					background: customBackground || themeBackground,
 					borderColor: customBorderColor || themeBorderColor,
@@ -120,39 +169,68 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 					...themeProps,
 					...customThemeProps,
 				}}
-				onClick={propagationStopper(onClick)}
-				ref={forwardedRef}
 				{...props}
 			>
 				{children}
-			</BaseButton>
+			</BaseButtonWithTooltip>
 		);
 	},
 );
 
-const TransparentButtonBase = styled(BaseButton)<ButtonProps>`
-	background: ${({ theme: { background = 'none' } }) => background};
-	border: ${({ theme: { borderColor } }) => (borderColor ? `0.1rem solid ${borderColor}` : 'none')};
-	color: ${({ theme: { fontColor = 'inherit' } }) => fontColor};
-	font-family: ${({ theme: { fontFamily = 'inherit' } }) => fontFamily};
-	justify-content: flex-start;
-	margin: ${({ theme: { margin = 0 } }) => margin};
-	padding: ${({ theme: { padding = 0 } }) => padding};
-	text-align: left;
+const TransparentButtonBase = ({
+	children,
+	className,
+	style: customStyle,
+	theme: {
+		background = 'none',
+		borderColor = undefined,
+		fontColor = 'inherit',
+		fontFamily = 'inherit',
+		hoverFontColor = undefined,
+		margin = 0,
+		padding = 0,
+	} = emptyObj,
+	onClick,
+	...props
+}: ButtonProps) => {
+	const [isHovered, setIsHovered] = useState(false);
 
-	&.active,
-	&:focus,
-	&:hover {
-		color: ${({ theme: { hoverFontColor, fontColor } }) =>
-			hoverFontColor || (fontColor && fontColor !== 'inherit' && Color(fontColor).lighten(0.3).string())};
-	}
-`;
+	const derivedHoverColor =
+		hoverFontColor ||
+		(fontColor && fontColor !== 'inherit' ? Color(fontColor).lighten(0.3).string() : undefined);
+
+	const style: CSSProperties = {
+		background,
+		border: borderColor ? `0.1rem solid ${borderColor}` : 'none',
+		color: isHovered ? derivedHoverColor : fontColor,
+		fontFamily,
+		justifyContent: 'flex-start',
+		margin,
+		padding,
+		textAlign: 'left',
+		...customStyle,
+	};
+
+	return (
+		<Button
+			className={className}
+			onMouseEnter={() => setIsHovered(true)}
+			onMouseLeave={() => setIsHovered(false)}
+			onClick={onClick}
+			style={style}
+			theme={{}}
+			{...props}
+		>
+			{children}
+		</Button>
+	);
+};
 
 export const TransparentButton = ({
 	className,
 	disabled,
 	onClick,
-	theme: { css: themeCSS, ...theme } = emptyObj,
+	theme: { style: themeStyle, ...theme } = emptyObj,
 	...props
 }: ButtonProps & {
 	onClick?: MouseEventHandler<HTMLButtonElement>;
@@ -160,7 +238,7 @@ export const TransparentButton = ({
 	return (
 		<TransparentButtonBase
 			className={cx(className, disabled && 'disabled')}
-			css={themeCSS}
+			style={themeStyle}
 			onClick={disabled ? undefined : propagationStopper(onClick)}
 			theme={theme}
 			{...props}

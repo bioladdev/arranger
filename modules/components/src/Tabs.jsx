@@ -1,9 +1,18 @@
-import { css } from '@emotion/react';
 import cx from 'classnames';
 import ReactTable from 'react-table-old';
-import { compose, withPropsOnChange, withState } from 'recompose';
+import { useState } from 'react';
 
-import Pagination from './Table/index.js';
+import Pagination from './Table/index';
+
+const compose = (...fns) => (Component) => fns.reduceRight((acc, fn) => fn(acc), Component);
+const withState = (key, setKey, initial) => (Component) => (props) => {
+	const [value, setValue] = useState(initial);
+	return <Component {...props} {...{ [key]: value, [setKey]: setValue }} />;
+};
+const withPropsOnChange = (dependencies, propsMapper) => (Component) => (props) => {
+	const mappedProps = propsMapper(props);
+	return <Component {...props} {...mappedProps} />;
+};
 
 const enhance = compose(
 	withState('activeTab', 'setActiveTab', null),
@@ -39,9 +48,7 @@ const Tabs = ({ tabs, activeTab, setActiveTab }) =>
 		<div className={`tabs`}>
 			<div
 				className={`tabs-titles`}
-				css={css`
-					display: flex;
-				`}
+				style={{ display: 'flex' }}
 			>
 				{tabs.map(({ key, title }) => (
 					<div

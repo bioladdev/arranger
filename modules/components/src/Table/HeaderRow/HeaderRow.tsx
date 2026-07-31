@@ -1,17 +1,16 @@
-import { css } from '@emotion/react';
 import { flexRender } from '@tanstack/react-table';
 import cx from 'classnames';
 
-import { TransparentButton } from '#Button/index.js';
-import { useTableContext } from '#Table/helpers/index.js';
-import { SELECTION_COLUMN_ID } from '#Table/types.js';
-import { useThemeContext } from '#ThemeContext/index.js';
-import { emptyObj } from '#utils/noops.js';
+import { TransparentButton } from '#Button/index';
+import { useTableContext } from '#Table/helpers/index';
+import { SELECTION_COLUMN_ID } from '#Table/types';
+import { useThemeContext } from '#ThemeContext/index';
+import { emptyObj } from '#utils/noops';
 
-import type { HeaderRowProps } from './type.js';
+import type { HeaderRowProps } from './type';
 
 const TableHeaderRow = ({
-	css: customCSS,
+	style: customCSS,
 	hasVisibleRows,
 	headers,
 	theme: {
@@ -33,7 +32,7 @@ const TableHeaderRow = ({
 					background: themeBackground,
 					borderColor: themeBorderColor,
 					className: themeClassName,
-					css: themeCSS,
+					style: themeCSS,
 					disabledBackground: themeDisabledBackground = colors?.grey?.[100],
 					disabledFontColor: themeDisabledFontColor = colors?.grey?.[500],
 					fontColor: themeFontColor = colors?.grey?.[800],
@@ -66,24 +65,7 @@ const TableHeaderRow = ({
 	return (
 		<tr
 			className={cx('TableHeaderRow', themeClassName)}
-			css={[
-				themeCSS,
-				css`
-					background: ${hasVisibleRows ? themeBackground : themeDisabledBackground};
-					color: ${hasVisibleRows ? themeFontColor : themeDisabledFontColor};
-					font-family: ${themeFontFamily};
-					font-size: ${themeFontSize};
-					font-weight: ${themeFontWeight};
-					letter-spacing: ${themeLetterSpacing};
-					line-height: ${themeLineHeight};
-					position: ${themePosition};
-
-					&:not(:last-of-type) {
-						border-bottom: ${borderColor_horizontal && `0.1rem solid ${borderColor_horizontal}`};
-					}
-				`,
-				customCSS,
-			]}
+			style={{ background: hasVisibleRows ? themeBackground : themeDisabledBackground, color: hasVisibleRows ? themeFontColor : themeDisabledFontColor, fontFamily: themeFontFamily, fontSize: themeFontSize, fontWeight: themeFontWeight, letterSpacing: themeLetterSpacing, lineHeight: themeLineHeight, position: themePosition, ...themeCSS, ...customCSS }}
 		>
 			{headers.map((headerObj) => {
 				const { displayName, sortable } = allColumnsDict[headerObj.id] || {
@@ -101,34 +83,7 @@ const TableHeaderRow = ({
 							desc: isSorted === 'desc',
 							sortable,
 						})}
-						css={css`
-							overflow: ${themeOverflow};
-							padding: ${headerPadding};
-							position: relative;
-							text-align: left;
-							text-decoration: ${themeTextDecoration};
-							text-overflow: ${textOverflow};
-							text-transform: ${themeTextTransform};
-							white-space: ${themeWhiteSpace};
-							/* left: header.getStart(), */
-							width: ${headerObj.getSize()}px;
-
-							&:not(:last-of-type) {
-								border-right: ${borderColor_vertical && `1px solid ${borderColor_vertical}`};
-							}
-
-							&.sortable {
-								cursor: pointer;
-
-								&.asc {
-									box-shadow: inset 0 3px 0 0 ${headerHighlightColor};
-								}
-
-								&.desc {
-									box-shadow: inset 0 -3px 0 0 ${headerHighlightColor};
-								}
-							}
-						`}
+						style={{ overflow: themeOverflow, padding: headerPadding, position: 'relative', textAlign: 'left', textDecoration: themeTextDecoration, textOverflow: textOverflow, textTransform: themeTextTransform, whiteSpace: themeWhiteSpace, width: `${headerObj.getSize()}px` }}
 						data-accessor={headerObj.id}
 						data-header={displayName}
 						key={headerObj.id}
@@ -143,30 +98,7 @@ const TableHeaderRow = ({
 							<TransparentButton
 								aria-label="Resize Column"
 								className={`resizer ${headerObj.column.getIsResizing() ? 'isResizing' : ''}`}
-								css={css`
-									background: rgba(0, 0, 0, 0.5);
-									cursor: col-resize;
-									height: 100%;
-									position: absolute;
-									right: 0;
-									top: 0;
-									touch-action: none;
-									user-select: none;
-									width: 3px;
-
-									&.isResizing {
-										background: blue;
-										opacity: 1;
-									}
-
-									@media (hover: hover) {
-										opacity: 0;
-
-										&:hover {
-											opacity: 1;
-										}
-									}
-								`}
+								style={{ background: 'rgba(0, 0, 0, 0.5)', cursor: 'col-resize', height: '100%', position: 'absolute', right: 0, top: 0, touchAction: 'none', userSelect: 'none', width: '3px' }}
 								onMouseDown={headerObj.getResizeHandler()}
 								onTouchStart={headerObj.getResizeHandler()}
 							/>

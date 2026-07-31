@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 
-import { DEBUG } from './config.js';
+import { DEBUG } from './config';
 
 const getDisplayName = <P extends object>(Component: P) => {
 	const displayName = (Component as FC<P>)?.displayName ?? (Component as FC<P>)?.name;

@@ -1,16 +1,16 @@
-export { Aggregations, AggregationsListDisplay, AggregationsList, AggsWrapper } from './aggregations/index.js';
-export * from './Arranger/index.js';
+export { Aggregations, AggregationsListDisplay, AggregationsList, AggsWrapper } from './aggregations/index';
+export * from './Arranger/index';
 export {
 	DataContext as ArrangerDataContext,
 	DataProvider as ArrangerDataProvider,
 	useDataContext as useArrangerData,
 	withData as withArrangerData,
-} from './DataContext/index.js';
-export { default as Query, withQuery } from './Query.js';
-export { default as QuickSearch } from './QuickSearch/index.js';
+} from './DataContext/index';
+export { default as Query, withQuery } from './Query';
+export { default as QuickSearch } from './QuickSearch/index';
 // TODO: Deprecate "CurrentSQON" component name as unsemantical,
 // remove SQONView (duplicate of CurrentSQON to produce the same log warning)
-export { CurrentSQON, default as SQONViewer, SQONView } from './SQONViewer/index.js';
+export { CurrentSQON, default as SQONViewer, SQONView } from './SQONViewer/index';
 export {
 	ColumnsSelectButton,
 	CountDisplay,
@@ -24,13 +24,13 @@ export {
 	Toolbar,
 	useTableContext,
 	withTableContext,
-} from './Table/index.js';
+} from './Table/index';
 export {
 	arrangerTheme,
 	ThemeContext as ArrangerThemeContext,
 	ThemeProvider as ArrangerThemeProvider,
 	useThemeContext as useArrangerTheme,
 	withTheme as withArrangerTheme,
-} from './ThemeContext/index.js';
-export * from './utils/index.js';
-export type * from './types.js';
+} from './ThemeContext/index';
+export * from './utils/index';
+export type * from './types';

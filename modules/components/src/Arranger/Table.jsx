@@ -1,13 +1,13 @@
 import Spinner from 'react-spinkit';
 
-import DataTable, { ColumnsState } from '#DataTable/index.js';
-import { withTableContext } from '#Table/index.js';
-import defaultApiFetcher from '#utils/api.js';
-import noopFn from '#utils/noops.js';
+import DataTable, { ColumnsState } from '#DataTable/index';
+import { withTableContext } from '#Table/index';
+import defaultApiFetcher from '#utils/api';
+import noopFn from '#utils/noops';
 
 /**
  * @param {Object} props
- * @param {import('#types.js').SQONType} props.sqon
+ * @param {import('#types').SQONType} props.sqon
  */
 const Table = ({
 	onFilterChange = noopFn,

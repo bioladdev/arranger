@@ -1,15 +1,14 @@
-import { css } from '@emotion/react';
 import cx from 'classnames';
 
-import { useThemeContext } from '#ThemeContext/index.js';
-import { emptyObj } from '#utils/noops.js';
+import { useThemeContext } from '#ThemeContext/index';
+import { emptyObj } from '#utils/noops';
 
-import type Props from './types.js';
+import type Props from './types';
 
 const BucketCount = ({
 	className,
 	children,
-	css: customCSS,
+	style: customStyle,
 	theme: {
 		activeBackground: customActiveBackground,
 		activeBorderColor: customActiveBorderColor,
@@ -19,7 +18,7 @@ const BucketCount = ({
 		borderColor,
 		borderRadius,
 		className: customClassName,
-		css: parentCSS,
+		style: parentStyle,
 		disabledBackground: customDisabledBackground,
 		disabledBorderColor: customDisabledBorderColor,
 		disabledFontColor: customDisabledFontColor,
@@ -42,7 +41,7 @@ const BucketCount = ({
 					borderColor: themeBorderColor,
 					borderRadius: themeBorderRadius = '0.2rem',
 					className: themeClassName,
-					css: themeCSS,
+					style: themeStyle,
 					disabledBackground: themeDisabledBackground = colors?.common?.white,
 					disabledBorderColor: themeDisabledBorderColor,
 					disabledFontColor: themeDisabledFontColor = colors?.grey?.[700],
@@ -65,36 +64,21 @@ const BucketCount = ({
 	return (
 		<span
 			className={cx(`bucket-count`, className, customClassName, themeClassName)}
-			css={[
-				themeCSS,
-				css`
-					background: ${background || themeBackground};
-					border: ${hasBorder && '0.1rem solid transparent'};
-					border-color: ${borderColor || themeBorderColor};
-					border-radius: ${borderRadius || themeBorderRadius};
-					color: ${fontColor || themeFontColor};
-					display: inline-block;
-					font-size: ${fontSize || themeFontSize};
-					height: fit-content;
-					padding: 0 0.2rem;
-
-					&.active {
-						background: ${customActiveBackground || themeActiveBackground};
-						border-color: ${customActiveBorderColor || themeActiveBorderColor};
-						color: ${customActiveFontColor || themeActiveFontColor};
-						font-size: ${customActiveFontSize || themeActiveFontSize};
-					}
-
-					&.disabled {
-						background: ${customDisabledBackground || themeDisabledBackground};
-						border-color: ${customDisabledBorderColor || themeDisabledBorderColor};
-						color: ${customDisabledFontColor || themeDisabledFontColor};
-						font-size: ${customDisabledFontSize || themeDisabledFontSize};
-					}
-				`,
-				parentCSS,
-				customCSS,
-			]}
+			// TODO: restore hover/focus styles via CSS
+			style={{
+				background: background || themeBackground,
+				border: hasBorder && '0.1rem solid transparent',
+				borderColor: borderColor || themeBorderColor,
+				borderRadius: borderRadius || themeBorderRadius,
+				color: fontColor || themeFontColor,
+				display: 'inline-block',
+				fontSize: fontSize || themeFontSize,
+				height: 'fit-content',
+				padding: '0 0.2rem',
+				...themeStyle,
+				...parentStyle,
+				...customStyle,
+			}}
 			{...props}
 		>
 			{children}

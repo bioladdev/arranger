@@ -1,11 +1,10 @@
-import { css } from '@emotion/react';
 import cx from 'classnames';
 import { useState } from 'react';
 
-import { TransparentButton } from '#Button/index.js';
-import { ArrowIcon } from '#Icons/index.js';
-import { useThemeContext } from '#ThemeContext/index.js';
-import noopFn, { emptyObj } from '#utils/noops.js';
+import { TransparentButton } from '#Button/index';
+import { ArrowIcon } from '#Icons/index';
+import { useThemeContext } from '#ThemeContext/index';
+import noopFn, { emptyObj } from '#utils/noops';
 
 const BaseWrapper = ({ className, ...props }) => <section {...props} className={cx('quicksearch', className)} />;
 
@@ -28,7 +27,7 @@ const QuickSearchWrapper = ({
 			QuickSearch: {
 				QuickSearchWrapper: {
 					className: themeClassName,
-					css: themeQuickSearchWrapperCSS,
+					style: themeQuickSearchWrapperCSS,
 					collapsedBackground: themeQuickSearchWrapperCollapsedBackground = colors?.grey?.[200],
 					collapsible: themeQuickSearchWrapperCollapsible = true,
 					dividerColor: themeQuickSearchWrapperDividerColor = colors?.grey?.[300],
@@ -64,50 +63,23 @@ const QuickSearchWrapper = ({
 		<BaseWrapper className={customClassName}>
 			<article
 				className={cx('quicksearch-wrapper', customClassName || themeClassName)}
-				css={[
-					themeQuickSearchWrapperCSS,
-					css`
-						border-bottom: 0.05rem solid transparent;
-						border-color: ${themeQuickSearchWrapperDividerColor};
-						box-sizing: border-box;
-						padding-bottom: ${isCollapsed ? 0 : '0.3rem'};
-					`,
-				]}
+				style={{ borderBottom: '0.05rem solid transparent', borderColor: themeQuickSearchWrapperDividerColor, boxSizing: 'border-box', paddingBottom: isCollapsed ? 0 : '0.3rem', ...themeQuickSearchWrapperCSS }}
 				ref={componentRef}
 				{...quickSearchWrapperTheme}
 				{...dataFields}
 			>
 				<header
 					className={cx('header', { collapsed: isCollapsed })}
-					css={css`
-						background: ${themeQuickSearchWrapperHeaderBackground};
-						box-sizing: border-box;
-						padding: 0 6px;
-						position: ${stickyHeader || themeQuickSearchWrapperHeaderSticky ? `sticky` : `relative`};
-						top: 0px;
-
-						&.collapsed {
-							background: ${themeQuickSearchWrapperCollapsedBackground};
-						}
-					`}
+					style={{ background: themeQuickSearchWrapperHeaderBackground, boxSizing: 'border-box', padding: '0 6px', position: stickyHeader || themeQuickSearchWrapperHeaderSticky ? 'sticky' : 'relative', top: '0px' }} // TODO: restore pseudo-selector styles via CSS
 					ref={headerRef}
 				>
 					<div
 						className={cx('title-wrapper', { collapsed: isCollapsed })}
-						css={css`
-							align-items: center;
-							border-bottom: 0.1rem solid ${themeQuickSearchWrapperHeaderDividerColor};
-							box-sizing: border-box;
-							display: flex;
-							padding: 6px 0 4px;
-						`}
+						style={{ alignItems: 'center', borderBottom: `0.1rem solid ${themeQuickSearchWrapperHeaderDividerColor}`, boxSizing: 'border-box', display: 'flex', padding: '6px 0 4px' }}
 					>
 						<TransparentButton
 							className="title-control"
-							css={css`
-								padding: 2px 0;
-								width: 100%;
-							`}
+							style={{ padding: '2px 0', width: '100%' }}
 							onClick={collapsible ? () => setIsCollapsed(!isCollapsed) : undefined}
 						>
 							{collapsible && (
@@ -124,12 +96,7 @@ const QuickSearchWrapper = ({
 
 							<span
 								className="title"
-								css={css`
-									color: ${themeQuickSearchWrapperHeaderFontColor || 'inherit'};
-									font-size: 1rem;
-									margin-left: 0.5rem;
-									${ActionIcon && `padding-right: calc(${themeActionIconSize}* 1.3px);`}
-								`}
+								style={{ color: themeQuickSearchWrapperHeaderFontColor || 'inherit', fontSize: '1rem', marginLeft: '0.5rem', ...(ActionIcon && { paddingRight: `calc(${themeActionIconSize}* 1.3px)` }) }}
 							>
 								{headerTitle}
 							</span>
@@ -138,14 +105,7 @@ const QuickSearchWrapper = ({
 						{ActionIcon && (
 							<TransparentButton
 								className="action-icon"
-								css={css`
-									cursor: pointer;
-									margin-left: 0.4rem;
-									margin-top: 0.1rem;
-									padding: 0.2rem;
-									position: absolute;
-									right: 6px;
-								`}
+								style={{ cursor: 'pointer', marginLeft: '0.4rem', marginTop: '0.1rem', padding: '0.2rem', position: 'absolute', right: '6px' }}
 								hidden={isCollapsed}
 							>
 								<ActionIcon
@@ -175,11 +135,7 @@ const QuickSearchWrapper = ({
 				{!isCollapsed && (
 					<section
 						className={cx('filter', { collapsed: isCollapsed })}
-						css={css`
-							box-sizing: border-box;
-							padding: 0 6px;
-							top: 0px;
-						`}
+						style={{ boxSizing: 'border-box', padding: '0 6px', top: '0px' }}
 					>
 						{children}
 					</section>

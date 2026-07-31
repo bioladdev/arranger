@@ -1,8 +1,8 @@
-import Location from '#Location.js';
-import { inCurrentSQON } from '#SQONViewer/utils.js';
+import Location from '#Location';
+import { inCurrentSQON } from '#SQONViewer/utils';
 
-import AggsQuery from './AggsQuery.js';
-import TermAggs from './TermAggs/index.js';
+import AggsQuery from './AggsQuery';
+import TermAggs from './TermAggs/index';
 
 const AggsPanel = ({ index, aggs = [], ...props }) =>
 	aggs.length ? (

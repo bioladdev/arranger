@@ -1,6 +1,6 @@
 // Note: baseTheme here is used to produce a type, so the import can be elided
-import type baseTheme from '#ThemeContext/baseTheme/index.js';
-import type { RecursivePartial } from '#utils/types.js';
+import type baseTheme from '#ThemeContext/baseTheme/index';
+import type { RecursivePartial } from '#utils/types';
 
 export type ColorNames = keyof typeof baseTheme.colors;
 

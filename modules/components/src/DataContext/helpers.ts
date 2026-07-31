@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import columnsToGraphql from '#utils/columnsToGraphql.js';
-import { emptyObj } from '#utils/noops.js';
+import columnsToGraphql from '#utils/columnsToGraphql';
+import { emptyObj } from '#utils/noops';
 
-import { componentConfigsQuery } from './dataQueries.js';
+import { componentConfigsQuery } from './dataQueries';
 import type {
 	APIFetcherFn,
 	ConfigsInterface,
@@ -11,7 +11,7 @@ import type {
 	FetchDataFn,
 	SQONType,
 	TableConfigsInterface,
-} from './types.js';
+} from './types';
 
 export const useConfigs = ({
 	apiFetcher,

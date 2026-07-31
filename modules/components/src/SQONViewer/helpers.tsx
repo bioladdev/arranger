@@ -1,19 +1,16 @@
-import isPropValid from '@emotion/is-prop-valid';
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
 import cx from 'classnames';
 import { format } from 'date-fns';
 import { merge, truncate, xor } from 'lodash-es';
 import { useCallback, useState } from 'react';
 
-import { TransparentButton } from '#Button/index.js';
-import type { ButtonProps } from '#Button/types.js';
-import { useDataContext } from '#DataContext/index.js';
-import { Row } from '#Flex/index.js';
-import { useThemeContext } from '#ThemeContext/index.js';
-import type { ThemeCommon } from '#ThemeContext/types/index.js';
-import { emptyObj } from '#utils/noops.js';
-import internalTranslateSQONValue from '#utils/translateSQONValue.js';
+import { TransparentButton } from '#Button/index';
+import type { ButtonProps } from '#Button/types';
+import { useDataContext } from '#DataContext/index';
+import { Row } from '#Flex/index';
+import { useThemeContext } from '#ThemeContext/index';
+import type { ThemeCommon } from '#ThemeContext/types/index';
+import { emptyObj } from '#utils/noops';
+import internalTranslateSQONValue from '#utils/translateSQONValue';
 
 import type {
 	GroupSQONInterface,
@@ -21,7 +18,7 @@ import type {
 	SQONViewerThemeProps,
 	UseDataBubblesProps,
 	ValueSQONInterface,
-} from './types.js';
+} from './types';
 
 export interface BubbleProps extends ButtonProps {
 	onClick?: () => void;
@@ -34,7 +31,6 @@ export const Bubble = ({ children, className, theme, ...props }: BubbleProps) =>
 	return (
 		<TransparentButton
 			className={cx('sqon-bubble', className)}
-			css={css``}
 			theme={merge(
 				{
 					margin: '0 0.2em',
@@ -49,30 +45,20 @@ export const Bubble = ({ children, className, theme, ...props }: BubbleProps) =>
 	);
 };
 
-export const FieldName = ({ children, className, css: customCSS, ...props }: BubbleProps) => (
+export const FieldName = ({ children, className, style: customStyle, ...props }: BubbleProps) => (
 	<Bubble
 		className={cx('sqon-fieldName', className)}
-		css={[
-			css`
-				cursor: default;
-			`,
-			customCSS,
-		]}
+		theme={{ style: { cursor: 'default', ...customStyle } }}
 		{...props}
 	>
 		{children}
 	</Bubble>
 );
 
-export const Op = ({ children, className, css: customCSS, ...props }: BubbleProps) => (
+export const Op = ({ children, className, style: customStyle, ...props }: BubbleProps) => (
 	<Bubble
 		className={cx('sqon-op', className)}
-		css={[
-			css`
-				cursor: default;
-			`,
-			customCSS,
-		]}
+		theme={{ style: { cursor: 'default', ...customStyle } }}
 		{...props}
 	>
 		{children}
@@ -104,7 +90,7 @@ export const useDataBubbles = ({
 				SQONLessOrMore: themeSQONLessOrMoreProps = emptyObj,
 				SQONValue: {
 					characterLimit: themeCharacterLimit = 30,
-					css: themeSQONValueCustomCSS = emptyObj,
+					style: themeSQONValueCustomStyle = emptyObj,
 					...themeSQONValueProps
 				} = emptyObj,
 			} = emptyObj,
@@ -123,10 +109,7 @@ export const useDataBubbles = ({
 	const Clear = ({ nextSQON }: { nextSQON: GroupSQONInterface | null }) => (
 		<Bubble
 			className="sqon-clear"
-			css={css`
-				margin-left: 0;
-				margin-right: 0.5em;
-			`}
+			style={{ marginLeft: 0, marginRight: '0.5em' }}
 			onClick={() => {
 				onClear?.();
 				setSQON?.(nextSQON);
@@ -145,7 +128,7 @@ export const useDataBubbles = ({
 	);
 
 	const FieldNameCrumb = ({ fieldName, ...fieldProps }: { fieldName: string }) => (
-		<FieldName css={css``} theme={{ fontWeight: 'bold', ...themeSQONFieldNameProps }} {...{ fieldName, ...fieldProps }}>
+		<FieldName theme={{ fontWeight: 'bold', ...themeSQONFieldNameProps }} {...{ fieldName, ...fieldProps }}>
 			{findExtendedMappingForField(fieldName)?.displayName || fieldName}
 		</FieldName>
 	);
@@ -164,13 +147,13 @@ export const useDataBubbles = ({
 				onClick={lessOrMoreClickHandler(valueSQON)}
 				theme={themeSQONLessOrMoreProps}
 			>
-				{showLess ? 'less' : '\u2026'}
+				{showLess ? 'less' : '…'}
 			</Bubble>
 		);
 	};
 
 	const ValueCrumb = ({
-		css: customCSS,
+		style: customStyle,
 		fieldName,
 		nextSQON,
 		value,
@@ -196,7 +179,7 @@ export const useDataBubbles = ({
 		return (
 			<Value
 				onClick={() => setSQON?.(nextSQON)}
-				css={[themeSQONValueCustomCSS, customCSS]}
+				style={{ ...themeSQONValueCustomStyle, ...customStyle }}
 				title={bubbleTitle}
 				theme={{
 					textDecoration: 'underline',
@@ -219,48 +202,95 @@ export const useDataBubbles = ({
 	};
 };
 
-export const SQONGroup = styled(
-	({ className, ...props }: { className?: string }) => (
-		<Row as="section" className={cx('sqon-group', className)} wrap {...props} />
-	),
-	{
-		shouldForwardProp: isPropValid,
-	},
-)<SQONViewerThemeProps['SQONGroup']>`
-	align-items: center;
-`;
+export const SQONGroup = ({
+	className,
+	children,
+	style,
+	...props
+}: {
+	className?: string;
+	children?: React.ReactNode;
+	style?: React.CSSProperties;
+}) => (
+	<Row
+		as="section"
+		className={cx('sqon-group', className)}
+		wrap
+		style={{ alignItems: 'center', ...style }}
+		{...props}
+	/>
+);
 
-export const SQONValueGroup = styled(
-	({ className, ...props }: { className?: string }) => (
-		<span className={cx('sqon-value-group', className)} {...props} />
-	),
-	{
-		shouldForwardProp: isPropValid,
-	},
-)<SQONViewerThemeProps['SQONValueGroup']>`
-	align-items: center;
-	background: ${({ background }) => background};
-	border-color: ${({ borderColor }) => borderColor};
-	border-radius: ${({ borderRadius }) => borderRadius};
-	color: ${({ fontColor }) => fontColor};
-	display: flex;
-	font-size: ${({ fontSize }) => fontSize};
-	font-weight: ${({ fontWeight }) => fontWeight};
-	letter-spacing: ${({ letterSpacing }) => letterSpacing};
-	line-height: ${({ lineHeight }) => lineHeight};
-	margin: ${({ margin }) => margin};
-	padding: ${({ padding }) => padding};
-	text-transform: ${({ textTransform }) => textTransform};
-`;
+export const SQONValueGroup = ({
+	className,
+	children,
+	background,
+	borderColor,
+	borderRadius,
+	fontColor: color,
+	fontSize,
+	fontWeight,
+	letterSpacing,
+	lineHeight,
+	margin,
+	padding,
+	textTransform,
+	style: customStyle,
+}: SQONViewerThemeProps['SQONValueGroup'] & {
+	className?: string;
+	children?: React.ReactNode;
+	style?: React.CSSProperties;
+}) => (
+	<span
+		className={cx('sqon-value-group', className)}
+		style={{
+			alignItems: 'center',
+			background,
+			border: borderColor ? `1px solid ${borderColor}` : undefined,
+			borderRadius,
+			color,
+			display: 'flex',
+			fontSize,
+			fontWeight,
+			letterSpacing,
+			lineHeight,
+			margin,
+			padding,
+			textTransform: textTransform as React.CSSProperties['textTransform'],
+			...customStyle,
+		}}
+	>
+		{children}
+	</span>
+);
 
-export const SQONWrapper = styled.article<SQONViewerThemeProps['SQONWrapper']>`
-	align-items: center;
-	color: ${({ fontColor }) => fontColor};
-	display: flex;
-	flex: 1;
-	flex-wrap: wrap;
-	font-size: ${({ fontSize }) => fontSize};
-	font-weight: ${({ fontWeight }) => fontWeight};
-	margin: 0;
-	padding: 12px 0 12px 12px;
-`;
+export const SQONWrapper = ({
+	className,
+	children,
+	fontColor: color,
+	fontSize,
+	fontWeight,
+	style: customStyle,
+}: SQONViewerThemeProps['SQONWrapper'] & {
+	className?: string;
+	children?: React.ReactNode;
+	style?: React.CSSProperties;
+}) => (
+	<article
+		className={className}
+		style={{
+			alignItems: 'center',
+			color,
+			display: 'flex',
+			flex: 1,
+			flexWrap: 'wrap',
+			fontSize,
+			fontWeight,
+			margin: 0,
+			padding: '12px 0 12px 12px',
+			...customStyle,
+		}}
+	>
+		{children}
+	</article>
+);

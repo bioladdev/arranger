@@ -8,13 +8,13 @@ import {
 import { get, merge } from 'lodash-es';
 import { type ReactNode, useEffect, useState } from 'react';
 
-import { SELECTION_COLUMN_ID, type UseTableDataProps } from '#Table/types.js';
-import { useThemeContext } from '#ThemeContext/index.js';
-import type { ColumnSortingInterface } from '#types.js';
-import { emptyObj } from '#utils/noops.js';
+import { SELECTION_COLUMN_ID, type UseTableDataProps } from '#Table/types';
+import { useThemeContext } from '#ThemeContext/index';
+import type { ColumnSortingInterface } from '#types';
+import { emptyObj } from '#utils/noops';
 
-import { makeTableColumns } from './columns.js';
-import { useTableContext } from './context.js';
+import { makeTableColumns } from './columns';
+import { useTableContext } from './context';
 
 export const getSingleValue = (data: Record<string, unknown> | ReactNode): ReactNode => {
 	if (typeof data === 'object' && data) {
@@ -182,6 +182,6 @@ export const useTableData = ({
 	return tableDataValues;
 };
 
-export * from './cells.js';
-export * from './columns.js';
-export * from './context.js';
+export * from './cells';
+export * from './columns';
+export * from './context';

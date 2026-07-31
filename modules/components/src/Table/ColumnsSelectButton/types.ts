@@ -1,10 +1,10 @@
 import type { ReactNode } from 'react';
 
-import type { ThemedButtonProps } from '#Button/types.js';
-import type { DropDownThemeProps } from '#DropDown/types.js';
-import type { InputThemeProps } from '#Input/types.js';
-import type { ThemeCommon } from '#ThemeContext/types/index.js';
-import type { RecursivePartial } from '#utils/types.js';
+import type { ThemedButtonProps } from '#Button/types';
+import type { DropDownThemeProps } from '#DropDown/types';
+import type { InputThemeProps } from '#Input/types';
+import type { ThemeCommon } from '#ThemeContext/types/index';
+import type { RecursivePartial } from '#utils/types';
 
 export interface ColumnSelectButtonThemeProps extends ThemedButtonProps, DropDownThemeProps {
 	enableFilter: boolean;

@@ -1,6 +1,6 @@
 import { keys, orderBy, partition } from 'lodash-es';
 
-import strToReg from '../utils/strToReg.js';
+import strToReg from '../utils/strToReg';
 
 const elasticMappingToDisplayTreeData = (elasticMapping, parentPath) => {
 	const mappingKeys = Object.keys(elasticMapping);

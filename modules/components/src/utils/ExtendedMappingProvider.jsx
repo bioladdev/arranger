@@ -1,7 +1,7 @@
-import { Component } from '@reach/component-component';
+import { useState, useEffect } from 'react';
 // import PropTypes from 'prop-types';
 
-import defaultApiFetcher, { fetchExtendedMapping } from './api.js';
+import defaultApiFetcher, { fetchExtendedMapping } from './api';
 
 const memoHash = {};
 const memoizedExtendedMapping = ({ documentType, apiFetcher }) => {
@@ -29,42 +29,39 @@ const ExtendedMappingProvider = ({
 	field: contentField,
 	children,
 }) => {
-	const initialState = { loading: true, extendedMapping: undefined };
-	const didMount = async (s) => {
-		if (contentField) {
-			const extendedMapping = !useCache
-				? await fetchExtendedMapping({
-					documentType,
-					apiFetcher,
-				}).then(({ extendedMapping }) =>
-					extendedMapping.filter(({ field }) => {
-						return field === contentField;
-					}),
-				)
-				: await memoizedExtendedMappingField({
-					documentType,
-					apiFetcher,
-					contentField,
-				});
-			s.setState({ loading: false, extendedMapping: extendedMapping });
-		} else {
-			const { extendedMapping } = !useCache
-				? await fetchExtendedMapping({
-					documentType,
-					apiFetcher,
-				})
-				: await memoizedExtendedMapping({
-					documentType,
-					apiFetcher,
-				});
-			s.setState({ loading: false, extendedMapping: extendedMapping });
-		}
-	};
-	return (
-		<Component initialState={initialState} didMount={didMount}>
-			{(s) => children({ ...s.state })}
-		</Component>
-	);
+	const [loading, setLoading] = useState(true);
+	const [extendedMapping, setExtendedMapping] = useState(undefined);
+
+	useEffect(() => {
+		let cancelled = false;
+		const doFetch = async () => {
+			if (contentField) {
+				const result = !useCache
+					? await fetchExtendedMapping({ documentType, apiFetcher }).then(({ extendedMapping }) =>
+						extendedMapping.filter(({ field }) => field === contentField),
+					)
+					: await memoizedExtendedMappingField({ documentType, apiFetcher, contentField });
+				if (!cancelled) {
+					setLoading(false);
+					setExtendedMapping(result);
+				}
+			} else {
+				const { extendedMapping: result } = !useCache
+					? await fetchExtendedMapping({ documentType, apiFetcher })
+					: await memoizedExtendedMapping({ documentType, apiFetcher });
+				if (!cancelled) {
+					setLoading(false);
+					setExtendedMapping(result);
+				}
+			}
+		};
+		doFetch();
+		return () => {
+			cancelled = true;
+		};
+	}, [documentType, apiFetcher, useCache, contentField]);
+
+	return children({ loading, extendedMapping });
 };
 
 // ExtendedMappingProvider.prototype = {

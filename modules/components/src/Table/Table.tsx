@@ -1,17 +1,16 @@
-import { css } from '@emotion/react';
 import cx from 'classnames';
-import { type PropsWithChildren, useLayoutEffect, useRef, useState } from 'react';
+import { type CSSProperties, type PropsWithChildren, useLayoutEffect, useRef, useState } from 'react';
 
-import Spinner, { LoaderContainer } from '#Loader/index.js';
-import MetaMorphicChild from '#MetaMorphicChild/index.js';
-import { useThemeContext } from '#ThemeContext/index.js';
-import { emptyObj } from '#utils/noops.js';
+import Spinner, { LoaderContainer } from '#Loader/index';
+import MetaMorphicChild from '#MetaMorphicChild/index';
+import { useThemeContext } from '#ThemeContext/index';
+import { emptyObj } from '#utils/noops';
 
-import HeaderRow from './HeaderRow/index.js';
-import { useTableData } from './helpers/index.js';
-import Row from './Row/index.js';
-import type { TableProps } from './types.js';
-import TableWrapper from './Wrapper.js';
+import HeaderRow from './HeaderRow/index';
+import { useTableData } from './helpers/index';
+import Row from './Row/index';
+import type { TableProps } from './types';
+import TableWrapper from './Wrapper';
 
 const Table = ({
 	className: customClassName,
@@ -38,7 +37,7 @@ const Table = ({
 				// appearance
 				background: themeTableBackground,
 				borderColor: themeTableBorderColor = colors?.grey?.[200],
-				css: themeTableCSS,
+				style: themeTableCSS,
 				fontColor: themeTableFontColor = colors?.grey?.[700],
 				fontFamily: themeTableFontFamily,
 				fontSize: themeTableFontSize = '0.8rem',
@@ -55,7 +54,7 @@ const Table = ({
 					background: themeHeaderGroupBackground,
 					borderColor: themeHeaderGroupBorderColor = themeTableBorderColor,
 					className: themeHeaderGroupClassName,
-					css: themeHeaderGroupCSS,
+					style: themeHeaderGroupCSS,
 					margin: themeHeaderGroupMargin,
 					overflow: themeHeaderGroupOverflow,
 					position: themeHeaderGroupPosition,
@@ -64,14 +63,14 @@ const Table = ({
 					background: themeTableBodyBackground,
 					borderColor: themeTableBodyBorderColor = themeTableBorderColor,
 					className: themeTableBodyClassName,
-					css: themeTableBodyCSS,
+					style: themeTableBodyCSS,
 					margin: themeTableBodyMargin,
 					overflow: themeTableBodyOverflow,
 					position: themeTableBodyPosition,
 				} = emptyObj,
 				TableWrapper: {
 					className: themeTableWrapperClassName,
-					css: themeTableWrapperCSS,
+					style: themeTableWrapperCSS,
 					key: themeTableWrapperKey = 'ArrangerTableWrapper',
 					...themeTableWrapperProps
 				} = emptyObj,
@@ -84,40 +83,25 @@ const Table = ({
 	const rows = tableInstance.getRowModel().rows;
 	const hasVisibleRows = rows.length > 0;
 
-	const containerStyles = css`
-		background: ${themeTableBackground};
-		border-collapse: collapse;
-		color: ${themeTableFontColor};
-		font-family: ${themeTableFontFamily};
-		font-size: ${themeTableFontSize};
-		font-weight: ${themeTableFontWeight};
-		letter-spacing: ${themeTableLetterSpacing};
-		line-height: ${themeTableLineHeight};
-		table-layout: fixed;
-		text-decoration: ${themeTableTextDecoration};
-		text-transform: ${themeTableTextTransform};
-		white-space: ${themeTableWhiteSpace};
-		width: 100%;
-
-		* {
-			box-sizing: border-box;
-		}
-	`;
+	const containerStyles: CSSProperties = {
+		background: themeTableBackground,
+		borderCollapse: 'collapse',
+		color: themeTableFontColor,
+		fontFamily: themeTableFontFamily,
+		fontSize: themeTableFontSize,
+		fontWeight: themeTableFontWeight,
+		letterSpacing: themeTableLetterSpacing,
+		lineHeight: themeTableLineHeight,
+		tableLayout: 'fixed',
+		textDecoration: themeTableTextDecoration,
+		textTransform: themeTableTextTransform,
+		whiteSpace: themeTableWhiteSpace,
+		width: '100%',
+	};
 
 	const MessageContainer = ({ Component = 'figure', children }: PropsWithChildren<any>) => (
 		<Component
-			css={[
-				css`
-					background: ${colors?.grey?.[200]};
-					border: 1px solid ${themeHeaderGroupBorderColor};
-					display: flex;
-					font-style: italic;
-					justify-content: center;
-					margin: 0;
-					padding: 0.7rem 0.5rem;
-				`,
-				containerStyles,
-			]}
+			style={{ background: colors?.grey?.[200], border: `1px solid ${themeHeaderGroupBorderColor}`, display: 'flex', fontStyle: 'italic', justifyContent: 'center', margin: 0, padding: '0.7rem 0.5rem', ...containerStyles }}
 		>
 			<MetaMorphicChild>{children}</MetaMorphicChild>
 		</Component>
@@ -131,7 +115,7 @@ const Table = ({
 	return (
 		<TableWrapper
 			className={cx('TableWrapper', customClassName, themeTableWrapperClassName)}
-			css={themeTableWrapperCSS}
+			style={themeTableWrapperCSS}
 			key={themeTableWrapperKey}
 			margin={themeTableMargin}
 			ref={ref}
@@ -157,19 +141,10 @@ const Table = ({
 			hasShowableColumns ? (
 				hasVisibleColumns ? (
 					<LoaderContainer {...{ isLoading }}>
-						<table css={[containerStyles, themeTableCSS]}>
+						<table style={{ ...containerStyles, ...themeTableCSS }}>
 							<thead
 								className={cx('TableHeaderGroup', themeHeaderGroupClassName)}
-								css={[
-									themeHeaderGroupCSS,
-									css`
-										background: ${themeHeaderGroupBackground};
-										border: ${themeHeaderGroupBorderColor && `1px solid ${themeHeaderGroupBorderColor}`};
-										margin: ${themeHeaderGroupMargin};
-										overflow: ${themeHeaderGroupOverflow};
-										position: ${themeHeaderGroupPosition};
-									`,
-								]}
+								style={{ background: themeHeaderGroupBackground, border: themeHeaderGroupBorderColor ? `1px solid ${themeHeaderGroupBorderColor}` : undefined, margin: themeHeaderGroupMargin, overflow: themeHeaderGroupOverflow, position: themeHeaderGroupPosition, ...themeHeaderGroupCSS }}
 							>
 								{headerGroups.map((headerGroup) => (
 									<HeaderRow
@@ -182,16 +157,7 @@ const Table = ({
 
 							<tbody
 								className={cx('TableBody', themeTableBodyClassName)}
-								css={[
-									themeTableBodyCSS,
-									css`
-										background: ${themeTableBodyBackground};
-										border: ${themeTableBodyBorderColor && `1px solid ${themeTableBodyBorderColor}`};
-										margin: ${themeTableBodyMargin};
-										overflow: ${themeTableBodyOverflow};
-										position: ${themeTableBodyPosition};
-									`,
-								]}
+								style={{ background: themeTableBodyBackground, border: themeTableBodyBorderColor ? `1px solid ${themeTableBodyBorderColor}` : undefined, margin: themeTableBodyMargin, overflow: themeTableBodyOverflow, position: themeTableBodyPosition, ...themeTableBodyCSS }}
 							>
 								{hasVisibleRows ? (
 									rows.map((row) => (

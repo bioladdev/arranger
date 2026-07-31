@@ -1,21 +1,20 @@
-import { css } from '@emotion/react';
 import cx from 'classnames';
 import { isEmpty, merge, orderBy, partition, truncate } from 'lodash-es';
 import { createRef, useState } from 'react';
 
-import { TransparentButton } from '#Button/index.js';
-import { removeSQON, toggleSQON } from '#SQONViewer/utils.js';
-import TextFilter from '#TextFilter/index.js';
-import TextHighlight from '#TextHighlight/index.js';
-import { useThemeContext } from '#ThemeContext/index.js';
-import ToggleButton from '#ToggleButton/index.js';
-import formatNumber from '#utils/formatNumber.js';
-import noopFn, { emptyObj, emptyStrFn } from '#utils/noops.js';
-import strToReg from '#utils/strToReg.js';
-import translateSQONValue from '#utils/translateSQONValue.js';
+import { TransparentButton } from '#Button/index';
+import { removeSQON, toggleSQON } from '#SQONViewer/utils';
+import TextFilter from '#TextFilter/index';
+import TextHighlight from '#TextHighlight/index';
+import { useThemeContext } from '#ThemeContext/index';
+import ToggleButton from '#ToggleButton/index';
+import formatNumber from '#utils/formatNumber';
+import noopFn, { emptyObj, emptyStrFn } from '#utils/noops';
+import strToReg from '#utils/strToReg';
+import translateSQONValue from '#utils/translateSQONValue';
 
-import AggsGroup from '../AggsGroup/index.js';
-import BucketCount from '../BucketCount/index.js';
+import AggsGroup from '../AggsGroup/index';
+import BucketCount from '../BucketCount/index';
 
 const generateNextSQON = ({ dotFieldName, bucket, isExclude, sqon }) =>
 	toggleSQON(
@@ -72,20 +71,14 @@ const IncludeExcludeButton = ({
 
 const MoreOrLessButton = ({
 	className = '',
-	css: customCSS = '',
+	style: customCSS = {},
 	howManyMore = 0,
 	isShowingMore = false,
 	...props
 }) => (
 	<TransparentButton
 		className={cx('showMore-wrapper', isShowingMore ? 'less' : 'more', className)}
-		css={[
-			css`
-				margin-left: 0.5rem;
-				text-decoration: underline;
-			`,
-			customCSS,
-		]}
+		style={{ marginLeft: '0.5rem', textDecoration: 'underline', ...(customCSS || {}) }}
 		{...props}
 	>
 		{isShowingMore ? 'Less' : `${howManyMore} More`}
@@ -374,9 +367,7 @@ const TermAggregations = ({
 			{headerTitle && (
 				<div
 					className="header"
-					css={css`
-						text-align: right;
-					`}
+					style={{ textAlign: 'right' }}
 				>
 					{headerTitle}
 				</div>
@@ -384,9 +375,7 @@ const TermAggregations = ({
 
 			{hasData ? (
 				<div
-					css={css`
-						width: 100%;
-					`}
+					style={{ width: '100%' }}
 				>
 					{(isAlphabetized ? alphabetizedBuckets : decoratedBuckets)
 						.slice(0, showingMore ? Infinity : maxTerms)
@@ -409,13 +398,7 @@ const TermAggregations = ({
 									fieldName: dotFieldName,
 									value: bucket.name,
 								}}
-								css={css`
-									cursor: pointer;
-									display: flex;
-									font-size: 0.8rem;
-									justify-content: space-between;
-									margin: 0.15rem 0;
-								`}
+								style={{ cursor: 'pointer', display: 'flex', fontSize: '0.8rem', justifyContent: 'space-between', margin: '0.15rem 0' }}
 								onClick={() =>
 									handleValueClick({
 										fieldName: dotFieldName,
@@ -428,9 +411,7 @@ const TermAggregations = ({
 							>
 								<span
 									className="bucket-link"
-									css={css`
-										display: flex;
-									`}
+									style={{ display: 'flex' }}
 									merge="toggle"
 								>
 									<input
@@ -439,10 +420,7 @@ const TermAggregations = ({
 											fieldName: dotFieldName,
 											value: bucket.name,
 										})}
-										css={css`
-											cursor: pointer;
-											margin: 0.2rem 0.3rem 0 0;
-										`}
+										style={{ cursor: 'pointer', margin: '0.2rem 0.3rem 0 0' }}
 										id={`input-${fieldName}-${bucket.name.replace(/\s/g, '-')}`}
 										name={`input-${fieldName}-${bucket.name.replace(/\s/g, '-')}`}
 										readOnly
@@ -473,11 +451,7 @@ const TermAggregations = ({
 			) : (
 				<span
 					className="no-data"
-					css={css`
-						color: ${themeNoDataFontColor};
-						display: block;
-						font-size: ${themeNoDataFontSize};
-					`}
+					style={{ color: themeNoDataFontColor, display: 'block', fontSize: themeNoDataFontSize }}
 				>
 					No data available
 				</span>

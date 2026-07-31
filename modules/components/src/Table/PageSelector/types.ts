@@ -1,5 +1,5 @@
-import type { ThemeCommon } from '#ThemeContext/types/index.js';
-import type { RecursivePartial } from '#utils/types.js';
+import type { ThemeCommon } from '#ThemeContext/types/index';
+import type { RecursivePartial } from '#utils/types';
 
 export interface PageSelectorThemeProps
 	extends ThemeCommon.FontProperties,

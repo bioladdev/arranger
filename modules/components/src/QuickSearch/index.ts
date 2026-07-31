@@ -1,1 +1,1 @@
-export { default } from './QuickSearch.js';
+export { default } from './QuickSearch';

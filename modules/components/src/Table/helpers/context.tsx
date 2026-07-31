@@ -1,22 +1,22 @@
 import type { RowSelectionState } from '@tanstack/react-table';
 import { type ComponentType, createContext, type ReactElement, useContext, useEffect, useMemo, useState } from 'react';
 
-import { useDataContext } from '#DataContext/index.js';
-import type { ColumnSortingInterface } from '#DataContext/types.js';
-import { useThemeContext } from '#ThemeContext/index.js';
-import { DEBUG } from '#utils/config.js';
-import getComponentDisplayName from '#utils/getComponentDisplayName.js';
-import missingProviderHandler from '#utils/missingProvider.js';
-import { emptyObj } from '#utils/noops.js';
+import { useDataContext } from '#DataContext/index';
+import type { ColumnSortingInterface } from '#DataContext/types';
+import { useThemeContext } from '#ThemeContext/index';
+import { DEBUG } from '#utils/config';
+import getComponentDisplayName from '#utils/getComponentDisplayName';
+import missingProviderHandler from '#utils/missingProvider';
+import { emptyObj } from '#utils/noops';
 
 import type {
 	ColumnsDictionary,
 	TableContextInterface,
 	TableContextProviderProps,
 	UseTableContextProps,
-} from '../types.js';
+} from '../types';
 
-import { aggregateCustomColumns, columnsArrayToDictionary, getColumnsByAttribute } from './columns.js';
+import { aggregateCustomColumns, columnsArrayToDictionary, getColumnsByAttribute } from './columns';
 
 export const TableContext = createContext<TableContextInterface>({
 	missingProvider: 'TableContext',

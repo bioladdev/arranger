@@ -1,10 +1,10 @@
 import type { FC, ReactElement } from 'react';
 
-import type { ButtonThemeProps, ThemedButtonProps } from '#Button/types.js';
-import type { ThemeCommon } from '#ThemeContext/types/index.js';
-import type { ToggleButtonThemeProps } from '#ToggleButton/types.js';
-import type { GenericFn } from '#utils/noops.js';
-import type { RecursivePartial } from '#utils/types.js';
+import type { ButtonThemeProps, ThemedButtonProps } from '#Button/types';
+import type { ThemeCommon } from '#ThemeContext/types/index';
+import type { ToggleButtonThemeProps } from '#ToggleButton/types';
+import type { GenericFn } from '#utils/noops';
+import type { RecursivePartial } from '#utils/types';
 
 export interface SearchResult {
 	// TODO: validate these

@@ -1,16 +1,15 @@
-import { css } from '@emotion/react';
 import cx from 'classnames';
 
-import { AggsGroup, BucketCount } from '#aggregations/index.js';
-import { replaceSQON, removeSQON } from '#SQONViewer/utils.js';
-import TextHighlight from '#TextHighlight/index.js';
-import { useThemeContext } from '#ThemeContext/index.js';
-import ToggleButton from '#ToggleButton/index.js';
-import formatNumber from '#utils/formatNumber.js';
-import noopFn, { emptyObj } from '#utils/noops.js';
+import { AggsGroup, BucketCount } from '#aggregations/index';
+import { replaceSQON, removeSQON } from '#SQONViewer/utils';
+import TextHighlight from '#TextHighlight/index';
+import { useThemeContext } from '#ThemeContext/index';
+import ToggleButton from '#ToggleButton/index';
+import formatNumber from '#utils/formatNumber';
+import noopFn, { emptyObj } from '#utils/noops';
 
-import { defaultDisplayLabels, defaultValueKeys } from './constants.js';
-import type Props from './types.js';
+import { defaultDisplayLabels, defaultValueKeys } from './constants';
+import type Props from './types';
 
 const emptyBucket = {
 	doc_count: 0,
@@ -133,9 +132,7 @@ const BooleanAggs = ({
 					/>
 					<BucketCount
 						className={cx(toggleStatus, themeBucketCountClassName)}
-						css={css`
-							margin-left: 0.3rem;
-						`}
+						style={{ marginLeft: '0.3rem' }}
 						theme={bucketCountTheme}
 					>
 						{formatNumber(isTrueBucketDisabled ? 0 : trueBucket.doc_count)}
@@ -154,9 +151,7 @@ const BooleanAggs = ({
 					/>
 					<BucketCount
 						className={cx(toggleStatus, themeBucketCountClassName)}
-						css={css`
-							margin-left: 0.2rem;
-						`}
+						style={{ marginLeft: '0.2rem' }}
 						theme={bucketCountTheme}
 					>
 						{formatNumber(isFalseBucketDisabled ? 0 : falseBucket.doc_count)}
@@ -183,9 +178,7 @@ const BooleanAggs = ({
 		>
 			{hasData ? (
 				<div
-					css={css`
-						width: 100%;
-					`}
+					style={{ width: '100%' }}
 				>
 					<ToggleButton
 						className={themeToggleButtonClassName}
@@ -203,11 +196,7 @@ const BooleanAggs = ({
 			) : (
 				<span
 					className="no-data"
-					css={css`
-						color: ${themeNoDataFontColor};
-						display: block;
-						font-size: ${themeNoDataFontSize};
-					`}
+					style={{ color: themeNoDataFontColor, display: 'block', fontSize: themeNoDataFontSize }}
 				>
 					No data available
 				</span>

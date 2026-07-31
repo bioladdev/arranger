@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 
-import type { ThemeCommon } from '#ThemeContext/types/index.js';
-import type { GenericFn } from '#utils/noops.js';
+import type { ThemeCommon } from '#ThemeContext/types/index';
+import type { GenericFn } from '#utils/noops';
 import AggsGroup from './AggsGroup.jsx';
 
 type IconButton = ThemeCommon.CustomCSS & {

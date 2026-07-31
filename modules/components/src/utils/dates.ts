@@ -1,7 +1,7 @@
 import { format, isValid, parseISO } from 'date-fns';
 import { isNil } from 'lodash-es';
 
-import { DEBUG } from './config.js';
+import { DEBUG } from './config';
 
 export const STANDARD_DATE = 'yyyy-MM-dd';
 

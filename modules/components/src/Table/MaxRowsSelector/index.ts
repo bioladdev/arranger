@@ -1,1 +1,1 @@
-export { default } from './MaxRowsSelector.js';
+export { default } from './MaxRowsSelector';

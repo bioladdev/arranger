@@ -1,6 +1,6 @@
-import type { LoaderThemeProps } from '#Loader/types.js';
-import type { ThemeCommon } from '#ThemeContext/types/index.js';
-import type { RecursivePartial } from '#utils/types.js';
+import type { LoaderThemeProps } from '#Loader/types';
+import type { ThemeCommon } from '#ThemeContext/types/index';
+import type { RecursivePartial } from '#utils/types';
 
 export type CountDisplayThemeProps = {
 	hideLoader: boolean;

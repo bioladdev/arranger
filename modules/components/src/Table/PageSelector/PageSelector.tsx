@@ -1,4 +1,3 @@
-import { css } from '@emotion/react';
 import cx from 'classnames';
 import {
 	useCallback,
@@ -9,18 +8,18 @@ import {
 	type MouseEventHandler,
 } from 'react';
 
-import { TransparentButton } from '#Button/index.js';
-import { useTableContext } from '#Table/helpers/index.js';
-import { useThemeContext } from '#ThemeContext/index.js';
-import { TooltippedForm, TooltippedLI } from '#Tooltip/index.js';
-import { emptyObj } from '#utils/noops.js';
-import useDebounce from '#utils/useDebounce.js';
+import { TransparentButton } from '#Button/index';
+import { useTableContext } from '#Table/helpers/index';
+import { useThemeContext } from '#ThemeContext/index';
+import { TooltippedForm, TooltippedLI } from '#Tooltip/index';
+import { emptyObj } from '#utils/noops';
+import useDebounce from '#utils/useDebounce';
 
-import type { PageSelectorProps } from './types.js';
+import type { PageSelectorProps } from './types';
 
 const PageSelector = ({
 	className: customClassName,
-	css: customCSS,
+	style: customCSS,
 	theme: {
 		borderColor: customBorderColor,
 		borderErrorColor: customBorderErrorColor,
@@ -47,7 +46,7 @@ const PageSelector = ({
 					borderRadius: themeBorderRadius = '0.3rem',
 					changePageOnTimeout: themeChangePageOnTimeout = false,
 					className: themeClassName,
-					css: themeCSS,
+					style: themeCSS,
 					disabledFontColor: themeDisabledFontColor = colors?.grey?.[400],
 					fontColor: themeFontColor = colors?.grey?.[700],
 					fontSize: themeFontSize = '0.8rem',
@@ -132,45 +131,19 @@ const PageSelector = ({
 	return (
 		<article
 			className={cx('PageSelector', customClassName, themeClassName)}
-			css={[
-				themeCSS,
-				css`
-					color: ${customFontColor || themeFontColor};
-					font-size: ${customFontSize || themeFontSize};
-				`,
-				customCSS,
-			]}
+			style={{ color: customFontColor || themeFontColor, fontSize: customFontSize || themeFontSize, ...themeCSS, ...customCSS }}
 			role="navigation"
 		>
+			{/* TODO: restore pseudo-selector styles via CSS */}
 			<ul
-				css={css`
-					align-items: center;
-					display: flex;
-					list-style: none;
-					margin: 0;
-
-					li {
-						align-items: center;
-						display: flex;
-
-						&:first-of-type {
-							margin-right: 0.6rem;
-						}
-
-						&:last-of-type {
-							margin-left: 0.6rem;
-						}
-					}
-				`}
+				style={{ alignItems: 'center', display: 'flex', listStyle: 'none', margin: 0 }}
 				aria-label="Pagination"
 			>
 				<TooltippedLI className="before">
 					{totalPages > 1 && (
 						<TransparentButton
 							className="first"
-							css={css`
-								margin-right: 0.3rem;
-							`}
+							style={{ marginRight: '0.3rem' }}
 							disabled={isFirstPage}
 							onClick={handlePageJump(firstPage)}
 							theme={{
@@ -197,14 +170,10 @@ const PageSelector = ({
 
 				<TooltippedLI className="current">
 					<label
-						css={css`
-							display: flex;
-						`}
+						style={{ display: 'flex' }}
 					>
 						<span
-							css={css`
-								margin: 0 0.2rem 0 0;
-							`}
+							style={{ margin: '0 0.2rem 0 0' }}
 						>
 							Page
 						</span>
@@ -222,26 +191,9 @@ const PageSelector = ({
 										tooltipVisibility: isInputbeyondRange ? 'always' : 'hover',
 									}}
 								>
+									{/* TODO: restore pseudo-selector styles via CSS */}
 									<input
-										css={css`
-											border: 0.1rem solid ${inputBorderColor};
-											border-radius: ${customBorderRadius || themeBorderRadius};
-											box-sizing: border-box;
-											color: ${customFontColor || themeFontColor};
-											font-size: calc(${customFontSize || themeFontSize} * 0.9);
-											height: calc(${customFontSize || themeFontSize} * 1.5);
-											padding: 0 0.3rem;
-											text-align: center;
-											width: 2.5rem;
-
-											// the following lines remove the spin button
-											-moz-appearance: textfield;
-											&::-webkit-inner-spin-button,
-											&::-webkit-outer-spin-button {
-												-webkit-appearance: none;
-												margin: 0;
-											}
-										`}
+										style={{ border: `0.1rem solid ${inputBorderColor}`, borderRadius: customBorderRadius || themeBorderRadius, boxSizing: 'border-box', color: customFontColor || themeFontColor, fontSize: `calc(${customFontSize || themeFontSize} * 0.9)`, height: `calc(${customFontSize || themeFontSize} * 1.5)`, padding: '0 0.3rem', textAlign: 'center', width: '2.5rem' }}
 										min={firstPage} // there's no page < 1, duh
 										max={lastPage}
 										name="page-selection-input"
@@ -292,9 +244,7 @@ const PageSelector = ({
 					{totalPages > 1 && (
 						<TransparentButton
 							className="last"
-							css={css`
-								margin-left: 0.3rem;
-							`}
+							style={{ marginLeft: '0.3rem' }}
 							disabled={isLastPage}
 							onClick={handlePageJump(lastPage)}
 							theme={{

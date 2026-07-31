@@ -1,8 +1,9 @@
 import { isEqual, debounce } from 'lodash-es';
 import { Component } from 'react';
-import { defaultProps } from 'recompose'; // Get rid of this cruft
 
-import defaultApiFetcher from './utils/api.js';
+import defaultApiFetcher from './utils/api';
+
+const defaultProps = (defaults) => (Component) => (props) => <Component {...defaults} {...props} />;
 
 class Query extends Component {
 	state = { data: null, error: null, loading: this.props.shouldFetch };

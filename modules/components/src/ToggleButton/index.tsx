@@ -1,11 +1,10 @@
-import { css } from '@emotion/react';
 import cx from 'classnames';
 
-import Button from '#Button/index.js';
-import { useThemeContext } from '#ThemeContext/index.js';
-import noopFn, { emptyObj } from '#utils/noops.js';
+import Button from '#Button/index';
+import { useThemeContext } from '#ThemeContext/index';
+import noopFn, { emptyObj } from '#utils/noops';
 
-import type Props from './types.js';
+import type Props from './types';
 
 // TODO: temprorarily quieting down TS errors to help migration
 /**
@@ -25,7 +24,7 @@ const ToggleButton = ({
 		borderRadius: customBorderRadius,
 		borderColor: customBorderColor,
 		className: customClassName,
-		css: customCSS,
+		style: customCSS,
 		disabledBackground: customDisabledBackground,
 		disabledBorderColor: customDisabledBorderColor,
 		disabledFontColor: customDisabledFontColor,
@@ -48,7 +47,7 @@ const ToggleButton = ({
 					borderRadius: themeBorderRadius = '0.9rem 50%',
 					borderColor: themeBorderColor = colors?.grey?.[600],
 					className: themeClassName = '',
-					css: themeCSS,
+					style: themeCSS,
 					disabledBackground: themeDisabledBackground = colors?.grey?.[200],
 					disabledBorderColor: themeDisabledBorderColor,
 					disabledFontColor: themeDisabledFontColor = colors?.grey?.[700],
@@ -64,79 +63,30 @@ const ToggleButton = ({
 	return (
 		<div
 			className={cx('toggle-button', className, customClassName, themeClassName)}
-			css={[
-				themeCSS,
-				css`
-					display: flex;
-					flex-direction: row;
-					justify-content: center;
-					height: calc(${themeFontSize} * 2);
-				`,
-				customCSS,
-			]}
+			style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', height: `calc(${themeFontSize} * 2)`, ...themeCSS, ...customCSS }}
 		>
 			{options.map(({ disabled = false, title, value = '' }, index) => {
 				const active = selectedValue === value;
 				const clickHandler = () => (disabled ? null : onChange({ value }));
 
 				return (
+					// TODO: restore active/disabled/border-radius pseudo-selector styles via CSS
 					<Button
 						className={cx('toggle-button-option', {
 							active,
 							disabled,
 						})}
-						css={[
-							themeOptionCSS,
-							css`
-								background: ${customBackground || themeBackground};
-								border: 0.1rem solid;
-								border-color: ${customBorderColor || themeBorderColor};
-								color: ${customFontColor || themeFontColor};
-								flex: 1;
-								font-size: ${customFontSize || themeFontSize};
-								padding: 5px;
-
-								&.active {
-									background: ${customActiveBackground || themeActiveBackground};
-									border-color: ${customActiveBorderColor || themeActiveBorderColor};
-									color: ${customActiveFontColor || themeActiveFontColor};
-									font-size: ${customActiveFontSize || themeActiveFontSize};
-								}
-
-								&.disabled {
-									background: ${customDisabledBackground || themeDisabledBackground};
-									border-color: ${customDisabledBorderColor || themeDisabledBorderColor};
-									color: ${customDisabledFontColor || themeDisabledFontColor};
-									font-size: ${customDisabledFontSize || themeDisabledFontSize};
-
-									.button-count {
-										background: red;
-										/* background-color: #cacbcf; */
-									}
-								}
-
-								&:first-of-type {
-									border-top-left-radius: ${customBorderRadius || themeBorderRadius};
-									border-bottom-left-radius: ${customBorderRadius || themeBorderRadius};
-								}
-
-								&:not(:first-of-type) {
-									&.active {
-										margin-left: -0.1rem;
-									}
-
-									&:not(.active) {
-										border-left: none;
-									}
-								}
-
-								&:last-of-type {
-									border-top-right-radius: ${customBorderRadius || themeBorderRadius};
-									border-bottom-right-radius: ${customBorderRadius || themeBorderRadius};
-								}
-							`,
-							customOptionCSS,
-						]}
+						style={{
+							background: customBackground || themeBackground,
+							border: '0.1rem solid',
+							borderColor: customBorderColor || themeBorderColor,
+							color: customFontColor || themeFontColor,
+							flex: 1,
+							fontSize: customFontSize || themeFontSize,
+							padding: '5px',
+							...themeOptionCSS,
+							...customOptionCSS,
+						}}
 						disabled={disabled}
 						key={value || `undefined-${index}`}
 						onClick={clickHandler}

@@ -1,5 +1,4 @@
 // TODO: get rid of prop types
-import { css } from '@emotion/react';
 import PropTypes from 'prop-types';
 import { Children, cloneElement } from 'react';
 
@@ -25,14 +24,7 @@ const Row = ({
 	...props
 }) => (
 	<Component
-		css={[
-			baseStyle,
-			css`
-				flex: ${flex};
-				flex-wrap: ${wrap && 'wrap'};
-			`,
-			style,
-		]}
+		style={{ ...baseStyle, flex, flexWrap: wrap ? 'wrap' : undefined, ...style }}
 		{...props}
 	>
 		{!spacing && children}

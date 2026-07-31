@@ -1,5 +1,5 @@
 /* @flow */
-import { parseSQONParam } from '../utils/uri/index.js';
+import { parseSQONParam } from '../utils/uri/index';
 
 // import type {
 //   TValueContent,

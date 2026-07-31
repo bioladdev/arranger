@@ -1,24 +1,23 @@
-import { css } from '@emotion/react';
 import { Component as ComponentComponent } from '@reach/component-component';
 import { debounce, keys, isEqual, pick } from 'lodash-es';
 import { Component } from 'react';
 import { FaFilter, FaTimesCircle } from 'react-icons/fa';
 
-import TextInput from '#Input/index.js';
-import Spinner from '#Loader/index.js';
-import NestedTreeView from '#NestedTreeView/index.js';
-import SQONViewer from '#SQONViewer/index.js';
-import Stats from '#Stats/index.js';
-import noopFn from '#utils/noops.js';
+import TextInput from '#Input/index';
+import Spinner from '#Loader/index';
+import NestedTreeView from '#NestedTreeView/index';
+import SQONViewer from '#SQONViewer/index';
+import Stats from '#Stats/index';
+import noopFn from '#utils/noops';
 
 import './AdvancedFacetView.css';
-import FacetView from './FacetView.js';
+import FacetView from './FacetView';
 import {
 	filterOutNonValue,
 	injectExtensionToElasticMapping,
 	orderDisplayTreeData,
 	filterDisplayTreeDataBySearchTerm,
-} from './utils.js';
+} from './utils';
 
 export default class AdvancedFacetView extends Component {
 	constructor(props) {
@@ -201,22 +200,14 @@ export default class AdvancedFacetView extends Component {
 										)}
 									</ComponentComponent>
 									{statsConfig && (
-										<div
-											css={css`
-												display: flex;
-												flex: 1;
-												height: 100%;
-											`}
-										>
+										<div style={{ display: 'flex', flex: 1, height: '100%' }}>
 											<Stats
 												small
 												transparent
 												{...props}
 												{...{ sqon }}
 												stats={statsConfig}
-												className={css`
-													flex-grow: 1;
-												`}
+												style={{ flexGrow: 1 }}
 											/>
 										</div>
 									)}

@@ -1,7 +1,7 @@
 import type { HTMLProps } from 'react';
 
-import type { ThemeCommon } from '#ThemeContext/types/index.js';
-import type { RecursivePartial } from '#utils/types.js';
+import type { ThemeCommon } from '#ThemeContext/types/index';
+import type { RecursivePartial } from '#utils/types';
 
 export type BucketCountThemeProps = ThemeCommon.CustomCSS &
 	ThemeCommon.BoxModelActiveProperties &
