@@ -1,11 +1,10 @@
-import { css } from '@emotion/react';
 import cx from 'classnames';
 import { isEqual } from 'lodash-es';
 import { Component } from 'react';
 
-import { withTheme } from '#ThemeContext/index.js';
-import { emptyObj } from '#utils/noops.js';
-import strToReg from '#utils/strToReg.js';
+import { withTheme } from '#ThemeContext/index';
+import { emptyObj } from '#utils/noops';
+import strToReg from '#utils/strToReg';
 
 // TODO: turn into function... component could use hooks.
 // TODO: temprorarily quieting down TS errors to help migration
@@ -20,7 +19,7 @@ class TextHighlight extends Component {
 	render() {
 		const {
 			content,
-			css: customCSS,
+			style: customStyle,
 			highlightClassName,
 			highlightColor,
 			highlightText,
@@ -32,7 +31,7 @@ class TextHighlight extends Component {
 						borderColor: themeBorderColor,
 						borderRadius: themeBorderRadius,
 						className: themeClassName,
-						css: themeCSS,
+						style: themeStyle,
 						fontcolor: themeFontColor = colors?.grey?.[900],
 						fontDecoration: themeFontDecoration,
 						fontSize: themeFontSize,
@@ -58,31 +57,24 @@ class TextHighlight extends Component {
 			return (
 				<span
 					className={cx('textHighlight active', themeWrapperClassName)}
-					css={[
-						themeWrapperCSS,
-						css`
-							// internal customisation should go here
-						`,
-					]}
+					style={{ ...themeWrapperCSS }}
 				>
 					{seg1}
 					<span
 						className={cx('highlighted', highlightClassName, themeClassName)}
-						css={[
-							themeCSS,
-							css`
-								background: ${themeBackground || highlightColor};
-								border: ${themeBorderColor && `1px solid ${themeBorderColor}`};
-								border-radius: ${themeBorderRadius};
-								color: ${themeFontColor};
-								font-size: ${themeFontSize};
-								font-weight: ${themeFontWeight};
-								margin: ${themeMargin};
-								padding: ${themePadding};
-								text-decoration: ${themeFontDecoration};
-							`,
-							customCSS,
-						]}
+						style={{
+							background: themeBackground || highlightColor,
+							border: themeBorderColor && `1px solid ${themeBorderColor}`,
+							borderRadius: themeBorderRadius,
+							color: themeFontColor,
+							fontSize: themeFontSize,
+							fontWeight: themeFontWeight,
+							margin: themeMargin,
+							padding: themePadding,
+							textDecoration: themeFontDecoration,
+							...themeStyle,
+							...customStyle,
+						}}
 					>
 						{foundQuery}
 					</span>
@@ -94,12 +86,7 @@ class TextHighlight extends Component {
 		return (
 			<span
 				className={cx('textHighlight active', themeWrapperClassName)}
-				css={[
-					themeWrapperCSS,
-					css`
-						// internal customisation should go here
-					`,
-				]}
+				style={{ ...themeWrapperCSS }}
 			>
 				{content}
 			</span>

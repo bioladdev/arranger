@@ -1,8 +1,6 @@
-import { css } from '@emotion/react';
-
-import TextHighlight from '#TextHighlight/index.js';
-import { useThemeContext } from '#ThemeContext/index.js';
-import { emptyObj } from '#utils/noops.js';
+import TextHighlight from '#TextHighlight/index';
+import { useThemeContext } from '#ThemeContext/index';
+import { emptyObj } from '#utils/noops';
 
 const QuickSearchDropdownItem = ({ entityName, inputValue, onMouseDown, optionIndex, primaryKey, result }) => {
 	const {
@@ -16,7 +14,7 @@ const QuickSearchDropdownItem = ({ entityName, inputValue, onMouseDown, optionIn
 						color3: themeEntityLogoColor3 = '#ff9324',
 						color4: themeEntityLogoColor4 = '#009bb8',
 						color5: themeEntityLogoColor5 = '#d8202f',
-						css: themeEntityLogoCSS = emptyObj,
+						style: themeEntityLogoCSS = emptyObj,
 						enabled: themeEntityLogoEnabled = true,
 						margin: themeEntityLogoMargin = '6px',
 						width: themeEntityLogoWidth = '14%',
@@ -24,10 +22,10 @@ const QuickSearchDropdownItem = ({ entityName, inputValue, onMouseDown, optionIn
 					evenRowColor: themeDropDownItemsEvenRowColor = '#f4f5f8',
 					lineHeight: themeDropdownItemsLineHeight = '220%',
 					resultKeyText: {
-						css: themeResultKeyTextCSS = emptyObj,
+						style: themeResultKeyTextCSS = emptyObj,
 						fontSize: themeResultKeyTextFontSize = '0.9em',
 					} = emptyObj,
-					resultValue: { css: themeResultValueCSS = emptyObj, fontSize: themeResultValueFontSize = '0.7em' } = emptyObj,
+					resultValue: { style: themeResultValueCSS = emptyObj, fontSize: themeResultValueFontSize = '0.7em' } = emptyObj,
 				} = emptyObj,
 			} = emptyObj,
 		} = emptyObj,
@@ -44,22 +42,7 @@ const QuickSearchDropdownItem = ({ entityName, inputValue, onMouseDown, optionIn
 	return (
 		<div
 			className="quick-search-result"
-			css={
-				onMouseDown &&
-				css`
-					cursor: pointer;
-					display: flex;
-					align-items: center;
-
-					&:hover {
-						box-shadow: inset 0px 0px 15px 0px rgba(0, 0, 0, 0.1);
-					}
-
-					&:nth-of-type(even) {
-						background-color: ${themeDropDownItemsEvenRowColor};
-					}
-				`
-			}
+			style={onMouseDown ? { cursor: 'pointer', display: 'flex', alignItems: 'center' } : undefined}
 			onMouseDown={onMouseDown}
 			role="presentation"
 			title={primaryKey}
@@ -67,22 +50,16 @@ const QuickSearchDropdownItem = ({ entityName, inputValue, onMouseDown, optionIn
 			{themeEntityLogoEnabled && (
 				<div
 					className={`quick-search-result-entity quick-search-result-entity-${optionIndex}`}
-					css={css`
-						background-color: ${logoEntityColors[optionIndex]};
-						border-radius: ${themeEntityLogoBorderRadius};
-						width: ${themeEntityLogoWidth};
-						margin: ${themeEntityLogoMargin};
-						display: flex;
-						align-items: center;
-						justify-content: center;
-
-						&:before {
-							content: '';
-							float: left;
-							padding-top: 100%;
-						}
-						${themeEntityLogoCSS}
-					`}
+					style={{
+						backgroundColor: logoEntityColors[optionIndex],
+						borderRadius: themeEntityLogoBorderRadius,
+						width: themeEntityLogoWidth,
+						margin: themeEntityLogoMargin,
+						display: 'flex',
+						alignItems: 'center',
+						justifyContent: 'center',
+						...themeEntityLogoCSS,
+					}}
 				>
 					<div>{entityName.slice(0, 2).toUpperCase()}</div>
 				</div>
@@ -90,17 +67,11 @@ const QuickSearchDropdownItem = ({ entityName, inputValue, onMouseDown, optionIn
 
 			<div
 				className="quick-search-result-details"
-				css={css`
-					overflow: hidden;
-				`}
+				style={{ overflow: 'hidden' }}
 			>
 				<div
 					className="quick-search-result-key"
-					css={css`
-						font-size: ${themeResultKeyTextFontSize};
-						line-height: ${themeDropdownItemsLineHeight};
-						${themeResultKeyTextCSS}
-					`}
+					style={{ fontSize: themeResultKeyTextFontSize, lineHeight: themeDropdownItemsLineHeight, ...themeResultKeyTextCSS }}
 				>
 					<TextHighlight highlightText={inputValue} content={primaryKey} />
 				</div>
@@ -108,13 +79,7 @@ const QuickSearchDropdownItem = ({ entityName, inputValue, onMouseDown, optionIn
 				{primaryKey === result || (
 					<div
 						className="quick-search-result-value"
-						css={css`
-							overflow: hidden;
-							text-overflow: ellipsis;
-							font-size: ${themeResultValueFontSize};
-							white-space: nowrap;
-							${themeResultValueCSS}
-						`}
+						style={{ overflow: 'hidden', textOverflow: 'ellipsis', fontSize: themeResultValueFontSize, whiteSpace: 'nowrap', ...themeResultValueCSS }}
 					>
 						<TextHighlight highlightText={inputValue} content={result} />
 					</div>

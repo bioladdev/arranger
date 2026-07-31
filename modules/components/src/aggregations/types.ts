@@ -1,14 +1,14 @@
-import type { SerializedStyles } from '@emotion/react';
+import type { CSSProperties } from 'react';
 
-import type { ThemedButtonProps } from '#Button/types.js';
-import type { APIFetcherFn, SQONType } from '#DataContext/types.js';
-import type { ThemeCommon } from '#ThemeContext/types/index.js';
-import type { ToggleButtonThemeProps } from '#ToggleButton/types.js';
+import type { ThemedButtonProps } from '#Button/types';
+import type { APIFetcherFn, SQONType } from '#DataContext/types';
+import type { ThemeCommon } from '#ThemeContext/types/index';
+import type { ToggleButtonThemeProps } from '#ToggleButton/types';
 
-import type AggsGroup from './AggsGroup/types.js';
-import type BooleanAggs from './BooleanAggs/types.js';
-import type { BucketCountThemeProps } from './BucketCount/types.js';
-import type TermAggs from './TermAggs/types.js';
+import type AggsGroup from './AggsGroup/types';
+import type BooleanAggs from './BooleanAggs/types';
+import type { BucketCountThemeProps } from './BucketCount/types';
+import type TermAggs from './TermAggs/types';
 
 export type AggsStateProps = JSX.IntrinsicAttributes & {
 	apiFetcher?: APIFetcherFn;
@@ -44,7 +44,7 @@ export type AggregationsThemeProps = {
 	BooleanAggs: BooleanAggs;
 	BucketCount: BucketCountThemeProps;
 	FilterInput: ThemeCommon.CustomCSS;
-	InputRange: SerializedStyles;
+	InputRange?: CSSProperties;
 	MoreOrLessButton: ThemedButtonProps;
 	RangeAggs: RangeAggs;
 	TermAggs: TermAggs;

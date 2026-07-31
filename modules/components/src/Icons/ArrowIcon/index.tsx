@@ -1,11 +1,10 @@
-import { css } from '@emotion/react';
 import cx from 'classnames';
 import Color from 'color';
 
-import { useThemeContext } from '#ThemeContext/index.js';
-import { emptyObj } from '#utils/noops.js';
+import { useThemeContext } from '#ThemeContext/index';
+import { emptyObj } from '#utils/noops';
 
-import type Props from './types.js';
+import type Props from './types';
 
 /** Displays a chevron, commonly used for dropdown functionalities (buttons and trees)
  * The following props (passed by the parent components) will be prioritised over theme customisations
@@ -18,7 +17,7 @@ import type Props from './types.js';
 
 const ArrowIcon = ({
 	className: customClassName,
-	css: customCSS,
+	style: customStyle,
 	disabled: customDisabled,
 	isTreeJoint,
 	pointUp,
@@ -36,7 +35,7 @@ const ArrowIcon = ({
 			ArrowIcon: {
 				activeFill: themeActiveFill,
 				className: themeClassName,
-				css: themeCSS,
+				style: themeStyle,
 				disabled: themeDisabled,
 				disabledFill: themeDisabledFill,
 				fill: themeFill = colors?.grey?.[600],
@@ -59,24 +58,24 @@ const ArrowIcon = ({
 			? (customActiveFill ?? themeActiveFill ?? Color(defaultFill).darken(0.5))
 			: defaultFill;
 
+	const transform = isTreeJoint
+		? pointUp
+			? undefined
+			: 'rotate(-90deg)'
+		: pointUp
+			? 'scale(-1)'
+			: undefined;
+
 	return (
 		<svg
 			className={className}
-			css={[
-				themeCSS,
-				css`
-					flex: 0 0 auto;
-					transform: ${isTreeJoint
-						? pointUp
-							? undefined
-							: 'rotate(-90deg)'
-						: pointUp
-							? 'scale(-1)'
-							: undefined};
-					transition: ${customTransition || themeTransition};
-				`,
-				customCSS,
-			]}
+			style={{
+				flex: '0 0 auto',
+				transform,
+				transition: customTransition || themeTransition,
+				...themeStyle,
+				...customStyle,
+			}}
 			height={customSize || themeSize}
 			preserveAspectRatio="xMidYMin "
 			viewBox="0 0 12 12"

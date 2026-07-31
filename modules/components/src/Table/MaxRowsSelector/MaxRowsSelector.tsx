@@ -1,16 +1,15 @@
-import { css } from '@emotion/react';
 import cx from 'classnames';
 import type { ChangeEventHandler } from 'react';
 
-import { useTableContext } from '#Table/helpers/index.js';
-import { useThemeContext } from '#ThemeContext/index.js';
-import { emptyObj } from '#utils/noops.js';
+import { useTableContext } from '#Table/helpers/index';
+import { useThemeContext } from '#ThemeContext/index';
+import { emptyObj } from '#utils/noops';
 
-import type { MaxRowsSelectorProps } from './types.js';
+import type { MaxRowsSelectorProps } from './types';
 
 const MaxRowsSelector = ({
 	className: customClassName,
-	css: customCSS,
+	style: customCSS,
 	disabled: customDisabled,
 	theme: {
 		background: customBackground,
@@ -34,7 +33,7 @@ const MaxRowsSelector = ({
 					borderColor: themeBorderColor = colors?.grey?.[300],
 					borderRadius: themeBorderRadius = '0.3rem',
 					className: themeClassName,
-					css: themeCSS,
+					style: themeCSS,
 					disabled: themeDisabled,
 					fontColor: themeFontColor = colors?.grey?.[700],
 					fontSize: themeFontSize = '0.8rem',
@@ -55,33 +54,13 @@ const MaxRowsSelector = ({
 	return (
 		<article
 			className={className}
-			css={[
-				themeCSS,
-				css`
-					color: ${customFontColor || themeFontColor};
-					align-items: center;
-					display: flex;
-					font-size: ${customFontSize || themeFontSize};
-				`,
-				customCSS,
-			]}
+			style={{ color: customFontColor || themeFontColor, alignItems: 'center', display: 'flex', fontSize: customFontSize || themeFontSize, ...themeCSS, ...customCSS }}
 		>
 			<span>Show </span>
 
 			<select
 				aria-label="Select the maximum number of rows"
-				css={css`
-					background: ${customBackground || themeBackground};
-					border: 0.1rem solid ${customBorderColor || themeBorderColor};
-					border-radius: ${customBorderRadius || themeBorderRadius};
-					box-sizing: border-box;
-					color: ${customFontColor || themeFontColor};
-					font-size: calc(${customFontSize || themeFontSize} * 0.9);
-					height: calc(${customFontSize || themeFontSize} * 1.5);
-					margin: 0 0.1rem;
-					padding: 0 0.2rem;
-					text-align: center;
-				`}
+				style={{ background: customBackground || themeBackground, border: `0.1rem solid ${customBorderColor || themeBorderColor}`, borderRadius: customBorderRadius || themeBorderRadius, boxSizing: 'border-box', color: customFontColor || themeFontColor, fontSize: `calc(${customFontSize || themeFontSize} * 0.9)`, height: `calc(${customFontSize || themeFontSize} * 1.5)`, margin: '0 0.1rem', padding: '0 0.2rem', textAlign: 'center' }}
 				disabled={customDisabled || themeDisabled}
 				onChange={changeHandler}
 				value={pageSize}

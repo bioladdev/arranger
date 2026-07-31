@@ -21,6 +21,7 @@ class TreeView extends PureComponent {
 			collapsed = this.state.collapsed,
 			className = '',
 			itemClassName = '',
+			itemStyle,
 			treeViewClassName = '',
 			childrenClassName = '',
 			nodeLabel = '',
@@ -45,7 +46,7 @@ class TreeView extends PureComponent {
 
 		return (
 			<div className={'tree-view ' + treeViewClassName}>
-				<div className={'tree-view_item ' + itemClassName}>
+				<div className={'tree-view_item ' + itemClassName} style={itemStyle}>
 					{arrow}
 					{nodeLabel({ open: this.handleClick })}
 				</div>

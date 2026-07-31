@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 
-import type { ColumnMappingInterface } from '#DataContext/types.js';
-import download from '#utils/download.js';
-import { emptyObj } from '#utils/noops.js';
+import type { ColumnMappingInterface } from '#DataContext/types';
+import download from '#utils/download';
+import { emptyObj } from '#utils/noops';
 
 import type {
 	CustomExporterDetailsInterface,
@@ -11,7 +11,7 @@ import type {
 	ExporterFunctionProps,
 	ProcessedExporterDetailsInterface,
 	ProcessedExporterInput,
-} from './types.js';
+} from './types';
 
 const useCustomisers =
 	(extendedColumn?: ColumnMappingInterface) =>

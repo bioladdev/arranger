@@ -1,1 +1,1 @@
-export { default } from './AggsGroup.js';
+export { default } from './AggsGroup';

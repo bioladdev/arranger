@@ -1,9 +1,9 @@
 import { isEqual } from 'lodash-es';
 import { Component } from 'react';
 
-import aggComponentsMap from '#aggregations/aggComponentsMap.js';
-import TextHighlight from '#TextHighlight/index.js';
-import { emptyObj } from '#utils/noops.js';
+import aggComponentsMap from '#aggregations/aggComponentsMap';
+import TextHighlight from '#TextHighlight/index';
+import { emptyObj } from '#utils/noops';
 
 const serializeToDomId = (path) => path.split('.').join('__');
 

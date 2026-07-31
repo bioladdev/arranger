@@ -1,6 +1,6 @@
-import type { ThemedButtonProps } from '#Button/types.js';
-import type { ThemeCommon } from '#ThemeContext/types/index.js';
-import type { GenericFn } from '#utils/noops.js';
+import type { ThemedButtonProps } from '#Button/types';
+import type { ThemeCommon } from '#ThemeContext/types/index';
+import type { GenericFn } from '#utils/noops';
 
 export interface SQONViewerThemeProps {
 	EmptyMessage: {

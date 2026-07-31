@@ -2,9 +2,9 @@ import { Component } from '@reach/component-component';
 import { cloneDeep } from 'lodash-es';
 import { FaPlusCircle, FaRegClone } from 'react-icons/fa';
 
-import defaultApiFetcher from '#utils/api.js';
+import defaultApiFetcher from '#utils/api';
 
-import SqonEntry from './SqonEntry.js';
+import SqonEntry from './SqonEntry';
 import './style.css';
 import {
 	resolveSyntheticSqon,
@@ -15,7 +15,7 @@ import {
 	isEmptySqon,
 	AND_OP,
 	OR_OP,
-} from './utils.js';
+} from './utils';
 
 
 const newEmptySqon = () => ({
@@ -347,5 +347,5 @@ export {
 	isFieldOp,
 	isIndexReferencedInSqon,
 	getDependentIndices,
-} from './utils.js';
-export { default as FieldOpModifier } from './filterComponents/index.js';
+} from './utils';
+export { default as FieldOpModifier } from './filterComponents/index';

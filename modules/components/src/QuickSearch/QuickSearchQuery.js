@@ -1,10 +1,16 @@
 import { JSONPath } from 'jsonpath-plus';
 import { capitalize, flatMap, isArray, isEmpty } from 'lodash-es';
-import { compose, withProps } from 'recompose';
+import { createElement } from 'react';
 
-import { withQuery } from '#Query.js';
-import { DEBUG } from '#utils/config.js';
-import splitString from '#utils/splitString.js';
+import { withQuery } from '#Query';
+import { DEBUG } from '#utils/config';
+import splitString from '#utils/splitString';
+
+const compose = (...fns) => (Component) => fns.reduceRight((acc, fn) => fn(acc), Component);
+const withProps = (input) => (Component) => (props) => {
+	const newProps = typeof input === 'function' ? input(props) : input;
+	return createElement(Component, { ...props, ...newProps });
+};
 
 const isValidValue = (value) => value?.trim()?.length > 1;
 

@@ -1,6 +1,6 @@
-import { Component } from '@reach/component-component';
 import convert from 'convert-units';
 import { min, max } from 'lodash-es';
+import { useState } from 'react';
 
 import {
 	getOperationAtPath,
@@ -12,9 +12,9 @@ import {
 	GT_OP,
 	LTE_OP,
 	LT_OP,
-} from '../utils.js';
+} from '../utils';
 
-import { FilterContainer } from './common.js';
+import { FilterContainer } from './common';
 import './FilterContainerStyle.css';
 
 const SUPPORTED_CONVERSIONS = {
@@ -68,18 +68,19 @@ export const RangeFilterUi = (props) => {
 			};
 	})();
 	const field = fieldName || initialFieldOp.content.field;
-	const initialState = {
+	const [state, setState] = useState({
 		selectedOperation: initialFieldOp.op,
 		minValue: min(initialFieldOp.content.value),
 		maxValue: max(initialFieldOp.content.value),
 		selectedUnit: originalUnit,
-	};
+	});
+	const mergeState = (patch) => setState((currentState) => ({ ...currentState, ...patch }));
 
-	const onSqonSubmit = (s) => () => {
-		const op = s.state.selectedOperation;
-		const toOriginalUnit = convertUnit(s.state.selectedUnit, originalUnit);
-		const min = toOriginalUnit(s.state.minValue);
-		const max = toOriginalUnit(s.state.maxValue);
+	const onSqonSubmit = () => {
+		const op = state.selectedOperation;
+		const toOriginalUnit = convertUnit(state.selectedUnit, originalUnit);
+		const min = toOriginalUnit(state.minValue);
+		const max = toOriginalUnit(state.maxValue);
 		const value = [GTE_OP, GT_OP].includes(op) ? [min] : [LTE_OP, LT_OP].includes(op) ? [max] : [min, max];
 
 		const sqonToSubmit = {
@@ -92,99 +93,95 @@ export const RangeFilterUi = (props) => {
 		onSubmit(setSqonAtPath(sqonPath, sqonToSubmit)(initialSqon));
 	};
 
-	const onOptionTypeChange = (s) => (e) => {
-		s.setState({
+	const onOptionTypeChange = (e) => {
+		mergeState({
 			selectedOperation: e.target.value,
 		});
 	};
 
-	const onMinimumChange = (s) => (e) => {
-		s.setState({ minValue: e.target.value });
+	const onMinimumChange = (e) => {
+		mergeState({ minValue: e.target.value });
 	};
 
-	const onMaximumChange = (s) => (e) => {
-		s.setState({ maxValue: e.target.value });
+	const onMaximumChange = (e) => {
+		mergeState({ maxValue: e.target.value });
 	};
 
-	const onClearClick = (s) => (e) => {
-		s.setState({
+	const onClearClick = (e) => {
+		mergeState({
 			maxValue: '',
 			minValue: '',
 		});
 	};
 
 	const unitOptions = supportedConversionFromUnit(originalUnit) || [];
-	const onUnitOptionSelect = (s) => (e) => {
-		s.setState({ selectedUnit: e.target.value });
+	const onUnitOptionSelect = (e) => {
+		mergeState({ selectedUnit: e.target.value });
 	};
 
-	const isMinimumDisabled = (s) => [LTE_OP, LT_OP].includes(s.state.selectedOperation);
-	const isMaximumDisabled = (s) => [GTE_OP, GT_OP].includes(s.state.selectedOperation);
+	const isMinimumDisabled = [LTE_OP, LT_OP].includes(state.selectedOperation);
+	const isMaximumDisabled = [GTE_OP, GT_OP].includes(state.selectedOperation);
 
 	const StyledInputComponent = (props) => (
 		<InputComponent {...props} className={`rangeFilterInput ${props.className || ''}`} />
 	);
 
 	return (
-		<Component initialState={initialState}>
-			{(s) => (
-				<ContainerComponent onSubmit={onSqonSubmit(s)} onCancel={onCancel}>
-					<div className="filterContent">
-						<div className="contentSection">
-							<span>{fieldDisplayNameMap[field] || field}</span> is{' '}
-							<select onChange={onOptionTypeChange(s)}>
-								{RANGE_OPS.map((option) => (
-									<option key={option} value={option} selected={s.state.selectedOperation === option}>
-										{opDisplayNameMap[option]}
-									</option>
-								))}
-							</select>
+		<ContainerComponent onSubmit={onSqonSubmit} onCancel={onCancel}>
+			<div className="filterContent">
+				<div className="contentSection">
+					<span>{fieldDisplayNameMap[field] || field}</span> is{' '}
+					<select onChange={onOptionTypeChange}>
+						{RANGE_OPS.map((option) => (
+							<option key={option} value={option} selected={state.selectedOperation === option}>
+								{opDisplayNameMap[option]}
+							</option>
+						))}
+					</select>
+				</div>
+				<div className="contentSection">
+					<span onClick={onClearClick} className="aggsFilterAction">
+						Clear
+					</span>
+				</div>
+				<form className="contentSection">
+					{unitOptions.map((unit) => (
+						<label className="unitOptionLabel" key={unit}>
+							<input
+								type="radio"
+								name={unit}
+								value={unit}
+								checked={state.selectedUnit === unit}
+								onChange={onUnitOptionSelect}
+							/>{' '}
+							{toUnitDisplayName(unit)}
+						</label>
+					))}
+				</form>
+				<div className="contentSection">
+					<div className="rangeInputContainer">
+						<div className="inputField">
+							<span className={`inputLabel ${isMinimumDisabled ? 'disabled' : ''}`}>From:</span>
+							<StyledInputComponent
+								disabled={isMinimumDisabled}
+								value={state.minValue}
+								type={'number'}
+								onChange={onMinimumChange}
+							/>
 						</div>
-						<div className="contentSection">
-							<span onClick={onClearClick(s)} className="aggsFilterAction">
-								Clear
-							</span>
-						</div>
-						<form className="contentSection">
-							{unitOptions.map((unit) => (
-								<label className="unitOptionLabel" key={unit}>
-									<input
-										type="radio"
-										name={unit}
-										value={unit}
-										checked={s.state.selectedUnit === unit}
-										onChange={onUnitOptionSelect(s)}
-									/>{' '}
-									{toUnitDisplayName(unit)}
-								</label>
-							))}
-						</form>
-						<div className="contentSection">
-							<div className="rangeInputContainer">
-								<div className="inputField">
-									<span className={`inputLabel ${isMinimumDisabled(s) ? 'disabled' : ''}`}>From:</span>
-									<StyledInputComponent
-										disabled={isMinimumDisabled(s)}
-										value={s.state.minValue}
-										type={'number'}
-										onChange={onMinimumChange(s)}
-									/>
-								</div>
-								<div className="inputField">
-									<span className={`inputLabel ${isMaximumDisabled(s) ? 'disabled' : ''}`}>To:</span>
-									<StyledInputComponent
-										disabled={isMaximumDisabled(s)}
-										value={s.state.maxValue}
-										type={'number'}
-										onChange={onMaximumChange(s)}
-									/>
-								</div>
-							</div>
+						<div className="inputField">
+							<span className={`inputLabel ${isMaximumDisabled ? 'disabled' : ''}`}>To:</span>
+							<StyledInputComponent
+								disabled={isMaximumDisabled}
+								value={state.maxValue}
+								type={'number'}
+								onChange={onMaximumChange}
+							/>
 						</div>
 					</div>
-				</ContainerComponent>
-			)}
-		</Component>
+				</div>
+			</div>
+		</ContainerComponent>
 	);
 };
 

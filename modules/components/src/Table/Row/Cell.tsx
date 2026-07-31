@@ -1,17 +1,16 @@
-import { css } from '@emotion/react';
 import cx from 'classnames';
 
-import { ColumnListStyles, SELECTION_COLUMN_ID } from '#Table/types.js';
-import { useThemeContext } from '#ThemeContext/index.js';
-import { emptyObj } from '#utils/noops.js';
+import { ColumnListStyles, SELECTION_COLUMN_ID } from '#Table/types';
+import { useThemeContext } from '#ThemeContext/index';
+import { emptyObj } from '#utils/noops';
 
-import type { CellProps } from './types.js';
+import type { CellProps } from './types';
 
 const Cell = ({
 	accessor = '',
 	children,
 	colSpan,
-	css: customCSS,
+	style: customCSS,
 	size: columnWidth,
 	theme: {
 		background: customBackground,
@@ -39,7 +38,7 @@ const Cell = ({
 					background: themeBackground,
 					borderColor: themeBorderColor = 'transparent',
 					className: themeClassName,
-					css: themeCSS,
+					style: themeCSS,
 					fontColor: themeFontColor,
 					horizontalBorderColor: themeHorizontalBorderColor,
 					hoverBackground: themeHoverBackground = colors?.grey?.[300],
@@ -78,89 +77,7 @@ const Cell = ({
 		<td
 			className={cx('cell', themeClassName)}
 			colSpan={colSpan}
-			css={[
-				themeCSS,
-				css`
-					background: ${background};
-					border-bottom-color: ${horizontalBorderColor};
-					border-left-color: ${verticalBorderColor};
-					border-right-color: ${verticalBorderColor};
-					border-top-color: ${horizontalBorderColor};
-					border-style: solid;
-					border-width: 1px;
-					box-sizing: border-box;
-					color: ${themeFontColor};
-					overflow: ${themeOverflow};
-					padding: ${padding};
-					position: relative;
-					text-align: left;
-					text-decoration: ${themeTextDecoration};
-					text-overflow: ${textOverflow};
-					text-transform: ${themeTextTransform};
-					vertical-align: top;
-					white-space: ${themeWhiteSpace};
-					width: ${columnWidth};
-
-					&:hover {
-						background: ${hoverBackground};
-						border-bottom-color: ${hoverHorizontalBorderColor};
-						border-left-color: ${hoverVerticalBorderColor};
-						border-right-color: ${hoverVerticalBorderColor};
-						border-top-color: ${hoverHorizontalBorderColor};
-						color: ${themeHoverFontColor};
-						z-index: 666;
-					}
-
-					ul.list-values {
-						margin: 0;
-						padding: 0;
-
-						> li {
-							line-height: 1rem;
-							list-style-position: inside;
-							overflow: hidden;
-							text-overflow: ellipsis;
-						}
-
-						&.none {
-							list-style: none;
-							padding: 0;
-						}
-
-						&.commas {
-							display: flex;
-							flex-wrap: wrap;
-							list-style: none;
-							padding: 0;
-
-							> li:not(:last-of-type)::after {
-								content: ', ';
-								margin-right: 0.2rem;
-							}
-						}
-
-						&.letters {
-							list-style: lower-alpha;
-						}
-
-						&.numbers {
-							list-style: decimal;
-						}
-
-						&.roman {
-							list-style: upper-roman;
-						}
-
-						${listStyle &&
-						!Object.values(ColumnListStyles).includes(listStyle) &&
-						css`
-							list-style: ${listStyle};
-							padding-left: ${listStyle === 'none' && 0};
-						`}
-					}
-				`,
-				customCSS,
-			]}
+			style={{ background, borderBottomColor: horizontalBorderColor, borderLeftColor: verticalBorderColor, borderRightColor: verticalBorderColor, borderTopColor: horizontalBorderColor, borderStyle: 'solid', borderWidth: '1px', boxSizing: 'border-box', color: themeFontColor, overflow: themeOverflow, padding, position: 'relative', textAlign: 'left', textDecoration: themeTextDecoration, textOverflow: textOverflow, textTransform: themeTextTransform, verticalAlign: 'top', whiteSpace: themeWhiteSpace, width: columnWidth, ...themeCSS, ...customCSS }}
 			data-accessor={accessor}
 			data-value={value}
 			title={accessor === SELECTION_COLUMN_ID ? 'Select this row' : value}

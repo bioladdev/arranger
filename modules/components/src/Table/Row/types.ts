@@ -1,9 +1,9 @@
 import type { Row } from '@tanstack/react-table';
 import type { PropsWithChildren } from 'react';
 
-import type { FieldList, TableInnerBoxModelProperties } from '#Table/types.js';
-import type { ThemeCommon } from '#ThemeContext/types/index.js';
-import type { RecursivePartial } from '#utils/types.js';
+import type { FieldList, TableInnerBoxModelProperties } from '#Table/types';
+import type { ThemeCommon } from '#ThemeContext/types/index';
+import type { RecursivePartial } from '#utils/types';
 
 export interface CellThemeProps extends TableInnerBoxModelProperties {
 	horizontalBorderColor: string;

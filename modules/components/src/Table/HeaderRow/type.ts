@@ -1,8 +1,8 @@
 import type { HeaderGroup } from '@tanstack/react-table';
 
-import type { TableInnerBoxModelProperties } from '#Table/types.js';
-import type { ThemeCommon } from '#ThemeContext/types/index.js';
-import type { RecursivePartial } from '#utils/types.js';
+import type { TableInnerBoxModelProperties } from '#Table/types';
+import type { ThemeCommon } from '#ThemeContext/types/index';
+import type { RecursivePartial } from '#utils/types';
 
 export interface HeaderRowThemeProps extends TableInnerBoxModelProperties {
 	horizontalBorderColor: string;

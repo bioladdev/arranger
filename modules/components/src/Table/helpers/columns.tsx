@@ -1,19 +1,18 @@
-import { css } from '@emotion/react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { mergeWith } from 'lodash-es';
 import { type HTMLAttributes, useEffect, useRef } from 'react';
 
-import type { ColumnMappingInterface } from '#DataContext/types.js';
+import type { ColumnMappingInterface } from '#DataContext/types';
 import {
 	SELECTION_COLUMN_ID,
 	type ColumnsDictionary,
 	type ColumnType,
 	type ColumnTypesObject,
 	type TableCellProps,
-} from '#Table/types.js';
-import { emptyObj } from '#utils/noops.js';
+} from '#Table/types';
+import { emptyObj } from '#utils/noops';
 
-import { defaultCellTypes, getCellValue } from './cells.js';
+import { defaultCellTypes, getCellValue } from './cells';
 
 export const aggregateCustomColumns = (
 	customColumns: ColumnMappingInterface[] = [],
@@ -64,10 +63,7 @@ function IndeterminateCheckbox({
 	return (
 		<input
 			aria-label={'Select this row'}
-			css={css`
-				cursor: pointer;
-				margin: 0.2rem 0 0;
-			`}
+			style={{ cursor: 'pointer', margin: '0.2rem 0 0' }}
 			className={className + ' cursor-pointer'}
 			ref={ref}
 			type="checkbox"

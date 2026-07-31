@@ -1,46 +1,46 @@
-import isPropValid from '@emotion/is-prop-valid';
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
 import cx from 'classnames';
 import color from 'color';
 import { merge } from 'lodash-es';
 import Spinkit from 'react-spinkit';
 
-import { useThemeContext } from '#ThemeContext/index.js';
-import { emptyObj } from '#utils/noops.js';
+import { useThemeContext } from '#ThemeContext/index';
+import { emptyObj } from '#utils/noops';
 
-import type { LoaderContainerProps, LoaderOverlayProps, LoaderProps } from './types.js';
+import type { LoaderContainerProps, LoaderOverlayProps, LoaderProps } from './types';
 
 const DefaultSpinner = ({ color, size }: { color?: string; size?: string | number }) => {
-	return (
-		<Spinkit
-			fadeIn="none"
-			name="circle"
-			color={color}
-			style={{
-				width: size,
-				height: size,
-			}}
-		/>
-	);
+	return <div>spinner</div>;
 };
 
-const LoaderBackground = styled('div', {
-	shouldForwardProp: (prop) => isPropValid(prop),
-})<LoaderContainerProps>`
-	border-radius: 8px;
-	position: relative;
-	overflow: ${({ isLoading }) => (isLoading ? 'hidden' : 'visible')};
-	box-shadow:
-		0 1px 6px 0 rgba(0, 0, 0, 0.1),
-		0 1px 5px 0 rgba(0, 0, 0, 0.08);
-	background-color: ${({ theme: { background } }) => background};
-`;
+const LoaderBackground = ({
+	children,
+	className,
+	isLoading,
+	style: customStyle,
+}: {
+	children?: React.ReactNode;
+	className?: string;
+	isLoading?: boolean;
+	style?: React.CSSProperties;
+}) => (
+	<div
+		className={className}
+		style={{
+			borderRadius: 8,
+			position: 'relative',
+			overflow: isLoading ? 'hidden' : 'visible',
+			boxShadow: '0 1px 6px 0 rgba(0, 0, 0, 0.1), 0 1px 5px 0 rgba(0, 0, 0, 0.08)',
+			...customStyle,
+		}}
+	>
+		{children}
+	</div>
+);
 
 const Loader = ({
 	children,
 	className = '',
-	css: customCSS,
+	style: customStyle,
 	theme: { color: customColor, Component: customComponent, inverted, size: customSize, vertical } = emptyObj,
 }: LoaderProps) => {
 	const {
@@ -49,45 +49,42 @@ const Loader = ({
 			Loader: {
 				color: themeColor = colors?.grey?.[600],
 				Component: themeComponent = DefaultSpinner,
-				css: themeCSS,
+				style: themeStyle,
 				size: themeSize = 30,
 			} = emptyObj,
 		} = emptyObj,
 	} = useThemeContext({ callerName: 'Loader' });
-
-	const spacingFromSpinner = `margin-${
-		vertical ? (inverted ? 'bottom' : 'top') : inverted ? 'right' : 'left'
-	}: 0.5rem;`;
 
 	const Component = customComponent || themeComponent;
 
 	return (
 		<figure
 			className={cx('Spinner', className)}
-			css={[
-				themeCSS,
-				css`
-					align-items: center;
-					bottom: 0;
-					display: flex;
-					flex-direction: ${vertical ? 'column' : 'row'}${inverted ? '-reverse' : ''};
-					justify-content: center;
-					left: 0;
-					margin: 0;
-					position: relative;
-					right: 0;
-					top: 0;
-				`,
-				customCSS,
-			]}
+			style={{
+				alignItems: 'center',
+				bottom: 0,
+				display: 'flex',
+				flexDirection: vertical ? (inverted ? 'column-reverse' : 'column') : inverted ? 'row-reverse' : 'row',
+				justifyContent: 'center',
+				left: 0,
+				margin: 0,
+				position: 'relative',
+				right: 0,
+				top: 0,
+				...themeStyle,
+				...customStyle,
+			}}
 		>
-			<Component color={customColor || themeColor} size={customSize || themeSize} />
+			<Component
+				color={customColor || themeColor}
+				size={customSize || themeSize}
+			/>
 
 			{children && (
 				<figcaption
-					css={css`
-						${spacingFromSpinner}
-					`}
+					style={{
+						[`margin-${vertical ? (inverted ? 'bottom' : 'top') : inverted ? 'right' : 'left'}`]: '0.5rem',
+					}}
 				>
 					{children}
 				</figcaption>
@@ -105,17 +102,17 @@ const LoaderOverlay = ({ theme: customThemeProps }: LoaderOverlayProps) => {
 
 	return (
 		<div
-			css={css`
-				position: absolute;
-				left: 0px;
-				right: 0px;
-				top: 0px;
-				bottom: 0px;
-				background: ${color(colors?.common?.white).alpha(0.7).hsl().string()};
-				display: flex;
-				justify-content: center;
-				align-items: center;
-			`}
+			style={{
+				position: 'absolute',
+				left: 0,
+				right: 0,
+				top: 0,
+				bottom: 0,
+				background: color(colors?.common?.white).alpha(0.7).hsl().string(),
+				display: 'flex',
+				justifyContent: 'center',
+				alignItems: 'center',
+			}}
 		>
 			<Loader {...theme} />
 		</div>
@@ -175,13 +172,5 @@ export const LoaderContainer = ({
 		</LoaderBackground>
 	);
 };
-
-// const WithLoader = (Component) => {
-// 	return (
-// 		<Container {...loading}>
-// 			<Component />
-// 		</Container>
-// 	);
-// };
 
 export default Loader;

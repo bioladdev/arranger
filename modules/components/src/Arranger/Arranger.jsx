@@ -1,8 +1,8 @@
 import { Children, Component } from 'react';
 
-import { DataProvider } from '#DataContext/index.js';
+import { DataProvider } from '#DataContext/index';
 
-import defaultApiFetcher from '../utils/api.js';
+import defaultApiFetcher from '../utils/api';
 
 // TODO: This is a dummy object, exported for the DataContext's types, to ensure that a TS
 // error comes up when this component is deprecated in a later version, after the rewrite

@@ -1,12 +1,12 @@
 import type { ComponentType, ReactNode } from 'react';
 import type { Merge } from 'type-fest';
 
-import type { ThemedButtonProps } from '#Button/types.js';
-import type { ColumnMappingInterface, SQONType } from '#DataContext/types.js';
-import type { DropDownThemeProps } from '#DropDown/types.js';
-import type { ColumnsDictionary } from '#Table/types.js';
-import type { ThemeCommon } from '#ThemeContext/types/index.js';
-import type { PrefixKeys, RecursivePartial, TypesUnionPropertiesOfInterface } from '#utils/types.js';
+import type { ThemedButtonProps } from '#Button/types';
+import type { ColumnMappingInterface, SQONType } from '#DataContext/types';
+import type { DropDownThemeProps } from '#DropDown/types';
+import type { ColumnsDictionary } from '#Table/types';
+import type { ThemeCommon } from '#ThemeContext/types/index';
+import type { PrefixKeys, RecursivePartial, TypesUnionPropertiesOfInterface } from '#utils/types';
 
 export interface TableColumnMappingInterface extends ColumnMappingInterface {
 	Header: ReactNode;

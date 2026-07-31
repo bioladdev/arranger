@@ -1,17 +1,15 @@
-// import type { ReactJSX } from '@emotion/react/dist/declarations/src/jsx-namespace.js';
-import type { jsx } from '@emotion/react';
 import { isEqual } from 'lodash-es';
 import { createContext, useContext, useEffect, useState, type ComponentType, type ReactElement } from 'react';
 
-import { ThemeProvider } from '#ThemeContext/index.js';
-import defaultApiFetcher from '#utils/api.js';
-import { ARRANGER_API, DEBUG } from '#utils/config.js';
-import getComponentDisplayName from '#utils/getComponentDisplayName.js';
-import missingProviderHandler from '#utils/missingProvider.js';
-import { emptyObj } from '#utils/noops.js';
+import { ThemeProvider } from '#ThemeContext/index';
+import defaultApiFetcher from '#utils/api';
+import { ARRANGER_API, DEBUG } from '#utils/config';
+import getComponentDisplayName from '#utils/getComponentDisplayName';
+import missingProviderHandler from '#utils/missingProvider';
+import { emptyObj } from '#utils/noops';
 
-import { useConfigs, useDataFetcher } from './helpers.js';
-import type { DataContextInterface, DataProviderProps, SQONType, UseDataContextProps } from './types.js';
+import { useConfigs, useDataFetcher } from './helpers';
+import type { DataContextInterface, DataProviderProps, SQONType, UseDataContextProps } from './types';
 
 export const DataContext = createContext<DataContextInterface>({
 	documentType: '',
@@ -103,15 +101,14 @@ export const useDataContext = ({
 export const withData = <Props extends Omit<Props, keyof DataContextInterface>>(Component: ComponentType<Props>) => {
 	// UseDataContextProps;
 	const callerName = getComponentDisplayName(Component);
-	const ComponentWithData = (props) => {
+	const ComponentWithData = (props: Props) => {
 		const dataProps = {
 			...props,
 			...useDataContext({ callerName }),
 		};
 
-		type DataProps = jsx.JSX.LibraryManagedAttributes<ComponentType<typeof dataProps>, Props>;
-
-		return <Component {...(dataProps as DataProps)} />;
+		// HOC pattern: dataProps is Props + DataContextInterface; cast is necessary
+		return <Component {...(dataProps as unknown as Props)} />;
 	};
 
 	ComponentWithData.displayName = `WithArrangerData(${callerName})`;

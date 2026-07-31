@@ -1,22 +1,63 @@
-import isPropValid from '@emotion/is-prop-valid';
-import styled from '@emotion/styled';
+import { type CSSProperties, forwardRef } from 'react';
 
-import type { TableThemeProps } from './types.js';
+import type { TableThemeProps } from './types';
 
-const TableWrapper = styled('section', {
-	shouldForwardProp: isPropValid,
-})<TableThemeProps['TableWrapper']>`
-	background: ${({ background }) => background};
-	border: ${({ borderColor }) => borderColor && `1px solid ${borderColor}`};
-	border-radius: ${({ borderRadius }) => borderRadius};
-	display: flex;
-	flex: ${({ flex }) => flex};
-	flex-wrap: wrap;
-	margin: ${({ margin }) => margin};
-	overflow: ${({ overflow = 'auto' }) => overflow};
-	padding: ${({ padding }) => padding};
-	position: ${({ position = 'relative' }) => position};
-	width: ${({ width = '100%' }) => width};
-`;
+type TableWrapperProps = TableThemeProps['TableWrapper'] & {
+	children?: React.ReactNode;
+	className?: string;
+};
+
+const TableWrapper = forwardRef<HTMLElement, TableWrapperProps>(
+	(
+		{
+			background,
+			borderColor,
+			borderRadius,
+			boxShadow,
+			children,
+			className,
+			flex,
+			height,
+			margin,
+			overflow = 'auto',
+			padding,
+			position = 'relative',
+			style: customStyle,
+			width = '100%',
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			key: _key,
+			...rest
+		},
+		ref,
+	) => {
+		const style: CSSProperties = {
+			background,
+			border: borderColor ? `1px solid ${borderColor}` : undefined,
+			borderRadius,
+			boxShadow,
+			display: 'flex',
+			flex,
+			flexWrap: 'wrap',
+			height,
+			margin,
+			overflow,
+			padding,
+			position,
+			width,
+			...customStyle,
+		};
+
+		return (
+			<section
+				className={className}
+				ref={ref}
+				style={style}
+				{...rest}
+			>
+				{children}
+			</section>
+		);
+	},
+);
 
 export default TableWrapper;

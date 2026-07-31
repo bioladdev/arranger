@@ -4,9 +4,9 @@ import type { Dispatch, SetStateAction } from 'react';
 
 // TODO: This legacyProps import will fail when <Arranger /> is deprecated
 // Should be safe to remove afterwards, if the migration path worked out
-import type { legacyProps } from '#Arranger/Arranger.js';
-import type { UnorderedListStyles } from '#Table/types.js';
-import type { CustomThemeType, ThemeOptions } from '#ThemeContext/types/index.js';
+import type { legacyProps } from '#Arranger/Arranger';
+import type { UnorderedListStyles } from '#Table/types';
+import type { CustomThemeType, ThemeOptions } from '#ThemeContext/types/index';
 
 export type AggsType = 'term' | 'range' | 'boolean';
 

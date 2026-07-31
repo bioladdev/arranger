@@ -1,1 +1,1 @@
-export { default, generateNextSQON } from './TextFilter.js';
+export { default, generateNextSQON } from './TextFilter';

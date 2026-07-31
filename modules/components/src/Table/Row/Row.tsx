@@ -1,18 +1,17 @@
-import { css } from '@emotion/react';
 import { flexRender } from '@tanstack/react-table';
 import cx from 'classnames';
 
-import MetaMorphicChild from '#MetaMorphicChild/index.js';
-import { getDisplayValue } from '#Table/helpers/index.js';
-import { SELECTION_COLUMN_ID } from '#Table/types.js';
-import { useThemeContext } from '#ThemeContext/index.js';
-import { emptyObj } from '#utils/noops.js';
+import MetaMorphicChild from '#MetaMorphicChild/index';
+import { getDisplayValue } from '#Table/helpers/index';
+import { SELECTION_COLUMN_ID } from '#Table/types';
+import { useThemeContext } from '#ThemeContext/index';
+import { emptyObj } from '#utils/noops';
 
-import Cell from './Cell.js';
-import type { RowProps } from './types.js';
+import Cell from './Cell';
+import type { RowProps } from './types';
 
 const TableRow = ({
-	css: customCSS,
+	style: customCSS,
 	id,
 	theme: {
 		borderColor: customBorderColor,
@@ -34,7 +33,7 @@ const TableRow = ({
 					background: themeBackground,
 					borderColor: themeBorderColor = customBorderColor,
 					className: themeClassName,
-					css: themeCSS,
+					style: themeCSS,
 					fontColor: themeFontColor,
 					fontFamily: themeFontFamily,
 					fontSize: themeFontSize,
@@ -71,54 +70,7 @@ const TableRow = ({
 	return (
 		<tr
 			className={cx('Row', themeClassName, { selected })}
-			css={[
-				themeCSS,
-				css`
-					background: ${themeBackground};
-					border-left: ${themeVerticalBorderColor && `0.1rem solid ${themeVerticalBorderColor}`};
-					border-right: ${themeVerticalBorderColor && `0.1rem solid ${themeVerticalBorderColor}`};
-					color: ${themeFontColor};
-					font-family: ${themeFontFamily};
-					font-size: ${themeFontSize};
-					font-weight: ${themeFontWeight};
-					letter-spacing: ${themeLetterSpacing};
-					line-height: ${themeLineHeight};
-					position: ${themePosition};
-					text-overflow: ${textOverflow};
-
-					&:first-of-type {
-						padding-top: 0.2rem;
-					}
-
-					&:not(:last-of-type) {
-						border-bottom: ${themeHorizontalBorderColor && `0.1rem solid ${themeHorizontalBorderColor}`};
-					}
-
-					&.selected {
-						background-color: ${themeSelectedBackground} !important;
-						color: ${themeSelectedFontColor} !important;
-
-						&:hover: {
-							// TODO: extend styles for this
-						}
-					}
-
-					&:hover {
-						background: ${hoverBackground} !important;
-						border-bottom: ${hoverHorizontalBorderColor && `1px solid ${hoverHorizontalBorderColor}`};
-						border-left: ${hoverVerticalBorderColor && `1px solid ${hoverVerticalBorderColor}`};
-						border-right: ${hoverVerticalBorderColor && `1px solid ${hoverVerticalBorderColor}`};
-						border-top: ${hoverHorizontalBorderColor && `1px solid ${hoverHorizontalBorderColor}`};
-						color: ${themeHoverFontColor};
-						z-index: 666;
-					}
-
-					&[data-row-id]:hover {
-						background: ${themeHoverBackground};
-					}
-				`,
-				customCSS,
-			]}
+			style={{ background: themeBackground, borderLeft: themeVerticalBorderColor ? `0.1rem solid ${themeVerticalBorderColor}` : undefined, borderRight: themeVerticalBorderColor ? `0.1rem solid ${themeVerticalBorderColor}` : undefined, color: themeFontColor, fontFamily: themeFontFamily, fontSize: themeFontSize, fontWeight: themeFontWeight, letterSpacing: themeLetterSpacing, lineHeight: themeLineHeight, position: themePosition, textOverflow: textOverflow, ...themeCSS, ...customCSS }}
 			data-row-id={id}
 		>
 			{hasVisibleCells ? (

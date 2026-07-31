@@ -1,15 +1,14 @@
-import { css } from '@emotion/react';
 import cx from 'classnames';
 import { filesize } from 'filesize';
 import { JSONPath } from 'jsonpath-plus';
 import { get, isNil } from 'lodash-es';
 import type { ReactNode } from 'react';
 
-import { ColumnListStyles } from '#Table/types.js';
-import dateFormatter from '#utils/dates.js';
-import { emptyObj } from '#utils/noops.js';
+import { ColumnListStyles } from '#Table/types';
+import dateFormatter from '#utils/dates';
+import { emptyObj } from '#utils/noops';
 
-import { getSingleValue } from './index.js';
+import { getSingleValue } from './index';
 
 export const getCellValue = (
 	row = emptyObj as unknown,
@@ -37,9 +36,7 @@ export const getDisplayValue = (row = emptyObj as unknown, column = emptyObj): s
 
 const Link = (props = emptyObj) => (
 	<a
-		css={css`
-			text-align: right;
-		`}
+		style={{ textAlign: 'right' }}
 		href={props.value}
 		rel="noopener noreferrer"
 		target="_blank"
@@ -50,9 +47,7 @@ const Link = (props = emptyObj) => (
 
 const Number = (props = emptyObj) => (
 	<span
-		css={css`
-			text-align: right;
-		`}
+		style={{ textAlign: 'right' }}
 	>
 		{props.value?.toLocaleString('en-CA')}
 	</span>

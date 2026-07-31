@@ -1,18 +1,17 @@
-import { css } from '@emotion/react';
 import cx from 'classnames';
 import { merge } from 'lodash-es';
 import { useMemo } from 'react';
 
-import MaxRowsSelector from '#Table/MaxRowsSelector/index.js';
-import PageSelector from '#Table/PageSelector/index.js';
-import { useThemeContext } from '#ThemeContext/index.js';
-import { emptyObj } from '#utils/noops.js';
+import MaxRowsSelector from '#Table/MaxRowsSelector/index';
+import PageSelector from '#Table/PageSelector/index';
+import { useThemeContext } from '#ThemeContext/index';
+import { emptyObj } from '#utils/noops';
 
-import type { PaginationProps } from './types.js';
+import type { PaginationProps } from './types';
 
 const Pagination = ({
 	className: customClassName,
-	css: customCSS,
+	style: customCSS,
 	theme: { MaxRowSelector: customMaxRowSelectorProps, PageSelector: customPageSelectorProps } = emptyObj,
 }: PaginationProps) => {
 	const {
@@ -20,7 +19,7 @@ const Pagination = ({
 			Table: {
 				Pagination: {
 					className: themeClassName,
-					css: themeCSS,
+					style: themeCSS,
 					MaxRowsSelector: themeMaxRowsSelectorProps = emptyObj,
 					PageSelector: themePageSelectorProps = emptyObj,
 				} = emptyObj,
@@ -35,25 +34,11 @@ const Pagination = ({
 		() => (
 			<section
 				className={className}
-				css={[
-					themeCSS,
-					css`
-						align-items: flex-start;
-						display: flex;
-						justify-content: space-between;
-					`,
-					customCSS,
-				]}
+				style={{ alignItems: 'flex-start', display: 'flex', justifyContent: 'space-between', ...themeCSS, ...customCSS }}
 			>
+				{/* TODO: restore pseudo-selector styles via CSS */}
 				<MaxRowsSelector
-					css={css`
-						margin-left: 0.3rem;
-
-						.Spinner {
-							justify-content: space-between;
-							width: 65%;
-						}
-					`}
+					style={{ marginLeft: '0.3rem' }}
 					theme={maxRowsSelectorTheme}
 				/>
 

@@ -2,10 +2,10 @@ import cx from 'classnames';
 import Color from 'color';
 import { FaSortAlphaDown, FaSortAlphaDownAlt } from 'react-icons/fa';
 
-import { useThemeContext } from '#ThemeContext/index.js';
-import { emptyObj } from '#utils/noops.js';
+import { useThemeContext } from '#ThemeContext/index';
+import { emptyObj } from '#utils/noops';
 
-import type Props from './types.js';
+import type Props from './types';
 
 /** Displays a chevron, commonly used for dropdown functionalities (buttons and trees)
  * The following props (passed by the parent components) will be prioritised over theme customisations

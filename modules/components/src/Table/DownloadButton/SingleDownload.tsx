@@ -1,7 +1,7 @@
-import Button from '#Button/index.js';
-import MetaMorphicChild from '#MetaMorphicChild/index.js';
+import Button from '#Button/index';
+import MetaMorphicChild from '#MetaMorphicChild/index';
 
-import type { SingleDownloadButtonProps } from './types.js';
+import type { SingleDownloadButtonProps } from './types';
 
 const SingleDownloadButton = ({
 	className,

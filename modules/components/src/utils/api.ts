@@ -1,11 +1,11 @@
 import axios, { type AxiosResponse } from 'axios';
 import urlJoin from 'url-join';
 
-import type { APIFetcherFn } from '#DataContext/types.js';
+import type { APIFetcherFn } from '#DataContext/types';
 
-import { ARRANGER_API } from './config.js';
-import { addDownloadHttpHeaders } from './download.js';
-import { emptyObj } from './noops.js';
+import { ARRANGER_API } from './config';
+import { addDownloadHttpHeaders } from './download';
+import { emptyObj } from './noops';
 
 let alwaysSendHeaders = { 'Content-Type': 'application/json' };
 

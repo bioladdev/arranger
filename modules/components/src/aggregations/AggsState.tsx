@@ -2,9 +2,9 @@ import { esToAggTypesMap } from '@overture-stack/arranger-types/elastic/constant
 import { debounce, isEqual } from 'lodash-es';
 import { Component } from 'react';
 
-import { withData } from '#DataContext/index.js';
+import { withData } from '#DataContext/index';
 
-import type { AggsStateProps } from './types.js';
+import type { AggsStateProps } from './types';
 
 export const queryFromAgg = ({ fieldName, type }) =>
 	type === 'Aggregations'

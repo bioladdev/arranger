@@ -1,4 +1,4 @@
-import { DEBUG } from '#utils/config.js';
+import { DEBUG } from '#utils/config';
 
 export const debugLogs = (...args: unknown[]) => {
 	DEBUG && console.log('debugLogs', ...args);

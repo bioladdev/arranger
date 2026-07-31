@@ -7,20 +7,20 @@ import type {
 	DisplayType,
 	FetchDataFn,
 	SQONType,
-} from '#DataContext/types.js';
-import type { DropDownThemeProps } from '#DropDown/types.js';
-import type { ThemeCommon } from '#ThemeContext/types/index.js';
-import type { RecursivePartial } from '#utils/types.js';
+} from '#DataContext/types';
+import type { DropDownThemeProps } from '#DropDown/types';
+import type { ThemeCommon } from '#ThemeContext/types/index';
+import type { RecursivePartial } from '#utils/types';
 
-import type { ColumnSelectButtonThemeProps } from './ColumnsSelectButton/types.js';
-import type { CountDisplayThemeProps } from './CountDisplay/types.js';
-import type { DownloadButtonThemeProps } from './DownloadButton/types.js';
-import type { HeaderRowThemeProps } from './HeaderRow/type.js';
-import type { MaxRowsSelectorThemeProps } from './MaxRowsSelector/types.js';
-import type { PageSelectorThemeProps } from './PageSelector/types.js';
-import type { PaginationThemeProps } from './Pagination/types.js';
-import type { CellThemeProps, RowThemeProps } from './Row/types.js';
-import type { ToolbarThemeProps } from './Toolbar/types.js';
+import type { ColumnSelectButtonThemeProps } from './ColumnsSelectButton/types';
+import type { CountDisplayThemeProps } from './CountDisplay/types';
+import type { DownloadButtonThemeProps } from './DownloadButton/types';
+import type { HeaderRowThemeProps } from './HeaderRow/type';
+import type { MaxRowsSelectorThemeProps } from './MaxRowsSelector/types';
+import type { PageSelectorThemeProps } from './PageSelector/types';
+import type { PaginationThemeProps } from './Pagination/types';
+import type { CellThemeProps, RowThemeProps } from './Row/types';
+import type { ToolbarThemeProps } from './Toolbar/types';
 
 export type FieldList = ColumnMappingInterface['fieldName'][];
 
@@ -164,11 +164,11 @@ export interface UseTableDataProps extends RecursivePartial<TableContextThemePro
 	visibleTableWidth: number;
 }
 
-export type * from './ColumnsSelectButton/types.js';
-export type * from './CountDisplay/types.js';
-export type * from './DownloadButton/types.js';
-export type * from './HeaderRow/type.js';
-export type * from './MaxRowsSelector/types.js';
-export type * from './PageSelector/types.js';
-export type * from './Pagination/types.js';
-export type * from './Toolbar/types.js';
+export type * from './ColumnsSelectButton/types';
+export type * from './CountDisplay/types';
+export type * from './DownloadButton/types';
+export type * from './HeaderRow/type';
+export type * from './MaxRowsSelector/types';
+export type * from './PageSelector/types';
+export type * from './Pagination/types';
+export type * from './Toolbar/types';

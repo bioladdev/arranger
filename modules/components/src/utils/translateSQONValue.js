@@ -1,4 +1,4 @@
-import formatNumber from '../utils/formatNumber.js';
+import formatNumber from '../utils/formatNumber';
 
 export default (value) => {
 	if (value === '__missing__') {

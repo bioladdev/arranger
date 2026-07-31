@@ -1,43 +1,13 @@
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
 import cx from 'classnames';
 import { createRef, forwardRef, useState } from 'react';
 
-import Button from '#Button/index.js';
-import { useThemeContext } from '#ThemeContext/index.js';
-import { emptyObj } from '#utils/noops.js';
-
-const InputWrapper = styled.div`
-	align-items: center;
-	display: flex;
-	flex: 1;
-	justify-content: center;
-	overflow: hidden;
-	padding: 5px;
-
-	input:focus {
-		outline: none;
-	}
-
-	.inputIcon {
-		color: lightgrey;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-	}
-
-	.inputRightIcon {
-		color: lightgrey;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-	}
-`;
+import Button from '#Button/index';
+import { useThemeContext } from '#ThemeContext/index';
+import { emptyObj } from '#utils/noops';
 
 // TODO: study custom vs theme handlers, figure out whether both or which.
 // TODO: change component props to {...,theme} model
 
-// const Input = React.forwardRef<HTMLInputElement, InputProps>({
 const Input = (
 	{
 		className,
@@ -51,7 +21,7 @@ const Input = (
 			ClearButton: CustomClearButton,
 			clearButtonAltText: customClearAltText,
 			Component: CustomComponent,
-			css: customCSS,
+			style: customStyle,
 			leftIcon: { Icon: CustomLeftIcon, ...customLeftIconProps } = emptyObj,
 			margin: customMargin,
 			padding: customPadding,
@@ -74,7 +44,7 @@ const Input = (
 				clearAltText: themeClearAltText = 'Clear text',
 				Component: ThemeComponent = 'input',
 				ClearButton: ThemeClearButton = Button,
-				css: themeCSS,
+				style: themeStyle,
 				disabled: themeDisabled,
 				disabledBorderColor: themeDisabledBorderColor = colors?.grey?.[300],
 				LeftIcon: ThemeLeftIcon,
@@ -103,9 +73,7 @@ const Input = (
 	const placeholder = customPlaceholder || themePlaceHolder;
 	const showClear = customShowClear || themeShowClear;
 
-	// const inputRef = (ref || React.createRef()) as React.RefObject<HTMLInputElement>;
 	const inputRef = ref || createRef();
-	// const clearButtonRef = createRef() as RefObject<HTMLButtonElement>;
 	const clearButtonRef = createRef();
 	const inputDisabled = customDisabled || themeDisabled;
 
@@ -136,30 +104,23 @@ const Input = (
 	};
 
 	return (
-		<InputWrapper
+		<div
 			className={cx('inputWrapper', { disabled: inputDisabled, focused: isFocused }, className)}
-			css={[
-				themeCSS,
-				css`
-					border: solid 1px ${inputDisabled ? themeDisabledBorderColor : borderColor};
-					border-radius: 5px;
-					box-sizing: border-box;
-					margin: ${margin};
-					padding: ${padding};
-
-					&.focused,
-					&:focus-visible {
-						box-shadow: ${boxShadow};
-						outline-color: currentcolor;
-						outline-color: activeborder;
-						outline-color: -moz-mac-focusring;
-						outline-color: -webkit-focus-ring-color;
-						outline-style: auto;
-						outline-width: thin;
-					}
-				`,
-				customCSS,
-			]}
+			style={{
+				alignItems: 'center',
+				border: `solid 1px ${inputDisabled ? themeDisabledBorderColor : borderColor}`,
+				borderRadius: '5px',
+				boxSizing: 'border-box',
+				boxShadow: isFocused ? boxShadow : undefined,
+				display: 'flex',
+				flex: 1,
+				justifyContent: 'center',
+				margin,
+				overflow: 'hidden',
+				padding: padding ?? '5px',
+				...themeStyle,
+				...customStyle,
+			}}
 			onClick={(e) => {
 				if (inputRef.current && e.target !== clearButtonRef?.current) inputRef.current.focus();
 			}}
@@ -168,16 +129,16 @@ const Input = (
 			}}
 		>
 			{LeftIcon && (
-				<span className="inputIcon">
+				<span
+					className="inputIcon"
+					style={{ color: 'lightgrey', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+				>
 					<LeftIcon {...customLeftIconProps} />
 				</span>
 			)}
 
 			<Component
-				css={css`
-					border: none;
-					width: 100%;
-				`}
+				style={{ border: 'none', width: '100%' }}
 				disabled={inputDisabled}
 				onBlur={blurHandler}
 				onChange={changeHandler}
@@ -207,11 +168,14 @@ const Input = (
 			)}
 
 			{RightIcon && (
-				<span className="inputRightIcon">
+				<span
+					className="inputRightIcon"
+					style={{ color: 'lightgrey', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+				>
 					<RightIcon {...customRightIconProps} />
 				</span>
 			)}
-		</InputWrapper>
+		</div>
 	);
 };
 

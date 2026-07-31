@@ -1,10 +1,10 @@
 import { capitalize } from 'lodash-es';
 
-import Query from '#Query.js';
-import defaultApiFetcher from '#utils/api.js';
-import { DEBUG } from '#utils/config.js';
+import Query from '#Query';
+import defaultApiFetcher from '#utils/api';
+import { DEBUG } from '#utils/config';
 
-import { queryFromAgg } from './AggsState.js';
+import { queryFromAgg } from './AggsState';
 
 const AggsQuery = ({ documentType = '', aggs = [], sqon = null, apiFetcher = defaultApiFetcher, ...props }) => {
 	return documentType && aggs.length ? (

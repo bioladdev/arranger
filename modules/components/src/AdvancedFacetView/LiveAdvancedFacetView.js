@@ -2,10 +2,10 @@ import { esToAggTypesMap } from '@overture-stack/arranger-types/elastic/constant
 import { isEqual } from 'lodash-es';
 import { Component } from 'react';
 
-import defaultApiFetcher from '#utils/api.js';
-import noopFn, { emptyObj } from '#utils/noops.js';
+import defaultApiFetcher from '#utils/api';
+import noopFn, { emptyObj } from '#utils/noops';
 
-import AdvancedFacetView from './index.js';
+import AdvancedFacetView from './index';
 
 const fetchGraphqlQuery = async ({ query, variables = null, apiFetcher = defaultApiFetcher }) =>
 	apiFetcher({

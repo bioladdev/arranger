@@ -1,23 +1,22 @@
-import { css } from '@emotion/react';
 import SQONBuilder from '@overture-stack/sqon-builder';
 import cx from 'classnames';
 import { merge } from 'lodash-es';
 import urlJoin from 'url-join';
 
-import { TransparentButton } from '#Button/index.js';
-import { useDataContext } from '#DataContext/index.js';
-import MultiSelectDropDown from '#DropDown/MultiSelectDropDown.js';
-import MetaMorphicChild from '#MetaMorphicChild/index.js';
-import { useTableContext } from '#Table/helpers/index.js';
-import { useThemeContext } from '#ThemeContext/index.js';
-import { ARRANGER_API } from '#utils/config.js';
-import download from '#utils/download.js';
-import noopFn, { emptyObj } from '#utils/noops.js';
-import stringCleaner from '#utils/stringCleaner.js';
+import { TransparentButton } from '#Button/index';
+import { useDataContext } from '#DataContext/index';
+import MultiSelectDropDown from '#DropDown/MultiSelectDropDown';
+import MetaMorphicChild from '#MetaMorphicChild/index';
+import { useTableContext } from '#Table/helpers/index';
+import { useThemeContext } from '#ThemeContext/index';
+import { ARRANGER_API } from '#utils/config';
+import download from '#utils/download';
+import noopFn, { emptyObj } from '#utils/noops';
+import stringCleaner from '#utils/stringCleaner';
 
-import { useExporters } from './helpers.js';
-import SingleDownloadButton from './SingleDownload.js';
-import type { DownloadButtonProps, ProcessedExporterDetailsInterface } from './types.js';
+import { useExporters } from './helpers';
+import SingleDownloadButton from './SingleDownload';
+import type { DownloadButtonProps, ProcessedExporterDetailsInterface } from './types';
 
 /**
  * This component allows library integrators to pass custom exporters (functionality to be run on the data, e.g. get JSON)
@@ -160,9 +159,7 @@ const DownloadButton = ({
 			itemToString={(exporter: ProcessedExporterDetailsInterface, closeDropDownFn = noopFn) => {
 				return (
 					<TransparentButton
-						css={css`
-							width: 100%;
-						`}
+						style={{ width: '100%' }}
 						onClick={handleExporterClick(exporter, closeDropDownFn)}
 					>
 						<MetaMorphicChild>{exporter.exporterLabel || 'unlabeled exporter'}</MetaMorphicChild>

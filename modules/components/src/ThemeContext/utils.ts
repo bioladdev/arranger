@@ -1,8 +1,8 @@
 import { merge } from 'lodash-es';
 
-import { emptyObj } from '#utils/noops.js';
+import { emptyObj } from '#utils/noops';
 
-import type { CustomThemeType, ThemeMergerFn, ThemeOptions, ThemeProcessorFn } from './types/index.js';
+import type { CustomThemeType, ThemeMergerFn, ThemeOptions, ThemeProcessorFn } from './types/index';
 
 // To support theme composition
 const mergeTargetAndCustomTheme = <Theme = CustomThemeType>(targetTheme: ThemeOptions, customTheme: Theme) => {

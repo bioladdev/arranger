@@ -1,1 +1,1 @@
-export { default } from './MetaMorphicChild.js';
+export { default } from './MetaMorphicChild';

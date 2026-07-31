@@ -1,6 +1,6 @@
-import { stringifyJSONParam } from '#utils/uri/index.js';
+import { stringifyJSONParam } from '#utils/uri/index';
 
-import { addInSQON, toggleSQON, mergeQuery } from '../utils.js';
+import { addInSQON, toggleSQON, mergeQuery } from '../utils';
 
 const baseFilter = {
 	op: 'and',

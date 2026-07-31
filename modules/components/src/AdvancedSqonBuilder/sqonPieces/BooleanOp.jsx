@@ -1,13 +1,13 @@
-import Component from '@reach/component-component';
+import { useState } from 'react';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 
-import defaultApiFetcher from '#utils/api.js';
-import ClickAwayListener from '#utils/ClickAwayListener.js';
+import defaultApiFetcher from '#utils/api';
+import ClickAwayListener from '#utils/ClickAwayListener';
 
-import { isReference, isBooleanOp, isFieldOp, isEmptySqon } from '../utils.js';
+import { isReference, isBooleanOp, isFieldOp, isEmptySqon } from '../utils';
 
-import { PillRemoveButton } from './common.js';
-import FieldOp from './FieldOp.js';
+import { PillRemoveButton } from './common';
+import FieldOp from './FieldOp';
 
 const SqonReference = (props) => {
 	const { refIndex, onRemoveClick = () => { }, highlightColor, isHighlighted } = props;
@@ -32,40 +32,34 @@ const SqonReference = (props) => {
 
 const LogicalOpSelector = (props) => {
 	const { opName, onChange = (newOpName) => { } } = props;
-	const initialState = { isOpen: false };
+	const [isOpen, setIsOpen] = useState(false);
 	const selectionOptions = ['and', 'or'];
-	const onClickAway = (s) => () => {
-		s.setState({ isOpen: false });
-	};
-	const onClick = (s) => () => s.setState({ isOpen: !s.state.isOpen });
+	const onClickAway = () => setIsOpen(false);
+	const onClick = () => setIsOpen((prev) => !prev);
 	const onselect = (option) => () => onChange(option);
 	return (
-		<Component initialState={initialState}>
-			{(s) => (
-				<ClickAwayListener handler={onClickAway(s)}>
-					<span
-						className="pill logicalOpSelector"
-						role="button"
-						tabIndex={0}
-						onClick={onClick(s)}
-						onKeyPress={onClick(s)}
-					>
-						<span className={'content'} style={{ pointerEvents: 'none' }}>
-							<span className={'opName'}>{opName}</span> {s.state.isOpen ? <FaChevronUp /> : <FaChevronDown />}
-						</span>
-						{s.state.isOpen && (
-							<div className={`menuContainer`}>
-								{selectionOptions.map((option) => (
-									<div key={option} className="menuOption" onClick={onselect(option)} onKeyPress={onselect(option)}>
-										{option}
-									</div>
-								))}
+		<ClickAwayListener handler={onClickAway}>
+			<span
+				className="pill logicalOpSelector"
+				role="button"
+				tabIndex={0}
+				onClick={onClick}
+				onKeyPress={onClick}
+			>
+				<span className={'content'} style={{ pointerEvents: 'none' }}>
+					<span className={'opName'}>{opName}</span> {isOpen ? <FaChevronUp /> : <FaChevronDown />}
+				</span>
+				{isOpen && (
+					<div className={`menuContainer`}>
+						{selectionOptions.map((option) => (
+							<div key={option} className="menuOption" onClick={onselect(option)} onKeyPress={onselect(option)}>
+								{option}
 							</div>
-						)}
-					</span>
-				</ClickAwayListener>
-			)}
-		</Component>
+						))}
+					</div>
+				)}
+			</span>
+		</ClickAwayListener>
 	);
 };
 

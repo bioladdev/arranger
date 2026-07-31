@@ -1,7 +1,7 @@
-import type { MaxRowsSelectorThemeProps } from '#Table/MaxRowsSelector/types.js';
-import type { PageSelectorThemeProps } from '#Table/PageSelector/types.js';
-import type { ThemeCommon } from '#ThemeContext/types/index.js';
-import type { RecursivePartial } from '#utils/types.js';
+import type { MaxRowsSelectorThemeProps } from '#Table/MaxRowsSelector/types';
+import type { PageSelectorThemeProps } from '#Table/PageSelector/types';
+import type { ThemeCommon } from '#ThemeContext/types/index';
+import type { RecursivePartial } from '#utils/types';
 
 export interface PaginationThemeProps extends ThemeCommon.FontProperties {
 	MaxRowSelector: MaxRowsSelectorThemeProps;

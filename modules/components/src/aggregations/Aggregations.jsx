@@ -1,22 +1,18 @@
-import { css } from '@emotion/react';
 import cx from 'classnames';
 import { sortBy } from 'lodash-es';
 
-import { withData } from '#DataContext/index.js';
-import Loader, { LoaderContainer } from '#Loader/index.js';
-import { DEBUG } from '#utils/config.js';
-import noopFn, { emptyArrFn, emptyObj, emptyObjFn } from '#utils/noops.js';
+import { withData } from '#DataContext/index';
+import Loader, { LoaderContainer } from '#Loader/index';
+import { DEBUG } from '#utils/config';
+import noopFn, { emptyArrFn, emptyObj, emptyObjFn } from '#utils/noops';
 
-import aggComponents from './aggComponentsMap.js';
-import AggsQuery from './AggsQuery.js';
-import AggsState from './AggsState.js';
+import aggComponents from './aggComponentsMap';
+import AggsQuery from './AggsQuery';
+import AggsState from './AggsState';
 
 const BaseWrapper = ({ className, ...props }) => (
 	<section
-		css={css`
-			height: 100%;
-			width: 100%;
-		`}
+		style={{ height: '100%', width: '100%' }}
 		{...props}
 		className={cx('aggregations', className)}
 	/>
@@ -46,7 +42,9 @@ export const AggregationsListDisplay = ({
 			.map((agg) => ({
 				...agg,
 				...data?.[documentType]?.aggregations?.[agg?.fieldName],
-				...extendedMapping.find((extendedField) => extendedField.fieldName.replaceAll('.', '__') === agg.fieldName),
+				...extendedMapping.find(
+					(extendedField) => extendedField.fieldName.replaceAll('.', '__') === agg.fieldName,
+				),
 				onValueChange: ({ sqon, value }) => {
 					onValueChange(value);
 					setSQON(sqon);
@@ -78,14 +76,7 @@ export const AggregationsListDisplay = ({
 
 		return inserted;
 	} else {
-		return (
-			<Loader
-				css={css`
-					height: 100%;
-					width: 100%;
-				`}
-			/>
-		);
+		return <Loader style={{ height: '100%', width: '100%' }} />;
 	}
 };
 
@@ -119,10 +110,7 @@ export const AggregationsList = ({
 
 			return (
 				<LoaderContainer
-					css={css`
-						height: 100%;
-						width: 100%;
-					`}
+					style={{ height: '100%', width: '100%' }}
 					disabled={true} // TODO: implement with theme
 					isLoading={isLoadingConfigs || loading}
 				>
@@ -159,7 +147,7 @@ export const AggregationsList = ({
  *       },
  *     },
  *   ]
- * @param {import('#types.js').SQONType} props.sqon
+ * @param {import('#types').SQONType} props.sqon
  */
 const Aggregations = ({
 	apiFetcher,
@@ -174,7 +162,7 @@ const Aggregations = ({
 	customFacets = [],
 	documentType = '',
 	extendedMapping,
-	isLoadingConfigs = "false",
+	isLoadingConfigs = 'false',
 	onValueChange = noopFn,
 	setSQON = noopFn,
 	sqon = null,
@@ -182,27 +170,31 @@ const Aggregations = ({
 	Wrapper = BaseWrapper,
 }) => {
 	return (
-		<Wrapper className={className} style={style}>
+		<Wrapper
+			className={className}
+			style={style}
+		>
 			<AggsState
 				apiFetcher={apiFetcher}
 				documentType={documentType}
-				render={(aggsState) => {
-					const aggs = aggsState.aggs.filter((agg) => agg.show);
+				render={() => <div> agg state render</div>}
+				// render={(aggsState) => {
+				// 	const aggs = aggsState.aggs.filter((agg) => agg.show);
 
-					return AggregationsList({
-						aggs,
-						apiFetcher,
-						componentProps,
-						containerRef,
-						customFacets,
-						documentType,
-						extendedMapping,
-						isLoadingConfigs,
-						onValueChange,
-						setSQON,
-						sqon,
-					});
-				}}
+				// 	return AggregationsList({
+				// 		aggs,
+				// 		apiFetcher,
+				// 		componentProps,
+				// 		containerRef,
+				// 		customFacets,
+				// 		documentType,
+				// 		extendedMapping,
+				// 		isLoadingConfigs,
+				// 		onValueChange,
+				// 		setSQON,
+				// 		sqon,
+				// 	});
+				// }}
 			/>
 		</Wrapper>
 	);

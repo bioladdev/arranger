@@ -1,5 +1,5 @@
-import { common, blueGrey as grey, purple, red, orange, lightBlue as blue, green } from './colors/index.js';
-import { deepMerge } from './utils.js';
+import { common, blueGrey as grey, purple, red, orange, lightBlue as blue, green } from './colors/index';
+import { deepMerge } from './utils';
 
 export const light = {
 	// The colors used to style the text.
@@ -175,4 +175,4 @@ export default function createPalette({ mode, ...other } = blankDefaults) {
 	return paletteOutput;
 }
 
-export * as colors from './colors/index.js';
+export * as colors from './colors/index';

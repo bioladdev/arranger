@@ -1,1 +1,1 @@
-export { default } from './TermAggs.js';
+export { default } from './TermAggs';

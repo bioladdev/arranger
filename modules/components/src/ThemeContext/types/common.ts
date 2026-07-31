@@ -1,14 +1,9 @@
 // import { ReactNode } from 'react';
-import type { Interpolation } from '@emotion/react';
-// import { EmotionJSX } from '@emotion/react/types/jsx-namespace';
+import type { CSSProperties } from 'react';
 
-import type { PrefixKeys } from '#utils/types.js';
+import type { PrefixKeys } from '#utils/types';
 
-import type { ThemeOptions } from './index.js';
-
-// hacky, but Emotion typing is finicky
-// export type ChildrenType = EmotionJSX.Element | ReactNode; // TODO: is this still necessary?
-export type cssInterpolation = Interpolation<ThemeOptions>;
+export type cssInterpolation = CSSProperties;
 
 export interface BoxModelProperties {
 	background: string;
@@ -30,7 +25,7 @@ export type BoxModelHoverProperties = PrefixKeys<BoxModelProperties, 'hover'>;
 
 export interface CustomCSS {
 	className?: string;
-	css?: cssInterpolation;
+	style?: CSSProperties;
 	key?: string | number | null;
 }
 

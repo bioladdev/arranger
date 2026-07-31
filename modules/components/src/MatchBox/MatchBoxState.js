@@ -1,8 +1,8 @@
 import { debounce } from 'lodash-es';
 import { Component } from 'react';
 
-import { decorateFieldWithColumnsState } from '#QuickSearch/QuickSearchQuery.js';
-import api from '#utils/api.js';
+import { decorateFieldWithColumnsState } from '#QuickSearch/QuickSearchQuery';
+import api from '#utils/api';
 
 let matchBoxFields = `
   state {

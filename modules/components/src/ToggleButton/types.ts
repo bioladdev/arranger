@@ -1,8 +1,7 @@
-import type { SerializedStyles } from '@emotion/react';
-import type { FC, HTMLProps } from 'react';
+import type { CSSProperties, FC, HTMLProps } from 'react';
 
-import type { ThemedButtonProps } from '#Button/types.js';
-import type { RecursivePartial } from '#utils/types.js';
+import type { ThemedButtonProps } from '#Button/types';
+import type { RecursivePartial } from '#utils/types';
 
 export interface Option {
 	disabled?: boolean;
@@ -11,7 +10,7 @@ export interface Option {
 }
 
 export interface ToggleButtonThemeProps extends ThemedButtonProps {
-	OptionCSS: SerializedStyles;
+	OptionCSS?: CSSProperties;
 }
 
 export default interface Props extends Omit<HTMLProps<HTMLButtonElement>, 'onChange'> {

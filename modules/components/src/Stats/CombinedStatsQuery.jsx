@@ -1,9 +1,9 @@
 import { get } from 'lodash-es';
 
-import { AggsState } from '#aggregations/index.js';
-import Query from '#Query.js';
+import { AggsState } from '#aggregations/index';
+import Query from '#Query';
 
-import { accessor, underscoreField } from './Stats.js';
+import { accessor, underscoreField } from './Stats';
 
 const CombinedStatsQuery = ({ apiFetcher, documentType, sqon, stats, render }) => (
 	<AggsState

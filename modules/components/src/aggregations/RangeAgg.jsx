@@ -1,4 +1,3 @@
-import { css } from '@emotion/react';
 import cx from 'classnames';
 import convert from 'convert-units';
 import { debounce, isEqual, isNil } from 'lodash-es';
@@ -6,12 +5,12 @@ import { Component } from 'react';
 import InputRange from 'react-input-range'; // TODO: abandoned. use rc-slider instead
 import 'react-input-range/lib/css/index.css';
 
-import { replaceFieldSQON } from '#SQONViewer/utils.js';
-import { withTheme } from '#ThemeContext/index.js';
-import formatNumber from '#utils/formatNumber.js';
-import { emptyObj } from '#utils/noops.js';
+import { replaceFieldSQON } from '#SQONViewer/utils';
+import { withTheme } from '#ThemeContext/index';
+import formatNumber from '#utils/formatNumber';
+import { emptyObj } from '#utils/noops';
 
-import AggsGroup from './AggsGroup/index.js';
+import AggsGroup from './AggsGroup/index';
 
 const SUPPORTED_CONVERSIONS = {
 	time: ['d', 'year'],
@@ -25,7 +24,7 @@ const RangeLabel = ({
 	children,
 	className,
 	borderRadius = 0,
-	css: customCSS,
+	style: customCSS,
 	fontWeight = 'inherit',
 	isRight,
 	isTop,
@@ -35,21 +34,19 @@ const RangeLabel = ({
 }) => (
 	<div
 		className={cx('RangeLabel', { bottom: !isTop, left: !isRight, right: isRight, top: isTop }, className)}
-		css={[
-			css`
-				background: ${background};
-				border-radius: ${borderRadius};
-				color: ${isTop ? 'inherit' : '#666'};
-				font-size: ${isTop ? 0.9 : 0.7}rem;
-				font-weight: ${fontWeight};
-				margin: ${margin};
-				padding: ${padding};
-				position: absolute;
-				${isRight && `right: 0;`}
-				top: ${isTop ? `-` : ``}1.2rem;
-			`,
-			customCSS,
-		]}
+		style={{
+			background,
+			borderRadius,
+			color: isTop ? 'inherit' : '#666',
+			fontSize: `${isTop ? 0.9 : 0.7}rem`,
+			fontWeight,
+			margin,
+			padding,
+			position: 'absolute',
+			...(isRight && { right: '0' }),
+			top: `${isTop ? '-' : ''}1.2rem`,
+			...customCSS,
+		}}
 		{...props}
 	>
 		{children}
@@ -191,7 +188,7 @@ class RangeAgg extends Component {
 					Aggregations: {
 						RangeAgg: {
 							// disableUnitSelection: themeDisableUnitSelection,
-							InputRange: { css: themeInputRangeCSS } = emptyObj,
+							InputRange: { style: themeInputRangeCSS } = emptyObj,
 							NoDataContainer: {
 								fontColor: themeNoDataFontColor = colors?.grey?.[600],
 								fontSize: themeNoDataFontSize = '0.8em',
@@ -200,7 +197,7 @@ class RangeAgg extends Component {
 							RangeSlider: {
 								background: themeRangeSliderBackground = colors?.common?.white,
 								borderColor: themeRangeSliderBorderColor = colors?.grey?.[500],
-								css: themeRangeSliderCSS,
+								style: themeRangeSliderCSS,
 								disabledBackground: themeRangeSliderDisabledBackground = colors?.grey?.[200],
 								disabledBorderColor: themeRangeSliderDisabledBorderColor = colors?.grey?.[500],
 							} = emptyObj,
@@ -212,7 +209,7 @@ class RangeAgg extends Component {
 								inBackground: themeRangeTrackInBackground = colors?.grey?.[600],
 								outBackground: themeRangeTrackOutBackground = colors?.grey?.[200],
 							} = emptyObj,
-							RangeWrapper: { css: themeRangeWrapperCSS, ...RangeWrapperProps } = emptyObj,
+							RangeWrapper: { style: themeRangeWrapperCSS, ...RangeWrapperProps } = emptyObj,
 							...themeRangeAggProps
 						} = emptyObj,
 					} = emptyObj,
@@ -257,36 +254,20 @@ class RangeAgg extends Component {
 				{hasData ? (
 					<div
 						className="range-wrapper"
-						css={[
-							themeRangeWrapperCSS,
-							css`
-								align-items: center;
-								display: flex;
-								flex-direction: column;
-								width: 100%;
-							`,
-						]}
+						style={{ alignItems: 'center', display: 'flex', flexDirection: 'column', width: '100%', ...themeRangeWrapperCSS }}
 						{...RangeWrapperProps}
 					>
 						{supportedConversions.length > 1 && (
 							<div
 								className="unit-wrapper"
-								css={css`
-									text-align: center;
-									margin-top: 4px;
-								`}
+								style={{ textAlign: 'center', marginTop: '4px' }}
 							>
 								{supportedConversions
 									.map((x) => convert().describe(x))
 									.map((x) => ({ ...x, isActive: x.abbr === displayUnit }))
 									.map(({ abbr, plural, isActive }) => (
 										<label
-											css={css`
-												margin: 0 5px;
-												font-family: inherit;
-												color: inherit;
-												border-bottom: none;
-											`}
+											style={{ margin: '0 5px', fontFamily: 'inherit', color: 'inherit', borderBottom: 'none' }}
 											htmlFor={abbr}
 											key={abbr}
 										>
@@ -297,51 +278,10 @@ class RangeAgg extends Component {
 							</div>
 						)}
 
+						{/* TODO: restore .input-range nested class styles via CSS */}
 						<div
 							className={cx('input-range-wrapper', { disabled: unusable })}
-							css={css`
-								margin: 1.5rem 0;
-								position: relative;
-								font-size: 0.8rem;
-								width: 90%;
-
-								/** InputRange doesn't allow customisation through props
-									* The following classes, and theme overrides are the
-									* only way available for now. May implement our own slider.
-									*/
-								.input-range {
-									background: ${unusable ? themeRangeTrackDisabledBackground : themeRangeTrackBackground};
-
-									.input-range__label {
-										display: none;
-									}
-
-									.input-range__slider {
-										background: ${unusable ? themeRangeSliderDisabledBackground : themeRangeSliderBackground};
-										border-color: ${unusable ? themeRangeSliderDisabledBorderColor : themeRangeSliderBorderColor};
-										padding: 0;
-
-										${themeRangeSliderCSS}
-									}
-
-									.input-range__track--background {
-										background: ${unusable ? themeRangeTrackDisabledOutBackground : themeRangeTrackOutBackground};
-
-										.input-range__track--active {
-											background: ${unusable ? themeRangeTrackDisabledInBackground : themeRangeTrackInBackground};
-										}
-									}
-
-									&.input-range--disabled {
-										.input-range__slider,
-										.input-range__track {
-											cursor: default;
-										}
-									}
-
-									${themeInputRangeCSS}
-								}
-							`}
+							style={{ margin: '1.5rem 0', position: 'relative', fontSize: '0.8rem', width: '90%' }}
 						>
 							<RangeLabel isTop {...themeRangeLabelProps}>
 								{this.formatRangeLabel(currentValues.min)}
@@ -378,13 +318,7 @@ class RangeAgg extends Component {
 
 							<span
 								id={getLabelId(displayName)}
-								css={css`
-									position: absolute;
-									height: 0;
-									width: 0;
-									top: -9999px;
-									left: -9999px;
-								`}
+								style={{ position: 'absolute', height: 0, width: 0, top: '-9999px', left: '-9999px' }}
 							>
 								{`Set ${displayName}`}
 							</span>
@@ -393,11 +327,7 @@ class RangeAgg extends Component {
 				) : (
 					<span
 						className="no-data"
-						css={css`
-							color: ${themeNoDataFontColor};
-							display: block;
-							font-size: ${themeNoDataFontSize};
-						`}
+						style={{ color: themeNoDataFontColor, display: 'block', fontSize: themeNoDataFontSize }}
 					>
 						No data available
 					</span>

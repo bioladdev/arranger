@@ -1,8 +1,8 @@
 import type { MouseEventHandler, ReactNode, TouchEventHandler } from 'react';
 
-import type { ThemeCommon } from '#ThemeContext/types/index.js';
-import type { TooltipThemeProperties } from '#Tooltip/types.js';
-import type { RecursivePartial } from '#utils/types.js';
+import type { ThemeCommon } from '#ThemeContext/types/index';
+import type { TooltipThemeProperties } from '#Tooltip/types';
+import type { RecursivePartial } from '#utils/types';
 
 export type ButtonCustomProps = ThemeCommon.CustomCSS &
 	ThemeCommon.MouseEventProperties & {

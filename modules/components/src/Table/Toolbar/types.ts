@@ -1,8 +1,8 @@
 import type { ElementType } from 'react';
 
-import type { CountDisplayThemeProps } from '#Table/CountDisplay/types.js';
-import type { ThemeCommon } from '#ThemeContext/types/index.js';
-import type { RecursivePartial } from '#utils/types.js';
+import type { CountDisplayThemeProps } from '#Table/CountDisplay/types';
+import type { ThemeCommon } from '#ThemeContext/types/index';
+import type { RecursivePartial } from '#utils/types';
 
 export type ToolbarThemeProps = {
 	spacing: string;

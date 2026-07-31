@@ -1,4 +1,4 @@
-import { graphql } from './api.js';
+import { graphql } from './api';
 
 export default ({ type, path, userId, sqon = {}, returnIds = false, apiFetcher, sort = [] }) =>
 	(apiFetcher || graphql)({

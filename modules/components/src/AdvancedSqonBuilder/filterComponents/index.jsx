@@ -1,10 +1,10 @@
-import { default as defaultApiFetcher } from '#utils/api.js';
-import ExtendedMappingProvider from '#utils/ExtendedMappingProvider.js';
+import { default as defaultApiFetcher } from '#utils/api';
+import ExtendedMappingProvider from '#utils/ExtendedMappingProvider';
 
-import BooleanFilter from './BooleanFilter.js';
-import { FilterContainer } from './common.js';
-import RangeFilter from './RangeFilter.js';
-import TermFilter from './TermFilter.js';
+import BooleanFilter from './BooleanFilter';
+import { FilterContainer } from './common';
+import RangeFilter from './RangeFilter';
+import TermFilter from './TermFilter';
 
 const FieldOpModifier = ({
 	sqonPath,
@@ -104,6 +104,6 @@ const FieldOpModifier = ({
 
 export default FieldOpModifier;
 
-export { default as TermFilter } from './TermFilter.js';
-export { default as RangeFilter } from './RangeFilter.js';
-export { default as BooleanFilter } from './BooleanFilter.js';
+export { default as TermFilter } from './TermFilter';
+export { default as RangeFilter } from './RangeFilter';
+export { default as BooleanFilter } from './BooleanFilter';

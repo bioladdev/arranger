@@ -1,5 +1,5 @@
 import React from 'react';
-import StyleProvider from './StyleProvider.js';
+import StyleProvider from './StyleProvider';
 
 export default class ThemeSwitcher extends React.Component {
   constructor(props) {

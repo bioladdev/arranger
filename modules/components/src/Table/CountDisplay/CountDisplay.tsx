@@ -1,17 +1,16 @@
-import { css } from '@emotion/react';
 import cx from 'classnames';
 import pluralize from 'pluralize';
 
-import { useTableContext } from '#Table/helpers/index.js';
-import { useThemeContext } from '#ThemeContext/index.js';
-import { emptyObj } from '#utils/noops.js';
+import { useTableContext } from '#Table/helpers/index';
+import { useThemeContext } from '#ThemeContext/index';
+import { emptyObj } from '#utils/noops';
 
-import { isPlural } from './helpers.js';
-import type { CountDisplayProps } from './types.js';
+import { isPlural } from './helpers';
+import type { CountDisplayProps } from './types';
 
 const CountDisplay = ({
 	className: customClassName,
-	css: customCSS,
+	style: customCSS,
 	theme: { fontColor: customFontColor, fontSize: customFontSize, spacing: customSpacing } = emptyObj,
 }: CountDisplayProps) => {
 	const { currentPage, documentType, isLoading, pageSize, missingProvider, total } = useTableContext({
@@ -23,7 +22,7 @@ const CountDisplay = ({
 			Table: {
 				CountDisplay: {
 					className: themeClassName,
-					css: themeCSS,
+					style: themeCSS,
 					fontColor: themeFontColor = colors?.grey?.[700],
 					fontSize: themeFontSize = '0.8rem',
 					spacing: themeSpacing = '0.2rem',
@@ -41,25 +40,7 @@ const CountDisplay = ({
 	return (
 		<article
 			className={cx('currentlyDisplayed', customClassName, themeClassName)}
-			css={[
-				themeCSS,
-				css`
-					align-items: center;
-					color: ${customFontColor ?? themeFontColor};
-					display: flex;
-					flex-grow: 1;
-					font-size: ${customFontSize ?? themeFontSize};
-
-					> * {
-						flex: 0 0 auto;
-
-						&:not(:first-of-type) {
-							margin-left: ${customSpacing ?? themeSpacing ?? themeToolbarSpacing};
-						}
-					}
-				`,
-				customCSS,
-			]}
+			style={{ alignItems: 'center', color: customFontColor ?? themeFontColor, display: 'flex', flexGrow: 1, fontSize: customFontSize ?? themeFontSize, ...themeCSS, ...customCSS }}
 		>
 			{missingProvider ? (
 				<span className="noProvider">The counter is missing its {missingProvider || 'context'} provider.</span>

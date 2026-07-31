@@ -13,4 +13,4 @@ export {
 	getOperationAtPath,
 	removeSqonPath,
 	setSqonAtPath,
-} from '../AdvancedSqonBuilder/utils.js';
+} from '../AdvancedSqonBuilder/utils';
