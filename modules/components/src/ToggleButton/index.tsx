@@ -5,6 +5,8 @@ import noopFn, { emptyObj } from '#utils/noops';
 import { NonEmptyArray } from '#types/utility.js';
 import { FC, HTMLProps } from 'react';
 
+import styles from './styles.module.css';
+
 export interface Option {
 	disabled?: boolean;
 	title?: FC<{ toggleStatus?: string } | undefined>;
@@ -24,17 +26,16 @@ interface Props extends Omit<HTMLProps<HTMLButtonElement>, 'onChange'> {
  */
 const ToggleButton = ({ onChange = noopFn, options, value: selectedValue = '', className }: Props) => {
 	return (
-		<div className={cx('toggle-button', className)}>
+		<div className={cx(styles.toggleButton, className)}>
 			{options.map(({ disabled = false, title, value = '' }, index) => {
 				const active = selectedValue === value;
 				const clickHandler = () => (disabled ? null : onChange({ value }));
 
 				return (
 					<button
-						className={cx('toggle-button-option', {
-							active,
-							disabled,
-						})}
+						className={cx(styles.option)}
+						data-active={active}
+						data-disabled={disabled}
 						disabled={disabled}
 						key={value || `undefined-${index}`}
 						onClick={clickHandler}

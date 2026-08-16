@@ -1,0 +1,36 @@
+:root {
+	--arranger-color-grey-50: #fafafa;
+	--arranger-color-grey-200: #eeeeee;
+	--arranger-color-grey-600: #757575;
+	--arranger-color-grey-700: #616161;
+}
+
+.toggleButton {
+	--arranger-toggle-button-border-radius: 0.9rem 50%;
+	--arranger-toggle-button-border-width: 0.1rem;
+	--arranger-toggle-button-font-size: 0.9rem;
+	--arranger-toggle-button-padding: 5px;
+
+	display: flex;
+	flex-direction: row;
+	height: calc(var(--arranger-toggle-button-font-size) * 2);
+	justify-content: center;
+}
+
+.option {
+	background: var(--arranger-color-grey-50);
+	border: var(--arranger-toggle-button-border-width) solid var(--arranger-color-grey-600);
+	border-radius: var(--arranger-toggle-button-border-radius);
+	flex: 1;
+	font-size: var(--arranger-toggle-button-font-size);
+	padding: var(--arranger-toggle-button-padding);
+}
+
+.option[data-active='true'] {
+	background: var(--arranger-color-grey-200);
+}
+
+.option[data-disabled='true'] {
+	background: var(--arranger-color-grey-200);
+	color: var(--arranger-color-grey-700);
+}
