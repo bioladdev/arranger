@@ -7,8 +7,10 @@ import styles from './styles.module.css';
 import type Props from './types';
 
 const BucketCount = ({
+	active = false,
 	className,
 	children,
+	disabled = false,
 	style: customStyle,
 	theme: {
 		activeBackground: customActiveBackground,
@@ -54,8 +56,6 @@ const BucketCount = ({
 	} = useThemeContext({ callerName: 'BucketCount' });
 
 	const combinedClassName = cx(className, customClassName, themeClassName);
-	const isActive = combinedClassName?.split(' ').includes('active');
-	const isDisabled = combinedClassName?.split(' ').includes('disabled');
 
 	const hasBorder = Boolean(
 		borderColor ||
@@ -84,9 +84,9 @@ const BucketCount = ({
 
 	return (
 		<span
-			className={cx(styles.bucketCount, className, customClassName, themeClassName)}
-			data-active={isActive}
-			data-disabled={isDisabled}
+			className={cx(styles.bucketCount, combinedClassName)}
+			data-active={active}
+			data-disabled={disabled}
 			data-has-border={hasBorder}
 			style={{ ...themeCustomProperties, ...themeStyle, ...parentStyle, ...customStyle }}
 			{...props}
