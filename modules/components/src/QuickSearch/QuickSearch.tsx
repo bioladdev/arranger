@@ -12,6 +12,7 @@ import { emptyObj } from '#utils/noops';
 import internalTranslateSQONValue from '#utils/translateSQONValue';
 
 import { useSearchFields } from './helpers';
+import styles from './QuickSearch.module.css';
 import DropdownItem from './QuickSearchDropdown';
 import QuickSearchQuery from './QuickSearchQuery';
 import QuickSearchWrapper from './QuickSearchWrapper';
@@ -177,8 +178,8 @@ const QuickSearch = ({
 
 						{isDropdownOpen && !searchDisabled && (
 							<div
-								className="quick-search-results"
-								style={{ marginBottom: '0.2rem', ...themeDropDownItemsCSS }}
+								className={styles.results}
+								style={themeDropDownItemsCSS}
 							>
 								{searchResults.length ? (
 									searchResults?.map(
@@ -227,10 +228,7 @@ const QuickSearch = ({
 						)}
 
 						{showPinnedValues && (
-							<div
-								className="quick-search-pinned-values"
-								style={{ display: 'flex', flexWrap: 'wrap' }}
-							>
+							<div className={styles.pinnedValues}>
 								{currentValues({
 									displayField,
 									sqon,
@@ -238,7 +236,7 @@ const QuickSearch = ({
 									(
 										primaryKey: string, ////////////
 									) => (
-										<div className="quick-search-pinned-value" key={primaryKey}>
+										<div key={primaryKey}>
 											<PinnedValueComponent
 												style={themePinnedValuesCSS}
 												theme={themePinnedValuesTheme}

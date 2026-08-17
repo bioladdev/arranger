@@ -1,4 +1,5 @@
 import { Component as ComponentComponent } from '@reach/component-component';
+import cx from 'classnames';
 import { debounce, keys, isEqual, pick } from 'lodash-es';
 import { Component } from 'react';
 import { FaFilter, FaTimesCircle } from 'react-icons/fa';
@@ -10,8 +11,8 @@ import SQONViewer from '#SQONViewer/index';
 import Stats from '#Stats/index';
 import noopFn from '#utils/noops';
 
-import './AdvancedFacetView.css';
 import FacetView from './FacetView';
+import styles from './styles.module.css';
 import {
 	filterOutNonValue,
 	injectExtensionToElasticMapping,
@@ -114,7 +115,7 @@ export default class AdvancedFacetView extends Component {
 			: displayTreeData;
 
 		return (
-			<div className="advancedFacetViewWrapper">
+			<div className={styles.advancedFacetViewWrapper}>
 				{displayTreeData && (
 					<>
 						<div>
@@ -123,11 +124,11 @@ export default class AdvancedFacetView extends Component {
 								setSQON={(sqon) => this.handleSqonChange({ sqon })}
 							/>
 						</div>
-						<div className="facetViewWrapper">
-							<div className="panel treeViewPanel">
-								<div className="treeView">
-									<div className="panelHeading">
-										<span className="fieldsShown">
+						<div className={styles.facetViewWrapper}>
+							<div className={cx(styles.panel, styles.treeViewPanel)}>
+								<div>
+									<div className={styles.treeViewPanelHeading}>
+										<span className={styles.fieldsShown}>
 											{withValueOnly
 												? keys(
 														filterOutNonValue({
@@ -138,8 +139,7 @@ export default class AdvancedFacetView extends Component {
 											fields
 										</span>
 										<span
-											className="valueOnlyCheck"
-											style={{ cursor: 'pointer' }}
+											className={styles.valueOnlyCheck}
 											onClick={() =>
 												this.setState({
 													selectedPath: displayTreeData[0]?.path,
@@ -167,13 +167,13 @@ export default class AdvancedFacetView extends Component {
 									/>
 								</div>
 							</div>
-							<div className={`panel facetsPanel`}>
-								<div className={`panelHeading`}>
+							<div className={cx(styles.panel, styles.facetsPanel)}>
+								<div className={styles.facetsPanelHeading}>
 									{/* using a thin local state here for rendering performance optimization */}
 									<ComponentComponent initialState={{ value: searchTerm || '' }}>
 										{({ state: { value }, setState }) => (
 											<InputComponent
-												className="filterInput"
+												className={styles.filterInput}
 												onChange={({ target: { value } }) => {
 													setState({ value }, () => {
 														this.setSearchTerm(value);
@@ -200,19 +200,19 @@ export default class AdvancedFacetView extends Component {
 										)}
 									</ComponentComponent>
 									{statsConfig && (
-										<div style={{ display: 'flex', flex: 1, height: '100%' }}>
+										<div className={styles.statsBar}>
 											<Stats
 												small
 												transparent
 												{...props}
 												{...{ sqon }}
 												stats={statsConfig}
-												style={{ flexGrow: 1 }}
+												className={styles.statsBarContent}
 											/>
 										</div>
 									)}
 								</div>
-								<div className={`facets`}>
+								<div className={styles.facets}>
 									<FacetView
 										extendedMapping={extendedMapping}
 										constructEntryId={this.constructFilterId}
@@ -233,7 +233,7 @@ export default class AdvancedFacetView extends Component {
 						</div>
 					</>
 				)}
-				{isLoading && <Spinner />}
+				{isLoading && <Spinner className={styles.spinnerOverlay} />}
 			</div>
 		);
 	}

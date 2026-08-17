@@ -1,0 +1,74 @@
+@import '../tokens.module.css';
+
+.baseWrapper {
+}
+
+.wrapper {
+	border-bottom: 0.05rem solid transparent;
+	border-color: var(--arranger-qs-wrapper-divider-color, var(--arranger-color-grey-300));
+	box-sizing: border-box;
+	padding-bottom: 0.3rem;
+}
+
+.wrapper[data-collapsed='true'] {
+	padding-bottom: 0;
+}
+
+.header {
+	background: var(--arranger-qs-wrapper-header-background, var(--arranger-color-common-white));
+	box-sizing: border-box;
+	padding: 0 6px;
+	position: relative;
+	top: 0;
+}
+
+.header[data-sticky='true'] {
+	position: sticky;
+}
+
+.titleWrapper {
+	align-items: center;
+	border-bottom: 0.1rem solid var(--arranger-qs-wrapper-header-divider-color, var(--arranger-color-grey-200));
+	box-sizing: border-box;
+	display: flex;
+	padding: 6px 0 4px;
+}
+
+.titleWrapper[data-collapsed='true'] {
+	border-bottom: none;
+	padding-bottom: 0;
+}
+
+.titleControl {
+	padding: 2px 0;
+	width: 100%;
+}
+
+.title {
+	color: var(--arranger-qs-wrapper-header-font-color, inherit);
+	font-size: 1rem;
+	margin-left: 0.5rem;
+}
+
+.title[data-has-action='true'] {
+	padding-right: var(--arranger-qs-wrapper-action-icon-padding);
+}
+
+.actionIcon {
+	cursor: pointer;
+	margin-left: 0.4rem;
+	margin-top: 0.1rem;
+	padding: 0.2rem;
+	position: absolute;
+	right: 6px;
+}
+
+.filterRow {
+	padding: 7px 0;
+}
+
+.filter {
+	box-sizing: border-box;
+	padding: 0 6px;
+	top: 0;
+}

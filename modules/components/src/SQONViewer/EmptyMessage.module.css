@@ -1,0 +1,9 @@
+.emptyMessage {
+	--arranger-empty-message-font-weight: normal;
+
+	font-weight: var(--arranger-empty-message-font-weight);
+}
+
+.arrow {
+	margin-right: 0.2em;
+}

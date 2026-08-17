@@ -11,6 +11,7 @@ import formatNumber from '#utils/formatNumber';
 import { emptyObj } from '#utils/noops';
 
 import AggsGroup from './AggsGroup/index';
+import styles from './RangeAgg.module.css';
 
 const SUPPORTED_CONVERSIONS = {
 	time: ['d', 'year'],
@@ -20,38 +21,38 @@ const SUPPORTED_CONVERSIONS = {
 const supportedConversionFromUnit = (unit) => (unit ? SUPPORTED_CONVERSIONS[convert().describe(unit).measure] : []);
 
 const RangeLabel = ({
-	background = 'none',
+	background,
 	children,
 	className,
-	borderRadius = 0,
+	borderRadius,
 	style: customCSS,
-	fontWeight = 'inherit',
+	fontWeight,
 	isRight,
 	isTop,
 	margin,
 	padding,
 	...props
-}) => (
-	<div
-		className={cx('RangeLabel', { bottom: !isTop, left: !isRight, right: isRight, top: isTop }, className)}
-		style={{
-			background,
-			borderRadius,
-			color: isTop ? 'inherit' : '#666',
-			fontSize: `${isTop ? 0.9 : 0.7}rem`,
-			fontWeight,
-			margin,
-			padding,
-			position: 'absolute',
-			...(isRight && { right: '0' }),
-			top: `${isTop ? '-' : ''}1.2rem`,
-			...customCSS,
-		}}
-		{...props}
-	>
-		{children}
-	</div>
-);
+}) => {
+	const themeStyle = {
+		'--arranger-range-label-background': background,
+		'--arranger-range-label-border-radius': borderRadius,
+		'--arranger-range-label-font-weight': fontWeight,
+		'--arranger-range-label-margin': margin,
+		'--arranger-range-label-padding': padding,
+	};
+
+	return (
+		<div
+			className={cx(styles.rangeLabel, className)}
+			data-right={Boolean(isRight)}
+			data-top={Boolean(isTop)}
+			style={{ ...themeStyle, ...customCSS }}
+			{...props}
+		>
+			{children}
+		</div>
+	);
+};
 
 const getLabelId = (displayName) => {
 	return `${displayName.split('(')[0].trim().toLowerCase().replace(/\s/g, '-')}__range-label`;
@@ -190,8 +191,8 @@ class RangeAgg extends Component {
 							// disableUnitSelection: themeDisableUnitSelection,
 							InputRange: { style: themeInputRangeCSS } = emptyObj,
 							NoDataContainer: {
-								fontColor: themeNoDataFontColor = colors?.grey?.[600],
-								fontSize: themeNoDataFontSize = '0.8em',
+								fontColor: themeNoDataFontColor,
+								fontSize: themeNoDataFontSize,
 							} = emptyObj,
 							RangeLabel: themeRangeLabelProps = emptyObj,
 							RangeSlider: {
@@ -240,6 +241,12 @@ class RangeAgg extends Component {
 		// TODO: implement unit selection disabling per fieldname.
 		// const enableUnitSelection = !themeDisableUnitSelection;
 
+		/** @type {import('react').CSSProperties & Record<`--arranger-range-agg-${string}`, string | undefined>} */
+		const noDataThemeStyle = {
+			'--arranger-range-agg-no-data-font-color': themeNoDataFontColor,
+			'--arranger-range-agg-no-data-font-size': themeNoDataFontSize,
+		};
+
 		return (
 			<AggsGroup
 				dataFields={dataFields}
@@ -253,21 +260,18 @@ class RangeAgg extends Component {
 			>
 				{hasData ? (
 					<div
-						className="range-wrapper"
-						style={{ alignItems: 'center', display: 'flex', flexDirection: 'column', width: '100%', ...themeRangeWrapperCSS }}
+						className={styles.rangeWrapper}
+						style={themeRangeWrapperCSS}
 						{...RangeWrapperProps}
 					>
 						{supportedConversions.length > 1 && (
-							<div
-								className="unit-wrapper"
-								style={{ textAlign: 'center', marginTop: '4px' }}
-							>
+							<div className={styles.unitWrapper}>
 								{supportedConversions
 									.map((x) => convert().describe(x))
 									.map((x) => ({ ...x, isActive: x.abbr === displayUnit }))
 									.map(({ abbr, plural, isActive }) => (
 										<label
-											style={{ margin: '0 5px', fontFamily: 'inherit', color: 'inherit', borderBottom: 'none' }}
+											className={styles.unitLabel}
 											htmlFor={abbr}
 											key={abbr}
 										>
@@ -278,10 +282,9 @@ class RangeAgg extends Component {
 							</div>
 						)}
 
-						{/* TODO: restore .input-range nested class styles via CSS */}
 						<div
-							className={cx('input-range-wrapper', { disabled: unusable })}
-							style={{ margin: '1.5rem 0', position: 'relative', fontSize: '0.8rem', width: '90%' }}
+							className={styles.inputRangeWrapper}
+							data-disabled={unusable}
 						>
 							<RangeLabel isTop {...themeRangeLabelProps}>
 								{this.formatRangeLabel(currentValues.min)}
@@ -317,8 +320,8 @@ class RangeAgg extends Component {
 							)}
 
 							<span
+								className={styles.hiddenLabel}
 								id={getLabelId(displayName)}
-								style={{ position: 'absolute', height: 0, width: 0, top: '-9999px', left: '-9999px' }}
 							>
 								{`Set ${displayName}`}
 							</span>
@@ -326,8 +329,8 @@ class RangeAgg extends Component {
 					</div>
 				) : (
 					<span
-						className="no-data"
-						style={{ color: themeNoDataFontColor, display: 'block', fontSize: themeNoDataFontSize }}
+						className={styles.noData}
+						style={noDataThemeStyle}
 					>
 						No data available
 					</span>

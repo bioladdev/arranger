@@ -15,6 +15,7 @@ import { TooltippedForm, TooltippedLI } from '#Tooltip/index';
 import { emptyObj } from '#utils/noops';
 import useDebounce from '#utils/useDebounce';
 
+import styles from './PageSelector.module.css';
 import type { PageSelectorProps } from './types';
 
 const PageSelector = ({
@@ -37,19 +38,18 @@ const PageSelector = ({
 	});
 
 	const {
-		colors,
 		components: {
 			Table: {
 				PageSelector: {
-					borderColor: themeBorderColor = colors?.grey?.[300],
-					borderErrorColor: themeBorderErrorColor = colors?.red?.[600],
-					borderRadius: themeBorderRadius = '0.3rem',
+					borderColor: themeBorderColor,
+					borderErrorColor: themeBorderErrorColor,
+					borderRadius: themeBorderRadius,
 					changePageOnTimeout: themeChangePageOnTimeout = false,
 					className: themeClassName,
 					style: themeCSS,
-					disabledFontColor: themeDisabledFontColor = colors?.grey?.[400],
-					fontColor: themeFontColor = colors?.grey?.[700],
-					fontSize: themeFontSize = '0.8rem',
+					disabledFontColor: themeDisabledFontColor,
+					fontColor: themeFontColor,
+					fontSize: themeFontSize,
 					showTotalPages: themeShowTotalPages,
 				} = emptyObj,
 			} = emptyObj,
@@ -57,9 +57,6 @@ const PageSelector = ({
 	} = useThemeContext({ callerName: 'Table - PageSelector' });
 
 	const disabledFontColor = customDisabledFontColor || themeDisabledFontColor;
-	const inputBorderColor = inputHasError
-		? customBorderErrorColor || themeBorderErrorColor
-		: customBorderColor || themeBorderColor;
 	const shouldChangeOntimeout = customChangePageOnTimeout || themeChangePageOnTimeout;
 
 	const firstPage = 1;
@@ -128,27 +125,31 @@ const PageSelector = ({
 		setCurrentInput((currentPage + 1).toString());
 	}, [currentPage]);
 
+	const pageSelectorThemeStyle = {
+		'--arranger-page-selector-border-radius': customBorderRadius || themeBorderRadius,
+		'--arranger-page-selector-disabled-font-color': disabledFontColor,
+		'--arranger-page-selector-error-border-color': customBorderErrorColor || themeBorderErrorColor,
+		'--arranger-page-selector-font-color': customFontColor || themeFontColor,
+		'--arranger-page-selector-font-size': customFontSize || themeFontSize,
+		'--arranger-page-selector-input-border-color': customBorderColor || themeBorderColor,
+	};
+
 	return (
 		<article
-			className={cx('PageSelector', customClassName, themeClassName)}
-			style={{ color: customFontColor || themeFontColor, fontSize: customFontSize || themeFontSize, ...themeCSS, ...customCSS }}
+			className={cx(styles.pageSelector, customClassName, themeClassName)}
+			style={{ ...pageSelectorThemeStyle, ...themeCSS, ...customCSS }}
 			role="navigation"
 		>
-			{/* TODO: restore pseudo-selector styles via CSS */}
 			<ul
-				style={{ alignItems: 'center', display: 'flex', listStyle: 'none', margin: 0 }}
+				className={styles.list}
 				aria-label="Pagination"
 			>
-				<TooltippedLI className="before">
+				<TooltippedLI>
 					{totalPages > 1 && (
 						<TransparentButton
-							className="first"
-							style={{ marginRight: '0.3rem' }}
+							className={cx(styles.navButton, styles.navButtonFirst)}
 							disabled={isFirstPage}
 							onClick={handlePageJump(firstPage)}
-							theme={{
-								disabledFontColor,
-							}}
 						>
 							{'<<'}
 						</TransparentButton>
@@ -156,27 +157,18 @@ const PageSelector = ({
 
 					{totalPages > 2 && (
 						<TransparentButton
-							className="previous"
+							className={styles.navButton}
 							disabled={isFirstPage}
 							onClick={handlePageJump(displayPage - 1)}
-							theme={{
-								disabledFontColor,
-							}}
 						>
 							{'<'}
 						</TransparentButton>
 					)}
 				</TooltippedLI>
 
-				<TooltippedLI className="current">
-					<label
-						style={{ display: 'flex' }}
-					>
-						<span
-							style={{ margin: '0 0.2rem 0 0' }}
-						>
-							Page
-						</span>
+				<TooltippedLI>
+					<label className={styles.pageLabel}>
+						<span className={styles.pageLabelText}>Page</span>
 
 						{
 							// is it worth showing an input field?
@@ -191,9 +183,9 @@ const PageSelector = ({
 										tooltipVisibility: isInputbeyondRange ? 'always' : 'hover',
 									}}
 								>
-									{/* TODO: restore pseudo-selector styles via CSS */}
 									<input
-										style={{ border: `0.1rem solid ${inputBorderColor}`, borderRadius: customBorderRadius || themeBorderRadius, boxSizing: 'border-box', color: customFontColor || themeFontColor, fontSize: `calc(${customFontSize || themeFontSize} * 0.9)`, height: `calc(${customFontSize || themeFontSize} * 1.5)`, padding: '0 0.3rem', textAlign: 'center', width: '2.5rem' }}
+										className={styles.pageInput}
+										data-error={inputHasError}
 										min={firstPage} // there's no page < 1, duh
 										max={lastPage}
 										name="page-selection-input"
@@ -218,7 +210,6 @@ const PageSelector = ({
 				</TooltippedLI>
 
 				<TooltippedLI
-					className="after"
 					theme={{
 						tooltipAlign: 'top left' as const,
 						tooltipText:
@@ -230,12 +221,9 @@ const PageSelector = ({
 				>
 					{totalPages > 2 && (
 						<TransparentButton
-							className="next"
+							className={styles.navButton}
 							disabled={isLastPage}
 							onClick={handlePageJump(displayPage + 1)}
-							theme={{
-								disabledFontColor,
-							}}
 						>
 							{'>'}
 						</TransparentButton>
@@ -243,13 +231,9 @@ const PageSelector = ({
 
 					{totalPages > 1 && (
 						<TransparentButton
-							className="last"
-							style={{ marginLeft: '0.3rem' }}
+							className={cx(styles.navButton, styles.navButtonLast)}
 							disabled={isLastPage}
 							onClick={handlePageJump(lastPage)}
-							theme={{
-								disabledFontColor,
-							}}
 						>
 							{'>>'}
 						</TransparentButton>

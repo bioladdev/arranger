@@ -1,0 +1,71 @@
+@import '../tokens.module.css';
+
+.button {
+	align-items: center;
+	background: var(--arranger-button-background, var(--arranger-color-grey-100));
+	border: 0.08rem solid var(--arranger-button-border-color, var(--arranger-color-grey-400));
+	border-radius: var(--arranger-button-border-radius, 0.3rem);
+	box-sizing: border-box;
+	color: var(--arranger-button-font-color);
+	display: flex;
+	flex: var(--arranger-button-flex);
+	font-family: var(--arranger-button-font-family);
+	font-size: var(--arranger-button-font-size, 0.85rem);
+	font-weight: var(--arranger-button-font-weight);
+	height: var(--arranger-button-height);
+	justify-content: center;
+	letter-spacing: var(--arranger-button-letter-spacing);
+	line-height: var(--arranger-button-line-height, 1.3rem);
+	margin: var(--arranger-button-margin);
+	padding: var(--arranger-button-padding);
+	position: var(--arranger-button-position, relative);
+	text-transform: var(--arranger-button-text-transform);
+	white-space: var(--arranger-button-white-space);
+	width: var(--arranger-button-width);
+}
+
+.button[data-clickable='true'] {
+	cursor: pointer;
+}
+
+.button[data-clickable='false'] {
+	cursor: default;
+}
+
+.button[data-hidden='true'] {
+	pointer-events: none;
+	visibility: hidden;
+}
+
+.button[data-disabled='true'] {
+	background: var(--arranger-button-disabled-background, var(--arranger-color-grey-100));
+	border-color: var(--arranger-button-disabled-border-color, var(--arranger-color-grey-300));
+	color: var(--arranger-button-disabled-font-color, var(--arranger-color-grey-300));
+}
+
+.button:hover:not([data-disabled='true']) {
+	background: var(--arranger-button-hover-background, var(--arranger-button-background, var(--arranger-color-grey-100)));
+}
+
+/* TransparentButton always renders on top of .button (both classes land on the
+   same <button>) and its own style has always fully overridden BaseButtonInner's
+   computed colors, including in the disabled case — reasserted below so it keeps
+   winning against the more specific .button[data-disabled='true'] rule. */
+.transparentButton,
+.transparentButton[data-disabled='true'] {
+	background: var(--arranger-transparent-button-background, none);
+	border: var(--arranger-transparent-button-border, none);
+	color: var(--arranger-transparent-button-color, inherit);
+	font-family: var(--arranger-transparent-button-font-family, inherit);
+	justify-content: flex-start;
+	margin: var(--arranger-transparent-button-margin, 0);
+	padding: var(--arranger-transparent-button-padding, 0);
+	text-align: left;
+}
+
+.transparentButton[data-has-hover-color='true']:hover {
+	color: var(
+		--arranger-transparent-button-hover-color,
+		color-mix(in srgb, var(--arranger-transparent-button-color, currentColor) 70%, white 30%)
+	);
+}

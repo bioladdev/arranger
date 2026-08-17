@@ -1,0 +1,63 @@
+@import '../tokens.module.css';
+
+.loaderBackground {
+	border-radius: 8px;
+	box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.1), 0 1px 5px 0 rgba(0, 0, 0, 0.08);
+	overflow: visible;
+	position: relative;
+}
+
+.loaderBackground[data-loading='true'] {
+	overflow: hidden;
+}
+
+.spinner {
+	align-items: center;
+	bottom: 0;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	left: 0;
+	margin: 0;
+	position: relative;
+	right: 0;
+	top: 0;
+}
+
+.spinner[data-vertical='true'] {
+	flex-direction: column;
+}
+
+.spinner[data-vertical='true'][data-inverted='true'] {
+	flex-direction: column-reverse;
+}
+
+.spinner[data-vertical='false'][data-inverted='true'] {
+	flex-direction: row-reverse;
+}
+
+/*
+ * Which side gets the 0.5rem margin depends on the vertical/inverted combination on the
+ * figure (row/column/reversed layout). Rather than a descendant selector keyed off the
+ * parent's data attributes, the caller computes the one active side per render and sets
+ * it as a custom property directly on this element (same per-instance-value bridge as
+ * Cell.tsx's columnWidth) — every other side stays at its zero default.
+ */
+.caption {
+	margin-bottom: var(--arranger-loader-caption-margin-bottom, 0);
+	margin-left: var(--arranger-loader-caption-margin-left, 0);
+	margin-right: var(--arranger-loader-caption-margin-right, 0);
+	margin-top: var(--arranger-loader-caption-margin-top, 0);
+}
+
+.overlay {
+	align-items: center;
+	background: color-mix(in srgb, var(--arranger-color-common-white) 70%, transparent);
+	bottom: 0;
+	display: flex;
+	justify-content: center;
+	left: 0;
+	position: absolute;
+	right: 0;
+	top: 0;
+}

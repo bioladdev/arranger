@@ -1,0 +1,34 @@
+@import '../tokens.module.css';
+
+.inputWrapper {
+	align-items: center;
+	border: 1px solid var(--arranger-input-border-color, var(--arranger-color-grey-600));
+	border-radius: 5px;
+	box-sizing: border-box;
+	display: flex;
+	flex: 1;
+	justify-content: center;
+	margin: var(--arranger-input-margin, 0);
+	overflow: hidden;
+	padding: var(--arranger-input-padding, 5px);
+}
+
+.inputWrapper:focus-within {
+	box-shadow: var(--arranger-input-box-shadow, inset 0 0 3px 0 var(--arranger-color-grey-400));
+}
+
+.inputWrapper[data-disabled='true'] {
+	border-color: var(--arranger-input-disabled-border-color, var(--arranger-color-grey-300));
+}
+
+.inputIcon {
+	align-items: center;
+	color: lightgrey;
+	display: flex;
+	justify-content: center;
+}
+
+.input {
+	border: none;
+	width: 100%;
+}

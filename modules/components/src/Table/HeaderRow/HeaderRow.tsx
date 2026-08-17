@@ -7,6 +7,7 @@ import { SELECTION_COLUMN_ID } from '#Table/types';
 import { useThemeContext } from '#ThemeContext/index';
 import { emptyObj } from '#utils/noops';
 
+import styles from './HeaderRow.module.css';
 import type { HeaderRowProps } from './type';
 
 const TableHeaderRow = ({
@@ -14,58 +15,64 @@ const TableHeaderRow = ({
 	hasVisibleRows,
 	headers,
 	theme: {
-		horizontalBorderColor: customHorizontalBorderColor,
 		padding: customPadding,
 		sortingHighlightColor: customSortingHighlightColor,
 		textOverflow: customTableTextOverflow,
-		verticalBorderColor: customVerticalBorderColor,
 	} = emptyObj,
 }: HeaderRowProps) => {
 	const { allColumnsDict } = useTableContext({ callerName: 'TableHeaderrow' });
 	const {
-		colors,
 		components: {
 			Table: {
-				padding: themeTablePadding = '0.1rem 0.4rem',
-				textOverflow: themeTableTextOverflow = 'ellipsis',
+				padding: themeTablePadding,
+				textOverflow: themeTableTextOverflow,
 				HeaderRow: {
 					background: themeBackground,
-					borderColor: themeBorderColor,
 					className: themeClassName,
 					style: themeCSS,
-					disabledBackground: themeDisabledBackground = colors?.grey?.[100],
-					disabledFontColor: themeDisabledFontColor = colors?.grey?.[500],
-					fontColor: themeFontColor = colors?.grey?.[800],
+					disabledBackground: themeDisabledBackground,
+					disabledFontColor: themeDisabledFontColor,
+					fontColor: themeFontColor,
 					fontFamily: themeFontFamily,
-					fontSize: themeFontSize = '0.9rem',
+					fontSize: themeFontSize,
 					fontWeight: themeFontWeight,
-					horizontalBorderColor: themeBorderColor_horizontal = themeBorderColor,
 					letterSpacing: themeLetterSpacing,
-					lineHeight: themeLineHeight = '1rem',
-					overflow: themeOverflow = 'hidden',
+					lineHeight: themeLineHeight,
+					overflow: themeOverflow,
 					padding: themePadding = themeTablePadding,
 					position: themePosition,
-					sortingHighlightColor: themeSortingHighlightColor = colors?.grey?.[500],
+					sortingHighlightColor: themeSortingHighlightColor,
 					textDecoration: themeTextDecoration,
 					textOverflow: themeTextOverflow = themeTableTextOverflow,
 					textTransform: themeTextTransform,
-					verticalBorderColor: themeBorderColor_vertical = themeBorderColor,
 					whiteSpace: themeWhiteSpace,
 				} = emptyObj,
 			} = emptyObj,
 		} = emptyObj,
 	} = useThemeContext({ callerName: 'TableHeaderRow' });
 
-	const borderColor_horizontal = customHorizontalBorderColor || themeBorderColor_horizontal;
-	const borderColor_vertical = customVerticalBorderColor || themeBorderColor_vertical;
 	const headerHighlightColor = customSortingHighlightColor || themeSortingHighlightColor;
 	const headerPadding = customPadding || themePadding;
 	const textOverflow = customTableTextOverflow || themeTextOverflow;
 
+	const rowThemeStyle = {
+		'--arranger-header-row-background': themeBackground,
+		'--arranger-header-row-disabled-background': themeDisabledBackground,
+		'--arranger-header-row-disabled-font-color': themeDisabledFontColor,
+		'--arranger-header-row-font-color': themeFontColor,
+		'--arranger-header-row-font-family': themeFontFamily,
+		'--arranger-header-row-font-size': themeFontSize,
+		'--arranger-header-row-font-weight': themeFontWeight,
+		'--arranger-header-row-letter-spacing': themeLetterSpacing,
+		'--arranger-header-row-line-height': themeLineHeight,
+		'--arranger-header-row-position': themePosition,
+	};
+
 	return (
 		<tr
-			className={cx('TableHeaderRow', themeClassName)}
-			style={{ background: hasVisibleRows ? themeBackground : themeDisabledBackground, color: hasVisibleRows ? themeFontColor : themeDisabledFontColor, fontFamily: themeFontFamily, fontSize: themeFontSize, fontWeight: themeFontWeight, letterSpacing: themeLetterSpacing, lineHeight: themeLineHeight, position: themePosition, ...themeCSS, ...customCSS }}
+			className={cx(styles.headerRow, themeClassName)}
+			data-has-visible-rows={Boolean(hasVisibleRows)}
+			style={{ ...rowThemeStyle, ...themeCSS, ...customCSS }}
 		>
 			{headers.map((headerObj) => {
 				const { displayName, sortable } = allColumnsDict[headerObj.id] || {
@@ -76,16 +83,24 @@ const TableHeaderRow = ({
 				const isSorted = headerObj.column.getIsSorted();
 				const handleSorting = sortable ? headerObj.column.getToggleSortingHandler() : undefined;
 
+				const headerThemeStyle = {
+					'--arranger-header-row-overflow': themeOverflow,
+					'--arranger-header-row-padding': headerPadding,
+					'--arranger-header-row-sorting-highlight-color': headerHighlightColor,
+					'--arranger-header-row-text-decoration': themeTextDecoration,
+					'--arranger-header-row-text-overflow': textOverflow,
+					'--arranger-header-row-text-transform': themeTextTransform,
+					'--arranger-header-row-white-space': themeWhiteSpace,
+				};
+
 				return (
 					<th
-						className={cx('table_header', headerObj.id, {
-							asc: isSorted === 'asc',
-							desc: isSorted === 'desc',
-							sortable,
-						})}
-						style={{ overflow: themeOverflow, padding: headerPadding, position: 'relative', textAlign: 'left', textDecoration: themeTextDecoration, textOverflow: textOverflow, textTransform: themeTextTransform, whiteSpace: themeWhiteSpace, width: `${headerObj.getSize()}px` }}
+						className={styles.header}
 						data-accessor={headerObj.id}
 						data-header={displayName}
+						data-sortable={sortable}
+						data-sorted={isSorted || undefined}
+						style={{ ...headerThemeStyle, width: `${headerObj.getSize()}px` }}
 						key={headerObj.id}
 						onClick={handleSorting}
 						title={displayName}
@@ -97,8 +112,8 @@ const TableHeaderRow = ({
 						{headerObj.column.getCanResize() && (
 							<TransparentButton
 								aria-label="Resize Column"
-								className={`resizer ${headerObj.column.getIsResizing() ? 'isResizing' : ''}`}
-								style={{ background: 'rgba(0, 0, 0, 0.5)', cursor: 'col-resize', height: '100%', position: 'absolute', right: 0, top: 0, touchAction: 'none', userSelect: 'none', width: '3px' }}
+								className={styles.resizer}
+								data-resizing={headerObj.column.getIsResizing()}
 								onMouseDown={headerObj.getResizeHandler()}
 								onTouchStart={headerObj.getResizeHandler()}
 							/>

@@ -1,0 +1,83 @@
+@import '../tokens.module.css';
+
+.sqonGroup {
+	align-items: center;
+	row-gap: 10px;
+}
+
+.bubble {
+	align-items: center;
+	border-radius: 10.5px;
+	display: flex;
+	flex: none;
+	font-family: Montserrat;
+	font-size: 11px;
+	font-weight: 300;
+	height: 22px;
+	letter-spacing: 0.2px;
+	margin-right: 10px;
+}
+
+.fieldName {
+	color: var(--arranger-color-text);
+	font-weight: 600;
+	margin-right: 0.3rem;
+	text-transform: uppercase;
+}
+
+.op {
+	color: var(--arranger-color-text-muted);
+	font-weight: normal;
+	margin-right: 5px;
+}
+
+.value {
+	background-color: var(--arranger-color-brand-blue);
+	color: var(--arranger-color-common-white);
+	cursor: pointer;
+	margin-right: 4px;
+	padding: 0 7px 0 12px;
+}
+
+.value::after {
+	content: url('data:image/svg+xml,%3Csvg%20width%3D%228%22%20height%3D%228%22%20stroke%3D%22white%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%0A%20%20%3Cline%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%228%22%20y2%3D%228%22%20/%3E%0A%20%20%3Cline%20x1%3D%228%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%228%22%20/%3E%0A%3C/svg%3E');
+	margin-left: 9px;
+}
+
+.clear {
+	--arranger-sqon-action-color: #008199;
+
+	background-color: var(--arranger-color-common-white);
+	border: 1px solid var(--arranger-color-border-muted);
+	color: var(--arranger-sqon-action-color);
+	cursor: pointer;
+	padding: 0 12px;
+	text-transform: uppercase;
+}
+
+.lessOrMore {
+	--arranger-sqon-action-color: #008199;
+
+	background-color: var(--arranger-color-common-white);
+	border: 1px solid var(--arranger-color-border-muted);
+	color: var(--arranger-sqon-action-color);
+	cursor: pointer;
+	margin-right: 6px;
+	padding: 0 12px;
+	text-transform: uppercase;
+}
+
+.lessOrMore[data-collapsed='true'] {
+	color: var(--arranger-color-brand-teal);
+	display: block;
+	font-size: 24px;
+	line-height: 0.3rem;
+}
+
+.sqonValueGroup {
+	align-items: center;
+	color: var(--arranger-color-brand-teal);
+	display: flex;
+	font-size: 22px;
+	line-height: 22px;
+}

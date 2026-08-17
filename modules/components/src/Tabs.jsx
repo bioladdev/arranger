@@ -3,6 +3,7 @@ import ReactTable from 'react-table-old';
 import { useState } from 'react';
 
 import Pagination from './Table/index';
+import styles from './Tabs.module.css';
 
 const compose = (...fns) => (Component) => fns.reduceRight((acc, fn) => fn(acc), Component);
 const withState = (key, setKey, initial) => (Component) => (props) => {
@@ -43,17 +44,15 @@ export const TabsTable = ({ className, columns, data, pageSize = 10, ...props })
 	/>
 );
 
-const Tabs = ({ tabs, activeTab, setActiveTab }) =>
+const Tabs = ({ tabs, activeTab, setActiveTab, className }) =>
 	tabs?.length ? (
-		<div className={`tabs`}>
-			<div
-				className={`tabs-titles`}
-				style={{ display: 'flex' }}
-			>
+		<div className={cx(styles.tabs, className)}>
+			<div className={styles.tabsTitles}>
 				{tabs.map(({ key, title }) => (
 					<div
 						key={key}
-						className={cx('tabs-title', { 'active-tab': key === activeTab })}
+						className={styles.tabsTitle}
+						data-active={key === activeTab}
 						onClick={() => setActiveTab(key)}
 					>
 						{title}
@@ -61,7 +60,7 @@ const Tabs = ({ tabs, activeTab, setActiveTab }) =>
 				))}
 			</div>
 
-			<div className={`tabs-content`}>{tabs.find(({ key }) => key === activeTab)?.content}</div>
+			<div>{tabs.find(({ key }) => key === activeTab)?.content}</div>
 		</div>
 	) : null;
 

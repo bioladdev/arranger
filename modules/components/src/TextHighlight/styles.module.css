@@ -1,0 +1,11 @@
+@import '../tokens.module.css';
+
+.textHighlight {
+}
+
+.highlighted {
+	--arranger-text-highlight-background: var(--arranger-color-amber-200);
+
+	background: var(--arranger-text-highlight-background);
+	color: var(--arranger-color-grey-900);
+}

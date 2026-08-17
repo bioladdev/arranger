@@ -6,6 +6,8 @@ import { ArrowIcon, SearchIcon, SortAlphaIcon } from '#Icons/index';
 import { useThemeContext } from '#ThemeContext/index';
 import noopFn, { emptyObj } from '#utils/noops';
 
+import styles from './AggsGroup.module.css';
+
 
 // TODO: redesign modifiers (filter, sort) to be off by default?
 // TODO: temporarily quieting down TS errors to help migration
@@ -83,10 +85,10 @@ const AggsGroup = ({
 						size: themeFilteringIconSize = '14',
 						...themeFilteringIconProps
 					} = emptyObj,
-					groupDividerColor: ThemeAggsGroupDividerColor = colors?.grey?.[300],
-					headerBackground: themeAggsHeaderBackground = colors?.common?.white,
-					headerDividerColor: themeAggsHeaderDividerColor = colors?.grey?.[200],
-					headerFontColor: themeAggsHeaderFontColor = colors?.grey?.[900],
+					groupDividerColor: ThemeAggsGroupDividerColor,
+					headerBackground: themeAggsHeaderBackground,
+					headerDividerColor: themeAggsHeaderDividerColor,
+					headerFontColor: themeAggsHeaderFontColor,
 					headerSticky: themeAggsHeaderSticky = false,
 					sorting: {
 						className: themeSortingIconClassName,
@@ -215,30 +217,37 @@ const AggsGroup = ({
 
 	const hasModifiers = filterable || sortable;
 
+	const aggsGroupThemeStyle = {
+		'--arranger-aggs-group-divider-color': ThemeAggsGroupDividerColor,
+		'--arranger-aggs-header-background': themeAggsHeaderBackground,
+		'--arranger-aggs-header-divider-color': themeAggsHeaderDividerColor,
+		'--arranger-aggs-header-font-color': themeAggsHeaderFontColor,
+	};
+
 	return WrapperComponent ? (
 		<WrapperComponent {...{ collapsible, displayName, componentRef, headerRef }} {...dataFields}>
 			{children}
 		</WrapperComponent>
 	) : (
 		<article
-			className={cx('aggregation-group', themeAggsGroupClassName || aggTypeCustomClassName)}
-			style={{ borderBottom: '0.05rem solid transparent', borderColor: ThemeAggsGroupDividerColor, boxSizing: 'border-box', paddingBottom: isCollapsed ? 0 : '0.3rem', ...themeAggsGroupCSS, ...customAggsWrapperCSS }}
+			className={cx(styles.aggregationGroup, themeAggsGroupClassName || aggTypeCustomClassName)}
+			data-collapsed={isCollapsed}
+			style={{ ...aggsGroupThemeStyle, ...themeAggsGroupCSS, ...customAggsWrapperCSS }}
 			ref={componentRef}
 			{...aggsGroupTheme}
 			{...dataFields}
 		>
 			<header
-				className={cx('header', { collapsed: isCollapsed })}
-				style={{ background: themeAggsHeaderBackground, boxSizing: 'border-box', padding: '0 6px', position: stickyHeader || themeAggsHeaderSticky ? 'sticky' : 'relative', top: '0px' }}
+				className={styles.header}
+				data-sticky={Boolean(stickyHeader || themeAggsHeaderSticky)}
 				ref={headerRef}
 			>
 				<div
-					className={cx('title-wrapper', { collapsed: isCollapsed })}
-					style={{ alignItems: 'center', borderBottom: `0.1rem solid ${themeAggsHeaderDividerColor}`, boxSizing: 'border-box', display: 'flex', padding: '6px 0 4px' }}
+					className={styles.titleWrapper}
+					data-collapsed={isCollapsed}
 				>
 					<TransparentButton
-						className="title-control"
-						style={{ padding: '2px 0', width: '100%' }}
+						className={styles.titleControl}
 						disabled={collapsingDisabled}
 						onClick={collapsingDisabled ? undefined : collapsingHandler}
 						title={collapsingIconHoverText}
@@ -250,8 +259,8 @@ const AggsGroup = ({
 						)}
 
 						<span
-							className="title"
-							style={{ color: themeAggsHeaderFontColor || 'inherit', fontSize: '0.9rem', marginLeft: '0.5rem', ...(hasModifiers && { paddingRight: '1rem' }) }}
+							className={styles.title}
+							data-has-modifiers={hasModifiers}
 						>
 							{displayName}
 						</span>
@@ -259,8 +268,7 @@ const AggsGroup = ({
 
 					{sortable && (
 						<TransparentButton
-							className="sorting-icon"
-							style={{ cursor: 'pointer', marginLeft: '0.4rem', marginTop: '0.1rem', padding: '0.2rem' }}
+							className={styles.sortingIcon}
 							disabled={sortingDisabled}
 							onClick={sortingDisabled ? undefined : sortingHandler}
 							title={sortingIconHoverText}
@@ -273,8 +281,7 @@ const AggsGroup = ({
 
 					{filterable && (
 						<TransparentButton
-							className="filter-icon"
-							style={{ cursor: 'pointer', marginLeft: '0.4rem', marginTop: '0.1rem', padding: '0.2rem' }}
+							className={styles.filterIcon}
 							disabled={filteringDisabled}
 							onClick={filteringDisabled ? undefined : filteringHandler}
 							title={filteringIconHoverText}
@@ -292,7 +299,7 @@ const AggsGroup = ({
 							filter,
 							index, // safe "key": expected to be consistent throughout the runtime lifetime of the app
 						) => (
-							<div key={index} className="filter">
+							<div key={index} className={styles.filter}>
 								{filter}
 							</div>
 						),
@@ -300,12 +307,7 @@ const AggsGroup = ({
 			</header>
 
 			{!isCollapsed && (
-				<section
-					className={cx('bucket', { collapsed: isCollapsed })}
-					style={{ alignItems: 'flex-end', display: 'flex', flexDirection: 'column', padding: '0.1rem 0.3rem' }}
-				>
-					{children}
-				</section>
+				<section className={styles.bucket}>{children}</section>
 			)}
 		</article>
 	);

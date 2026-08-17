@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import { type CSSProperties, type PropsWithChildren, useLayoutEffect, useRef, useState } from 'react';
+import { type PropsWithChildren, useLayoutEffect, useRef, useState } from 'react';
 
 import Spinner, { LoaderContainer } from '#Loader/index';
 import MetaMorphicChild from '#MetaMorphicChild/index';
@@ -9,6 +9,7 @@ import { emptyObj } from '#utils/noops';
 import HeaderRow from './HeaderRow/index';
 import { useTableData } from './helpers/index';
 import Row from './Row/index';
+import styles from './Table.module.css';
 import type { TableProps } from './types';
 import TableWrapper from './Wrapper';
 
@@ -25,7 +26,6 @@ const Table = ({
 		visibleTableWidth,
 	});
 	const {
-		colors,
 		components: {
 			Table: {
 				// functionality
@@ -36,18 +36,18 @@ const Table = ({
 
 				// appearance
 				background: themeTableBackground,
-				borderColor: themeTableBorderColor = colors?.grey?.[200],
+				borderColor: themeTableBorderColor,
 				style: themeTableCSS,
-				fontColor: themeTableFontColor = colors?.grey?.[700],
+				fontColor: themeTableFontColor,
 				fontFamily: themeTableFontFamily,
-				fontSize: themeTableFontSize = '0.8rem',
+				fontSize: themeTableFontSize,
 				fontWeight: themeTableFontWeight,
 				letterSpacing: themeTableLetterSpacing,
 				lineHeight: themeTableLineHeight,
 				margin: themeTableMargin,
 				textDecoration: themeTableTextDecoration,
 				textTransform: themeTableTextTransform,
-				whiteSpace: themeTableWhiteSpace = 'nowrap',
+				whiteSpace: themeTableWhiteSpace,
 
 				// Child Components
 				HeaderGroup: {
@@ -83,26 +83,23 @@ const Table = ({
 	const rows = tableInstance.getRowModel().rows;
 	const hasVisibleRows = rows.length > 0;
 
-	const containerStyles: CSSProperties = {
-		background: themeTableBackground,
-		borderCollapse: 'collapse',
-		color: themeTableFontColor,
-		fontFamily: themeTableFontFamily,
-		fontSize: themeTableFontSize,
-		fontWeight: themeTableFontWeight,
-		letterSpacing: themeTableLetterSpacing,
-		lineHeight: themeTableLineHeight,
-		tableLayout: 'fixed',
-		textDecoration: themeTableTextDecoration,
-		textTransform: themeTableTextTransform,
-		whiteSpace: themeTableWhiteSpace,
-		width: '100%',
+	// shared across .table and MessageContainer via CSS custom-property inheritance from TableWrapper
+	const tableThemeStyle = {
+		'--arranger-table-background': themeTableBackground,
+		'--arranger-table-font-color': themeTableFontColor,
+		'--arranger-table-font-family': themeTableFontFamily,
+		'--arranger-table-font-size': themeTableFontSize,
+		'--arranger-table-font-weight': themeTableFontWeight,
+		'--arranger-table-letter-spacing': themeTableLetterSpacing,
+		'--arranger-table-line-height': themeTableLineHeight,
+		'--arranger-table-text-decoration': themeTableTextDecoration,
+		'--arranger-table-text-transform': themeTableTextTransform,
+		'--arranger-table-white-space': themeTableWhiteSpace,
+		'--arranger-header-group-border-color': themeHeaderGroupBorderColor,
 	};
 
 	const MessageContainer = ({ Component = 'figure', children }: PropsWithChildren<any>) => (
-		<Component
-			style={{ background: colors?.grey?.[200], border: `1px solid ${themeHeaderGroupBorderColor}`, display: 'flex', fontStyle: 'italic', justifyContent: 'center', margin: 0, padding: '0.7rem 0.5rem', ...containerStyles }}
-		>
+		<Component className={styles.messageContainer}>
 			<MetaMorphicChild>{children}</MetaMorphicChild>
 		</Component>
 	);
@@ -115,7 +112,7 @@ const Table = ({
 	return (
 		<TableWrapper
 			className={cx('TableWrapper', customClassName, themeTableWrapperClassName)}
-			style={themeTableWrapperCSS}
+			style={{ ...tableThemeStyle, ...themeTableWrapperCSS }}
 			key={themeTableWrapperKey}
 			margin={themeTableMargin}
 			ref={ref}
@@ -141,10 +138,22 @@ const Table = ({
 			hasShowableColumns ? (
 				hasVisibleColumns ? (
 					<LoaderContainer {...{ isLoading }}>
-						<table style={{ ...containerStyles, ...themeTableCSS }}>
+						<table
+							className={styles.table}
+							style={themeTableCSS}
+						>
 							<thead
-								className={cx('TableHeaderGroup', themeHeaderGroupClassName)}
-								style={{ background: themeHeaderGroupBackground, border: themeHeaderGroupBorderColor ? `1px solid ${themeHeaderGroupBorderColor}` : undefined, margin: themeHeaderGroupMargin, overflow: themeHeaderGroupOverflow, position: themeHeaderGroupPosition, ...themeHeaderGroupCSS }}
+								className={cx(styles.headerGroup, themeHeaderGroupClassName)}
+								style={{
+									'--arranger-header-group-background': themeHeaderGroupBackground,
+									'--arranger-header-group-border': themeHeaderGroupBorderColor
+										? `1px solid ${themeHeaderGroupBorderColor}`
+										: undefined,
+									'--arranger-header-group-margin': themeHeaderGroupMargin,
+									'--arranger-header-group-overflow': themeHeaderGroupOverflow,
+									'--arranger-header-group-position': themeHeaderGroupPosition,
+									...themeHeaderGroupCSS,
+								}}
 							>
 								{headerGroups.map((headerGroup) => (
 									<HeaderRow
@@ -156,8 +165,17 @@ const Table = ({
 							</thead>
 
 							<tbody
-								className={cx('TableBody', themeTableBodyClassName)}
-								style={{ background: themeTableBodyBackground, border: themeTableBodyBorderColor ? `1px solid ${themeTableBodyBorderColor}` : undefined, margin: themeTableBodyMargin, overflow: themeTableBodyOverflow, position: themeTableBodyPosition, ...themeTableBodyCSS }}
+								className={cx(styles.tableBody, themeTableBodyClassName)}
+								style={{
+									'--arranger-table-body-background': themeTableBodyBackground,
+									'--arranger-table-body-border': themeTableBodyBorderColor
+										? `1px solid ${themeTableBodyBorderColor}`
+										: undefined,
+									'--arranger-table-body-margin': themeTableBodyMargin,
+									'--arranger-table-body-overflow': themeTableBodyOverflow,
+									'--arranger-table-body-position': themeTableBodyPosition,
+									...themeTableBodyCSS,
+								}}
 							>
 								{hasVisibleRows ? (
 									rows.map((row) => (

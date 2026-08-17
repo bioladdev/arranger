@@ -7,6 +7,7 @@ import PageSelector from '#Table/PageSelector/index';
 import { useThemeContext } from '#ThemeContext/index';
 import { emptyObj } from '#utils/noops';
 
+import styles from './Pagination.module.css';
 import type { PaginationProps } from './types';
 
 const Pagination = ({
@@ -37,10 +38,7 @@ const Pagination = ({
 				style={{ alignItems: 'flex-start', display: 'flex', justifyContent: 'space-between', ...themeCSS, ...customCSS }}
 			>
 				{/* TODO: restore pseudo-selector styles via CSS */}
-				<MaxRowsSelector
-					style={{ marginLeft: '0.3rem' }}
-					theme={maxRowsSelectorTheme}
-				/>
+				<MaxRowsSelector className={styles.maxRowsSelector} />
 
 				<PageSelector theme={pageSelectorTheme} />
 			</section>

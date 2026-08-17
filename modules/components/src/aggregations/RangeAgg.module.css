@@ -1,0 +1,74 @@
+@import '../tokens.module.css';
+
+.rangeLabel {
+	background: var(--arranger-range-label-background, none);
+	border-radius: var(--arranger-range-label-border-radius, 0);
+	color: var(--arranger-range-label-color, #666);
+	font-size: var(--arranger-range-label-font-size, 0.7rem);
+	font-weight: var(--arranger-range-label-font-weight, inherit);
+	margin: var(--arranger-range-label-margin);
+	padding: var(--arranger-range-label-padding);
+	position: absolute;
+	top: 1.2rem;
+}
+
+.rangeLabel[data-top='true'] {
+	color: inherit;
+	font-size: var(--arranger-range-label-font-size, 0.9rem);
+	top: -1.2rem;
+}
+
+.rangeLabel[data-right='true'] {
+	right: 0;
+}
+
+.noData {
+	color: var(--arranger-range-agg-no-data-font-color, var(--arranger-color-grey-600));
+	display: block;
+	font-size: var(--arranger-range-agg-no-data-font-size, 0.8em);
+}
+
+.rangeWrapper {
+	align-items: center;
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+}
+
+.unitWrapper {
+	margin-top: 4px;
+	text-align: center;
+}
+
+.unitLabel {
+	border-bottom: none;
+	color: inherit;
+	font-family: inherit;
+	margin: 0 5px;
+}
+
+/*
+ * `.aggregation-group .input-range__label { font-size: 0.8rem }` from beagle.css is not
+ * recreated here. react-input-range does expose a `classNames` prop (InputRangeClassNames)
+ * that could redirect individual internal elements, but it requires ALL ten fields — a
+ * partial override would replace the library's own default classnames wholesale, which
+ * would break the structural styling that comes from its bundled
+ * `react-input-range/lib/css/index.css` (track/slider positioning), not just the label
+ * font-size. Safely doing this would mean reimplementing that entire stylesheet as our own
+ * CSS Modules classes, well beyond a font-size tweak — flagged as unrecoverable within
+ * reasonable scope rather than risking that regression.
+ */
+.inputRangeWrapper {
+	font-size: 0.8rem;
+	margin: 1.5rem 0;
+	position: relative;
+	width: 90%;
+}
+
+.hiddenLabel {
+	height: 0;
+	left: -9999px;
+	position: absolute;
+	top: -9999px;
+	width: 0;
+}

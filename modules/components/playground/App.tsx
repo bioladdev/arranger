@@ -4,18 +4,22 @@ import { useState, Suspense, lazy, useMemo } from 'react';
 // Adjust glob pattern to match where your components live
 const modules = import.meta.glob('../src/**/*.{jsx,tsx}');
 
-const EXCLUDED = new Set(['Aggregations', 'Bar', 'Baz']);
+const EXCLUDED = new Set(['Aggregations', 'AdvancedFacetView', 'AdvancedSqonBuilder']);
 
 const registry = Object.fromEntries(
 	Object.entries(modules)
 		.map(([path, loader]) => {
-			const name = path.split('/').pop().replace('.jsx', '');
+			const file = path
+				.split('/')
+				.pop()
+				.replace(/\.(jsx|tsx)$/, '');
+			const name = file === 'index' ? path.split('/').at(-2) : file;
 			return [name, lazy(loader)];
 		})
-		.filter((o) => !EXCLUDED.has(o.name)),
+		.filter(([name]) => !EXCLUDED.has(name)),
 );
 
-console.log(registry);
+console.log(modules);
 
 export default function Playground() {
 	const names = useMemo(() => Object.keys(registry).sort(), []);

@@ -9,6 +9,7 @@ import formatNumber from '#utils/formatNumber';
 import noopFn, { emptyObj } from '#utils/noops';
 
 import { defaultDisplayLabels, defaultValueKeys } from './constants';
+import styles from './styles.module.css';
 import type Props from './types';
 
 const emptyBucket = {
@@ -30,16 +31,15 @@ const BooleanAggs = ({
 	WrapperComponent,
 }: Props) => {
 	const {
-		colors,
 		components: {
 			Aggregations: {
 				BooleanAggs: {
 					BucketCount: { className: themeBucketCountClassName, ...bucketCountTheme } = emptyObj,
-					ToggleButton: { className: themeToggleButtonClassName, ...toggleButtonTheme } = emptyObj,
+					ToggleButton: { className: themeToggleButtonClassName } = emptyObj,
 				} = emptyObj,
 				NoDataContainer: {
-					fontColor: themeNoDataFontColor = colors?.grey?.[600],
-					fontSize: themeNoDataFontSize = '0.8em',
+					fontColor: themeNoDataFontColor,
+					fontSize: themeNoDataFontSize,
 				} = emptyObj,
 			} = emptyObj,
 		} = emptyObj,
@@ -131,8 +131,7 @@ const BooleanAggs = ({
 						highlightText={highlightText}
 					/>
 					<BucketCount
-						className={cx(toggleStatus, themeBucketCountClassName)}
-						style={{ marginLeft: '0.3rem' }}
+						className={cx(toggleStatus, styles.trueBucketCount, themeBucketCountClassName)}
 						theme={bucketCountTheme}
 					>
 						{formatNumber(isTrueBucketDisabled ? 0 : trueBucket.doc_count)}
@@ -150,8 +149,7 @@ const BooleanAggs = ({
 						highlightText={highlightText}
 					/>
 					<BucketCount
-						className={cx(toggleStatus, themeBucketCountClassName)}
-						style={{ marginLeft: '0.2rem' }}
+						className={cx(toggleStatus, styles.falseBucketCount, themeBucketCountClassName)}
 						theme={bucketCountTheme}
 					>
 						{formatNumber(isFalseBucketDisabled ? 0 : falseBucket.doc_count)}
@@ -177,9 +175,7 @@ const BooleanAggs = ({
 			}}
 		>
 			{hasData ? (
-				<div
-					style={{ width: '100%' }}
-				>
+				<div className={styles.optionsWrapper}>
 					<ToggleButton
 						className={themeToggleButtonClassName}
 						onChange={({ value }) => {
@@ -189,14 +185,16 @@ const BooleanAggs = ({
 							);
 						}}
 						options={options}
-						theme={toggleButtonTheme}
 						value={isTrueActive ? valueKeys.true : isFalseActive ? valueKeys.false : undefined}
 					/>
 				</div>
 			) : (
 				<span
-					className="no-data"
-					style={{ color: themeNoDataFontColor, display: 'block', fontSize: themeNoDataFontSize }}
+					className={styles.noData}
+					style={{
+						'--arranger-boolean-aggs-no-data-font-color': themeNoDataFontColor,
+						'--arranger-boolean-aggs-no-data-font-size': themeNoDataFontSize,
+					}}
 				>
 					No data available
 				</span>

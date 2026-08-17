@@ -1,3 +1,4 @@
+import cx from 'classnames';
 import { get } from 'lodash-es';
 import { Fragment } from 'react';
 import Spinner from 'react-spinkit';
@@ -5,6 +6,8 @@ import Spinner from 'react-spinkit';
 import { AggsState } from '#aggregations/index';
 import Query from '#Query';
 import formatNumber from '#utils/formatNumber';
+
+import styles from './Stats.module.css';
 
 export const underscoreField = (str) => (str || '').split('.').join('__');
 
@@ -86,12 +89,12 @@ const Stat = ({
 	...props
 }) => {
 	return (
-		<div className="stat-container">
+		<div className={styles.statContainer}>
 			{icon}
-			<div className="stat-content">
+			<div className={styles.statContent}>
 				<QueryComponent {...props} render={(x) => (x.loading ? <LoadingSpinnerComponent /> : formatNumber(x.value))} />
 			</div>
-			<div className="stat-label">{label}</div>
+			<div className={styles.statLabel}>{label}</div>
 		</div>
 	);
 };
@@ -100,31 +103,24 @@ const Stats = ({
 	apiFetcher,
 	documentType,
 	stats,
-	className,
 	render,
-	small,
-	transparent,
+	small = false,
+	transparent = false,
 	LoadingSpinnerComponent = LoadingSpinner,
+	className,
 	...props
 }) => (
 	<div
-		className={`
-			stats-container
-			${small ? `small` : ``}
-			${transparent ? `transparent` : ``}
-		`}
-		css={`
-			display: flex;
-			align-items: center;
-			${className};
-		`}
+		className={cx(styles.statsContainer, className)}
+		data-small={small}
+		data-transparent={transparent}
 	>
 		<AggsState
 			{...{ apiFetcher, documentType }}
 			render={(aggsState) =>
 				stats.map((stat, i) => (
 					<Fragment key={stat.label}>
-						{i > 0 && <div key={i} className="stats-line" />}
+						{i > 0 && <div key={i} className={styles.statsLine} />}
 						<Stat
 							{...{
 								aggsState,

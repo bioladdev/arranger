@@ -8,6 +8,8 @@ import { ColumnListStyles } from '#Table/types';
 import dateFormatter from '#utils/dates';
 import { emptyObj } from '#utils/noops';
 
+import styles from './cells.module.css';
+
 import { getSingleValue } from './index';
 
 export const getCellValue = (
@@ -36,7 +38,7 @@ export const getDisplayValue = (row = emptyObj as unknown, column = emptyObj): s
 
 const Link = (props = emptyObj) => (
 	<a
-		style={{ textAlign: 'right' }}
+		className={styles.alignRight}
 		href={props.value}
 		rel="noopener noreferrer"
 		target="_blank"
@@ -45,13 +47,7 @@ const Link = (props = emptyObj) => (
 	</a>
 );
 
-const Number = (props = emptyObj) => (
-	<span
-		style={{ textAlign: 'right' }}
-	>
-		{props.value?.toLocaleString('en-CA')}
-	</span>
-);
+const Number = (props = emptyObj) => <span className={styles.alignRight}>{props.value?.toLocaleString('en-CA')}</span>;
 
 const FileSize = ({ options = emptyObj, value = 0 }) => <span>{`${filesize(value, options)}`}</span>;
 

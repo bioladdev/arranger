@@ -1,0 +1,52 @@
+@import '../tokens.module.css';
+
+.statsContainer {
+	--arranger-stats-padding: 14px 0;
+	--arranger-stats-content-font-size: 18px;
+	--arranger-stats-label-font-size: 13px;
+
+	align-items: center;
+	background: var(--arranger-color-common-white);
+	border: 1px solid var(--arranger-color-border);
+	display: flex;
+	padding: var(--arranger-stats-padding);
+}
+
+.statsContainer[data-transparent='true'] {
+	background: transparent;
+	border: none;
+}
+
+.statsContainer[data-small='true'] {
+	--arranger-stats-content-font-size: 14px;
+	--arranger-stats-label-font-size: 10px;
+}
+
+.statContainer {
+	align-items: center;
+	display: flex;
+	flex-grow: 1;
+	justify-content: center;
+}
+
+.statContent {
+	color: var(--arranger-color-text);
+	font-size: var(--arranger-stats-content-font-size);
+	font-weight: 500;
+	letter-spacing: 0.3px;
+	margin-right: 6px;
+}
+
+.statLabel {
+	color: var(--arranger-color-text-muted);
+	font-size: var(--arranger-stats-label-font-size);
+	font-weight: 300;
+	letter-spacing: 0.2px;
+	line-height: 1.54;
+}
+
+.statsLine {
+	background-color: var(--arranger-color-border-strong);
+	height: 35px;
+	width: 1px;
+}

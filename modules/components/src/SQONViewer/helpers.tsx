@@ -12,6 +12,7 @@ import type { ThemeCommon } from '#ThemeContext/types/index';
 import { emptyObj } from '#utils/noops';
 import internalTranslateSQONValue from '#utils/translateSQONValue';
 
+import styles from './helpers.module.css';
 import type {
 	GroupSQONInterface,
 	GroupValueSQONType,
@@ -30,7 +31,7 @@ export const Bubble = ({ children, className, theme, ...props }: BubbleProps) =>
 
 	return (
 		<TransparentButton
-			className={cx('sqon-bubble', className)}
+			className={cx(styles.bubble, className)}
 			theme={merge(
 				{
 					margin: '0 0.2em',
@@ -47,7 +48,7 @@ export const Bubble = ({ children, className, theme, ...props }: BubbleProps) =>
 
 export const FieldName = ({ children, className, style: customStyle, ...props }: BubbleProps) => (
 	<Bubble
-		className={cx('sqon-fieldName', className)}
+		className={cx(styles.fieldName, className)}
 		theme={{ style: { cursor: 'default', ...customStyle } }}
 		{...props}
 	>
@@ -57,7 +58,7 @@ export const FieldName = ({ children, className, style: customStyle, ...props }:
 
 export const Op = ({ children, className, style: customStyle, ...props }: BubbleProps) => (
 	<Bubble
-		className={cx('sqon-op', className)}
+		className={cx(styles.op, className)}
 		theme={{ style: { cursor: 'default', ...customStyle } }}
 		{...props}
 	>
@@ -66,7 +67,7 @@ export const Op = ({ children, className, style: customStyle, ...props }: Bubble
 );
 
 export const Value = ({ children, className, ...props }: BubbleProps) => (
-	<Bubble className={cx('sqon-value', className)} {...props}>
+	<Bubble className={cx(styles.value, className)} {...props}>
 		{children}
 	</Bubble>
 );
@@ -108,7 +109,7 @@ export const useDataBubbles = ({
 
 	const Clear = ({ nextSQON }: { nextSQON: GroupSQONInterface | null }) => (
 		<Bubble
-			className="sqon-clear"
+			className={styles.clear}
 			style={{ marginLeft: 0, marginRight: '0.5em' }}
 			onClick={() => {
 				onClear?.();
@@ -143,7 +144,8 @@ export const useDataBubbles = ({
 
 		return (
 			<Bubble
-				className={cx(showLess ? 'sqon-less' : 'sqon-more')}
+				className={styles.lessOrMore}
+				data-collapsed={!showLess}
 				onClick={lessOrMoreClickHandler(valueSQON)}
 				theme={themeSQONLessOrMoreProps}
 			>
@@ -214,9 +216,9 @@ export const SQONGroup = ({
 }) => (
 	<Row
 		as="section"
-		className={cx('sqon-group', className)}
+		className={cx(styles.sqonGroup, className)}
 		wrap
-		style={{ alignItems: 'center', ...style }}
+		style={style}
 		{...props}
 	/>
 );
@@ -242,14 +244,12 @@ export const SQONValueGroup = ({
 	style?: React.CSSProperties;
 }) => (
 	<span
-		className={cx('sqon-value-group', className)}
+		className={cx(styles.sqonValueGroup, className)}
 		style={{
-			alignItems: 'center',
 			background,
 			border: borderColor ? `1px solid ${borderColor}` : undefined,
 			borderRadius,
 			color,
-			display: 'flex',
 			fontSize,
 			fontWeight,
 			letterSpacing,

@@ -16,6 +16,8 @@ import translateSQONValue from '#utils/translateSQONValue';
 import AggsGroup from '../AggsGroup/index';
 import BucketCount from '../BucketCount/index';
 
+import styles from './TermAggs.module.css';
+
 const generateNextSQON = ({ dotFieldName, bucket, isExclude, sqon }) =>
 	toggleSQON(
 		{
@@ -77,8 +79,9 @@ const MoreOrLessButton = ({
 	...props
 }) => (
 	<TransparentButton
-		className={cx('showMore-wrapper', isShowingMore ? 'less' : 'more', className)}
-		style={{ marginLeft: '0.5rem', textDecoration: 'underline', ...(customCSS || {}) }}
+		className={cx(styles.showMoreWrapper, className)}
+		data-showing-more={isShowingMore}
+		style={customCSS || undefined}
 		{...props}
 	>
 		{isShowingMore ? 'Less' : `${howManyMore} More`}
@@ -176,7 +179,6 @@ const TermAggregations = ({
 	// TODO: (THEME) refactor to separate internal components into their own files
 	// that will allow chunking apart this gigantic destructuring pattern
 	const {
-		colors,
 		components: {
 			Aggregations: {
 				collapsing: {
@@ -197,8 +199,8 @@ const TermAggregations = ({
 				} = emptyObj,
 				MoreOrLessButton: themeAggregationsMoreOrLessButtonProps = emptyObj,
 				NoDataContainer: {
-					fontColor: themeNoDataFontColor = colors?.grey?.[600],
-					fontSize: themeNoDataFontSize = '0.8em',
+					fontColor: themeNoDataFontColor,
+					fontSize: themeNoDataFontSize,
 				} = emptyObj,
 				sorting: {
 					className: themeAggregationsSortingIconClassName,
@@ -272,6 +274,13 @@ const TermAggregations = ({
 		themeAggregationsSortingIconHandler?.(event, fieldName);
 		themeTermAggregationsSortingIconHandler?.(event, fieldName);
 	};
+
+	/** @type {import('react').CSSProperties & Record<`--arranger-term-aggs-${string}`, string | undefined>} */
+	const noDataThemeStyle = {
+		'--arranger-term-aggs-no-data-font-color': themeNoDataFontColor,
+		'--arranger-term-aggs-no-data-font-size': themeNoDataFontSize,
+	};
+
 	return (
 		<AggsGroup
 			componentRef={aggWrapperRef}
@@ -364,19 +373,10 @@ const TermAggregations = ({
 				WrapperComponent,
 			}}
 		>
-			{headerTitle && (
-				<div
-					className="header"
-					style={{ textAlign: 'right' }}
-				>
-					{headerTitle}
-				</div>
-			)}
+			{headerTitle && <div className={styles.header}>{headerTitle}</div>}
 
 			{hasData ? (
-				<div
-					style={{ width: '100%' }}
-				>
+				<div className={styles.bucketList}>
 					{(isAlphabetized ? alphabetizedBuckets : decoratedBuckets)
 						.slice(0, showingMore ? Infinity : maxTerms)
 						.map((bucket, i, array) => (
@@ -386,7 +386,7 @@ const TermAggregations = ({
 								})}
 								key={bucket.name}
 								className={cx(
-									'bucket-item',
+									styles.bucketItem,
 									constructBucketItemClassName({
 										bucket,
 										i,
@@ -398,7 +398,6 @@ const TermAggregations = ({
 									fieldName: dotFieldName,
 									value: bucket.name,
 								}}
-								style={{ cursor: 'pointer', display: 'flex', fontSize: '0.8rem', justifyContent: 'space-between', margin: '0.15rem 0' }}
 								onClick={() =>
 									handleValueClick({
 										fieldName: dotFieldName,
@@ -410,8 +409,7 @@ const TermAggregations = ({
 								}
 							>
 								<span
-									className="bucket-link"
-									style={{ display: 'flex' }}
+									className={styles.bucketLink}
 									merge="toggle"
 								>
 									<input
@@ -420,7 +418,7 @@ const TermAggregations = ({
 											fieldName: dotFieldName,
 											value: bucket.name,
 										})}
-										style={{ cursor: 'pointer', margin: '0.2rem 0.3rem 0 0' }}
+										className={styles.checkbox}
 										id={`input-${fieldName}-${bucket.name.replace(/\s/g, '-')}`}
 										name={`input-${fieldName}-${bucket.name.replace(/\s/g, '-')}`}
 										readOnly
@@ -439,7 +437,7 @@ const TermAggregations = ({
 
 								{bucket.doc_count && (
 									<BucketCount
-										className={themeBucketCountClassName}
+										className={cx(styles.bucketCount, themeBucketCountClassName)}
 										theme={bucketCountTheme}
 									>
 										{formatNumber(bucket.doc_count)}
@@ -450,8 +448,8 @@ const TermAggregations = ({
 				</div>
 			) : (
 				<span
-					className="no-data"
-					style={{ color: themeNoDataFontColor, display: 'block', fontSize: themeNoDataFontSize }}
+					className={styles.noData}
+					style={noDataThemeStyle}
 				>
 					No data available
 				</span>

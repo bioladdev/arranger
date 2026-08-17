@@ -1,0 +1,25 @@
+.matchBox {
+}
+
+.matchBoxSelectEntityForm {
+	margin-bottom: 20px;
+}
+
+.matchBoxSelectionText {
+	margin-bottom: 1.5em;
+}
+
+.matchBoxUploadInstructionText {
+	margin-bottom: 1.5em;
+}
+
+.matchBoxBrowseRow {
+	display: flex;
+	margin-bottom: 1.5em;
+}
+
+.matchBoxFileInput {
+	left: 0px;
+	position: absolute;
+	top: -10000px;
+}

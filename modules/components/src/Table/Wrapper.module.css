@@ -1,0 +1,15 @@
+.wrapper {
+	background: var(--arranger-table-wrapper-background);
+	border: var(--arranger-table-wrapper-border);
+	border-radius: var(--arranger-table-wrapper-border-radius);
+	box-shadow: var(--arranger-table-wrapper-box-shadow);
+	display: flex;
+	flex: var(--arranger-table-wrapper-flex);
+	flex-wrap: wrap;
+	height: var(--arranger-table-wrapper-height);
+	margin: var(--arranger-table-wrapper-margin);
+	overflow: var(--arranger-table-wrapper-overflow, auto);
+	padding: var(--arranger-table-wrapper-padding);
+	position: var(--arranger-table-wrapper-position, relative);
+	width: var(--arranger-table-wrapper-width, 100%);
+}

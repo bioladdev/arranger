@@ -5,6 +5,8 @@ import aggComponentsMap from '#aggregations/aggComponentsMap';
 import TextHighlight from '#TextHighlight/index';
 import { emptyObj } from '#utils/noops';
 
+import styles from './FacetView.module.css';
+
 const serializeToDomId = (path) => path.split('.').join('__');
 
 const flattenDisplayTreeData = (displayTreeData) => {
@@ -54,7 +56,7 @@ export default class FacetView extends Component {
 			onTermSelected,
 		} = this.props;
 		return (
-			<div className="facetView" ref={(el) => (this.root = el)}>
+			<div className={styles.facetView} ref={(el) => (this.root = el)}>
 				{flattenDisplayTreeData(displayTreeData).map(({ path }) => {
 					const metaData = extendedMapping.find(({ field }) => field === path);
 					const { type } = metaData || {};
@@ -112,20 +114,24 @@ export default class FacetView extends Component {
 								displayName = 'unknown field name',
 							} = emptyObj,
 						}) => (
-							<div id={serializeToDomId(path)} className={`facetContainer`}>
-								<div className={`header`}>
-									<div className={`title`}>
+							<div id={serializeToDomId(path)} className={styles.facetContainer}>
+								<div className={styles.header}>
+									<div className={styles.title}>
 										<TextHighlight content={displayName} highlightText={searchString} />
 									</div>
-									<div className={`breadscrumbs`}>
+									<div className={styles.breadscrumbs}>
 										{pathDisplayNames.slice(0, -1).map((pathName, index, arr) => (
-											<span key={index} className={`breadscrumb-item`}>
+											<span
+												key={index}
+												className={styles.breadscrumbItem}
+												data-last={index === arr.length - 1}
+											>
 												{pathName}
 											</span>
 										))}
 									</div>
 								</div>
-								<div className={`content`}>{children}</div>
+								<div className={styles.content}>{children}</div>
 							</div>
 						),
 					});

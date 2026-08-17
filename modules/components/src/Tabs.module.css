@@ -1,0 +1,26 @@
+@import './tokens.module.css';
+
+.tabs {
+}
+
+.tabsTitles {
+	display: flex;
+}
+
+.tabsTitle {
+	background-color: var(--arranger-color-surface-muted);
+	border: 1px solid var(--arranger-color-border-strong);
+	border-bottom: none;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+	color: var(--arranger-color-brand-blue-dark);
+	cursor: pointer;
+	margin-right: 10px;
+	padding: 10px 20px;
+}
+
+.tabsTitle[data-active='true'] {
+	background-color: var(--arranger-color-brand-blue);
+	border: none;
+	color: var(--arranger-color-common-white);
+}

@@ -8,6 +8,7 @@ import { useThemeContext } from '#ThemeContext/index';
 import { emptyObj } from '#utils/noops';
 
 import Cell from './Cell';
+import styles from './Row.module.css';
 import type { RowProps } from './types';
 
 const TableRow = ({
@@ -23,7 +24,6 @@ const TableRow = ({
 	...props
 }: RowProps) => {
 	const {
-		colors,
 		components: {
 			Table: {
 				noDataMessage = 'No data matches the search parameters.',
@@ -38,16 +38,13 @@ const TableRow = ({
 					fontFamily: themeFontFamily,
 					fontSize: themeFontSize,
 					fontWeight: themeFontWeight,
-					horizontalBorderColor: themeHorizontalBorderColor = themeBorderColor,
-					hoverBackground: themeHoverBackground = colors?.grey?.[100],
+					hoverBackground: themeHoverBackground,
 					hoverBorderColor: themeHoverBorderColor,
 					hoverFontColor: themeHoverFontColor,
-					hoverHorizontalBorderColor: themeHoverHorizontalBorderColor,
-					hoverVerticalBorderColor: themeHoverVerticalBorderColor,
 					letterSpacing: themeLetterSpacing,
 					lineHeight: themeLineHeight,
 					position: themePosition,
-					selectedBackground: themeSelectedBackground = colors?.grey?.[300],
+					selectedBackground: themeSelectedBackground,
 					selectedFontColor: themeSelectedFontColor,
 					textOverflow: themeTextOverflow,
 					verticalBorderColor: themeVerticalBorderColor = themeBorderColor,
@@ -62,15 +59,32 @@ const TableRow = ({
 	const hasVisibleCells = visibleCells && visibleCells.length > 0;
 
 	const hoverBackground = customHoverBackground || themeHoverBackground;
-	const hoverHorizontalBorderColor =
-		customHoverHorizontalBorderColor || themeHoverHorizontalBorderColor || themeHoverBorderColor;
-	const hoverVerticalBorderColor =
-		customHoverVerticalBorderColor || themeHoverVerticalBorderColor || themeHoverBorderColor;
+	const hoverBorderColor =
+		customHoverVerticalBorderColor || customHoverHorizontalBorderColor || themeHoverBorderColor;
+
+	const themeStyle = {
+		'--arranger-row-background': themeBackground,
+		'--arranger-row-font-color': themeFontColor,
+		'--arranger-row-font-family': themeFontFamily,
+		'--arranger-row-font-size': themeFontSize,
+		'--arranger-row-font-weight': themeFontWeight,
+		'--arranger-row-hover-background': hoverBackground,
+		'--arranger-row-hover-border-color': hoverBorderColor,
+		'--arranger-row-hover-font-color': themeHoverFontColor,
+		'--arranger-row-letter-spacing': themeLetterSpacing,
+		'--arranger-row-line-height': themeLineHeight,
+		'--arranger-row-position': themePosition,
+		'--arranger-row-selected-background': themeSelectedBackground,
+		'--arranger-row-selected-font-color': themeSelectedFontColor,
+		'--arranger-row-text-overflow': textOverflow,
+		'--arranger-row-vertical-border-color': themeVerticalBorderColor,
+	};
 
 	return (
 		<tr
-			className={cx('Row', themeClassName, { selected })}
-			style={{ background: themeBackground, borderLeft: themeVerticalBorderColor ? `0.1rem solid ${themeVerticalBorderColor}` : undefined, borderRight: themeVerticalBorderColor ? `0.1rem solid ${themeVerticalBorderColor}` : undefined, color: themeFontColor, fontFamily: themeFontFamily, fontSize: themeFontSize, fontWeight: themeFontWeight, letterSpacing: themeLetterSpacing, lineHeight: themeLineHeight, position: themePosition, textOverflow: textOverflow, ...themeCSS, ...customCSS }}
+			className={cx(styles.row, themeClassName)}
+			data-selected={Boolean(selected)}
+			style={{ ...themeStyle, ...themeCSS, ...customCSS }}
 			data-row-id={id}
 		>
 			{hasVisibleCells ? (

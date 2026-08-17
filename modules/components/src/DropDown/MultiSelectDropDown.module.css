@@ -1,0 +1,85 @@
+@import '../tokens.module.css';
+
+.dropdownContainer {
+	position: relative;
+}
+
+.dropDownButton {
+	--arranger-transparent-button-color: var(--arranger-multi-select-font-color);
+}
+
+.listWrapper {
+	background: var(--arranger-list-wrapper-background, var(--arranger-color-grey-100));
+	border: 1px solid var(--arranger-list-wrapper-border-color, var(--arranger-color-grey-200));
+	border-radius: var(--arranger-list-wrapper-border-radius, 0.3rem);
+	box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
+	max-height: unset;
+	overflow-y: hidden;
+	padding: 0;
+	position: absolute;
+	width: var(--arranger-list-wrapper-width, 12rem);
+	z-index: 100;
+}
+
+.listWrapper[data-align='right'] {
+	left: auto;
+	right: 0;
+}
+
+.listWrapper[data-align='left'] {
+	left: 0;
+	right: auto;
+}
+
+.legend {
+	clip: rect(0 0 0 0);
+	position: absolute;
+}
+
+.selectionControls {
+	border-bottom: 1px solid #d9d9df;
+	box-sizing: border-box;
+	display: flex;
+	justify-content: space-between;
+	left: 0;
+	padding: 4px 8px;
+	position: sticky;
+	right: 0;
+	top: 0;
+}
+
+.selectionButton {
+	--arranger-transparent-button-color: var(--arranger-selection-control-font-color);
+	--arranger-transparent-button-font-size: var(--arranger-selection-control-font-size);
+
+	white-space: nowrap;
+}
+
+.list {
+	list-style: none;
+	margin: 0;
+	max-height: var(--arranger-list-wrapper-max-height, 15rem);
+	overflow-y: scroll;
+	padding: 0 0.2rem;
+}
+
+.listItem {
+	padding: 0.2rem 0.3rem;
+}
+
+.listItemLabel {
+	align-items: flex-start;
+	color: var(--arranger-list-wrapper-font-color);
+	display: flex;
+	font-size: var(--arranger-list-wrapper-font-size, 0.8rem);
+	word-break: break-word;
+}
+
+.listItemLabel[data-selectable='true'] {
+	cursor: pointer;
+}
+
+.listItemCheckbox {
+	cursor: pointer;
+	margin: 0.1rem 0.4rem 0 0;
+}

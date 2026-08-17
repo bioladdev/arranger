@@ -7,6 +7,7 @@ import noopFn, { emptyObj } from '#utils/noops';
 
 import EmptyMessage from './EmptyMessage';
 import { Op, SQONGroup, SQONValueGroup, SQONWrapper, useDataBubbles } from './helpers';
+import styles from './styles.module.css';
 import { toggleSQON, replaceFilterSQON } from './utils';
 
 /**
@@ -46,7 +47,7 @@ const SQONViewer = ({
 	});
 
 	return (
-		<SQONWrapper className={cx('sqon-view', { 'sqon-view-empty': isEmpty })} {...themeSQONWrapperProps}>
+		<SQONWrapper className={styles.sqonView} {...themeSQONWrapperProps}>
 			{isEmpty ? (
 				<EmptyMessage message={emptyMessage} />
 			) : (
@@ -81,14 +82,14 @@ const SQONViewer = ({
 								</Op>
 
 								{hasMultipleValues && (
-									<SQONValueGroup className="sqon-value-group-start" {...themeSQONVaueGroupProps}>
+									<SQONValueGroup className={styles.sqonValueGroupStart} {...themeSQONVaueGroupProps}>
 										(
 									</SQONValueGroup>
 								)}
 
 								{valuesToDisplay.map((value) =>
 									ValueCrumb({
-										className: cx({ 'sqon-value-single': !hasMultipleValues }),
+										className: cx(!hasMultipleValues && styles.valueSingle),
 										fieldName,
 										key: value,
 										nextSQON:
@@ -129,7 +130,7 @@ const SQONViewer = ({
 								{hasMultipleValues && value.length > 2 && <LessOrMore valueSQON={valueSQON} />}
 
 								{hasMultipleValues && (
-									<SQONValueGroup className="sqon-value-group-end" {...themeSQONVaueGroupProps}>
+									<SQONValueGroup className={styles.sqonValueGroupEnd} {...themeSQONVaueGroupProps}>
 										)
 									</SQONValueGroup>
 								)}

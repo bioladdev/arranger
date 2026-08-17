@@ -12,6 +12,8 @@ import noopFn, { emptyObj } from '#utils/noops';
 import strToReg from '#utils/strToReg';
 import internalTranslateSQONValue from '#utils/translateSQONValue';
 
+import styles from './MultiSelectDropDown.module.css';
+
 /**
  *  * @param {Object} props
  * @param {string} [props.align="right"]
@@ -89,7 +91,6 @@ const DropDownMenu = ({
 	const panelRef = useRef();
 	const renderRef = useRef();
 	const {
-		colors,
 		components: {
 			DropDown: {
 				arrowColor: themeArrowColor,
@@ -100,19 +101,19 @@ const DropDownMenu = ({
 				disabledFontColor: themeDropDownDisabledFontColor,
 				enableFilter: themeDropdownEnableFilter,
 				filterPlaceholder: themeDropdownFilterPlaceholder,
-				fontColor: themeDropDownFontColor = colors?.grey?.[800],
+				fontColor: themeDropDownFontColor,
 
 				// Child Components
 				ListWrapper: {
-					background: themeListWrapperBackground = colors?.grey?.[100],
-					borderColor: themeListWrapperBorderColor = colors?.grey?.[200],
-					borderRadius: themeListWrapperBorderRadius = '0.3rem',
+					background: themeListWrapperBackground,
+					borderColor: themeListWrapperBorderColor,
+					borderRadius: themeListWrapperBorderRadius,
 					style: themeListWrapperCSS,
 					fontColor: themeListWrapperFontColor = themeDropDownFontColor,
-					fontSize: themeListWrapperFontSize = '0.8rem',
-					hoverBackground: themeListWrapperHoverBackground = colors?.grey?.[200],
-					maxHeight: themeListWrapperMaxHeight = '15rem',
-					width: themeListWrapperWidth = '12rem',
+					fontSize: themeListWrapperFontSize,
+					hoverBackground: themeListWrapperHoverBackground,
+					maxHeight: themeListWrapperMaxHeight,
+					width: themeListWrapperWidth,
 				} = emptyObj,
 				SelectionControls: {
 					fontColor: themeSelectionControlFontColor = themeListWrapperFontColor,
@@ -302,17 +303,35 @@ const DropDownMenu = ({
 		setIsDisabled(disabled || items.length < 1);
 	}, [disabled, items]);
 
+	/** @type {import('react').CSSProperties & Record<`--arranger-list-wrapper-${string}`, string | undefined>} */
+	const listWrapperThemeStyle = {
+		'--arranger-list-wrapper-background': customListWrapperBackground || themeListWrapperBackground,
+		'--arranger-list-wrapper-border-color': customListWrapperBorderColor || themeListWrapperBorderColor,
+		'--arranger-list-wrapper-border-radius': customListWrapperBorderRadius || themeListWrapperBorderRadius,
+		'--arranger-list-wrapper-font-color': customListWrapperFontColor || themeListWrapperFontColor,
+		'--arranger-list-wrapper-font-size': customListWrapperFontSize || themeListWrapperFontSize,
+		'--arranger-list-wrapper-max-height': customListWrapperMaxHeight || themeListWrapperMaxHeight,
+		'--arranger-list-wrapper-width': customListWrapperWidth || themeListWrapperWidth,
+	};
+
+	/** @type {import('react').CSSProperties & Record<`--arranger-selection-control-${string}`, string | undefined>} */
+	const selectionButtonThemeStyle = {
+		'--arranger-selection-control-font-color': customSelectionControlFontColor || themeSelectionControlFontColor,
+		'--arranger-selection-control-font-size': customSelectionControlFontSize || themeSelectionControlFontSize,
+	};
+
 	return (
-		<article
-			className={cx('DropdownContainer', customClassName, themeClassName)}
-			style={{ position: 'relative' }}
-		>
+		<article className={cx(styles.dropdownContainer, customClassName, themeClassName)}>
 			<Button
 				aria-label={isOpen ? buttonAriaLabelOpen : buttonAriaLabelClosed}
 				aria-haspopup="true"
 				aria-expanded={isOpen}
-				className="DropDownButton"
-				style={{ ...themeDropDownButtonCSS, ...customDropDownButtonCSS }}
+				className={styles.dropDownButton}
+				style={{
+					'--arranger-multi-select-font-color': fontColor,
+					...themeDropDownButtonCSS,
+					...customDropDownButtonCSS,
+				}}
 				disabled={isDisabled}
 				onBlur={handleBlur}
 				onClick={handleAction}
@@ -333,35 +352,19 @@ const DropDownMenu = ({
 
 			{isOpen && (
 				<fieldset
-					className="ListWrapper"
-					style={{
-						background: customListWrapperBackground || themeListWrapperBackground,
-						border: `solid 1px ${customListWrapperBorderColor || themeListWrapperBorderColor}`,
-						borderRadius: customListWrapperBorderRadius || themeListWrapperBorderRadius,
-						boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.2)',
-						left: align === 'right' ? 'auto' : 0,
-						maxHeight: 'unset',
-						overflowY: 'hidden',
-						padding: 0,
-						position: 'absolute',
-						right: align === 'right' ? 0 : 'auto',
-						width: customListWrapperWidth || themeListWrapperWidth,
-						zIndex: 100,
-						...themeListWrapperCSS,
-						...customListWrapperCSS,
-					}}
+					className={styles.listWrapper}
+					data-align={align === 'right' ? 'right' : 'left'}
+					style={{ ...listWrapperThemeStyle, ...themeListWrapperCSS, ...customListWrapperCSS }}
 					ref={panelRef}
 				>
-					<legend style={{ position: 'absolute', clip: 'rect(0 0 0 0)' }}>{itemSelectionLegend}</legend>
+					<legend className={styles.legend}>{itemSelectionLegend}</legend>
 
 					{allowControls && allowSelection && (
-						<section
-							className="SelectionControls"
-							style={{ borderBottom: '1px solid #d9d9df', boxSizing: 'border-box', display: 'flex', justifyContent: 'space-between', left: 0, padding: '4px 8px', position: 'sticky', right: 0, top: 0 }}
-						>
+						<section className={styles.selectionControls}>
 							<TransparentButton
 								aria-label={selectAllAriaLabel}
-								className="SelectAllButton"
+								className={styles.selectionButton}
+								style={selectionButtonThemeStyle}
 								onClick={handleSelectAll}
 								theme={selectionButtonsTheme}
 							>
@@ -371,7 +374,8 @@ const DropDownMenu = ({
 
 							<TransparentButton
 								aria-label={resetToDefaultAriaLabel}
-								className="ResetSelectionButton"
+								className={styles.selectionButton}
+								style={selectionButtonThemeStyle}
 								onClick={handleReset}
 								theme={selectionButtonsTheme}
 							>
@@ -396,8 +400,8 @@ const DropDownMenu = ({
 
 					{items.length > 0 ? (
 						<ul
-							className="List"
-							style={{ listStyle: 'none', padding: '0 0.2rem', overflowY: 'scroll', maxHeight: customListWrapperMaxHeight || themeListWrapperMaxHeight, margin: 0 }}
+							className={styles.list}
+							style={listWrapperThemeStyle}
 						>
 							{items
 								.filter(
@@ -411,19 +415,18 @@ const DropDownMenu = ({
 
 									return (
 										<li
-											className="ListItem"
-											style={{ padding: '0.2rem 0.3rem' }}
+											className={styles.listItem}
 											key={itemId}
 										>
 											<label
-												className="ListItemLabel"
-												style={{ alignItems: 'flex-start', color: customListWrapperFontColor || themeListWrapperFontColor, cursor: allowSelection ? 'pointer' : undefined, display: 'flex', fontSize: customListWrapperFontSize || themeListWrapperFontSize, wordBreak: 'break-word' }}
+												className={styles.listItemLabel}
+												data-selectable={allowSelection}
+												style={listWrapperThemeStyle}
 											>
 												{allowSelection && ( // checkbox
 													<input
 														checked={checkSelected(item)}
-														className="ListItemCheckbox"
-														style={{ cursor: 'pointer', margin: '0.1rem 0.4rem 0 0' }}
+														className={styles.listItemCheckbox}
 														id={itemId}
 														name={itemId}
 														onBlur={index === items.length - 1 ? handleBlur : undefined}
