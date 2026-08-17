@@ -1,0 +1,36 @@
+@import '../tokens.module.css';
+
+.facetView {
+	height: 100%;
+	overflow-y: scroll;
+}
+
+.facetContainer {
+	margin-top: 10px;
+}
+
+.header {
+	background-color: var(--arranger-color-surface-subtle);
+	display: flex;
+	flex-direction: row;
+	font-weight: bold;
+	justify-content: space-between;
+	padding: 5px 20px;
+}
+
+.title {
+	color: var(--arranger-color-brand-magenta);
+}
+
+.breadscrumbs {
+	color: var(--arranger-color-brand-blue-dark);
+	text-align: right;
+}
+
+.breadscrumbItem:not([data-last='true'])::after {
+	content: ' » ';
+}
+
+.content {
+	padding: 10px;
+}

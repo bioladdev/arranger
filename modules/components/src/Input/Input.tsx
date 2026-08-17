@@ -5,6 +5,8 @@ import Button from '#Button/index';
 import { useThemeContext } from '#ThemeContext/index';
 import { emptyObj } from '#utils/noops';
 
+import styles from './Input.module.css';
+
 // TODO: study custom vs theme handlers, figure out whether both or which.
 // TODO: change component props to {...,theme} model
 
@@ -34,19 +36,17 @@ const Input = (
 	ref,
 ) => {
 	const [internalValue, setInternalValue] = useState('');
-	const [isFocused, setIsFocused] = useState(false);
 	const {
-		colors,
 		components: {
 			Input: {
-				borderColor: themeBorderColor = colors?.grey?.[600],
-				boxShadow: themeBoxShadow = `inset 0 0 3px 0 ${colors?.grey?.[400]}`,
+				borderColor: themeBorderColor,
+				boxShadow: themeBoxShadow,
 				clearAltText: themeClearAltText = 'Clear text',
 				Component: ThemeComponent = 'input',
 				ClearButton: ThemeClearButton = Button,
 				style: themeStyle,
 				disabled: themeDisabled,
-				disabledBorderColor: themeDisabledBorderColor = colors?.grey?.[300],
+				disabledBorderColor: themeDisabledBorderColor,
 				LeftIcon: ThemeLeftIcon,
 				margin: themeMargin = '0',
 				padding: themePadding,
@@ -78,7 +78,6 @@ const Input = (
 	const inputDisabled = customDisabled || themeDisabled;
 
 	const blurHandler = (event) => {
-		setIsFocused(false);
 		customBlurHandler?.(event);
 		themeBlurHandler?.(event);
 	};
@@ -98,29 +97,23 @@ const Input = (
 	};
 
 	const focusHandler = (event) => {
-		setIsFocused(true);
 		customFocusHandler?.(event);
 		themeFocusHandler?.(event);
 	};
 
+	const wrapperThemeStyle = {
+		'--arranger-input-border-color': inputDisabled ? undefined : borderColor,
+		'--arranger-input-box-shadow': boxShadow,
+		'--arranger-input-disabled-border-color': inputDisabled ? themeDisabledBorderColor : undefined,
+		'--arranger-input-margin': margin,
+		'--arranger-input-padding': padding,
+	};
+
 	return (
 		<div
-			className={cx('inputWrapper', { disabled: inputDisabled, focused: isFocused }, className)}
-			style={{
-				alignItems: 'center',
-				border: `solid 1px ${inputDisabled ? themeDisabledBorderColor : borderColor}`,
-				borderRadius: '5px',
-				boxSizing: 'border-box',
-				boxShadow: isFocused ? boxShadow : undefined,
-				display: 'flex',
-				flex: 1,
-				justifyContent: 'center',
-				margin,
-				overflow: 'hidden',
-				padding: padding ?? '5px',
-				...themeStyle,
-				...customStyle,
-			}}
+			className={cx(styles.inputWrapper, className)}
+			data-disabled={Boolean(inputDisabled)}
+			style={{ ...wrapperThemeStyle, ...themeStyle, ...customStyle }}
 			onClick={(e) => {
 				if (inputRef.current && e.target !== clearButtonRef?.current) inputRef.current.focus();
 			}}
@@ -129,16 +122,13 @@ const Input = (
 			}}
 		>
 			{LeftIcon && (
-				<span
-					className="inputIcon"
-					style={{ color: 'lightgrey', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
-				>
+				<span className={styles.inputIcon}>
 					<LeftIcon {...customLeftIconProps} />
 				</span>
 			)}
 
 			<Component
-				style={{ border: 'none', width: '100%' }}
+				className={styles.input}
 				disabled={inputDisabled}
 				onBlur={blurHandler}
 				onChange={changeHandler}
@@ -168,10 +158,7 @@ const Input = (
 			)}
 
 			{RightIcon && (
-				<span
-					className="inputRightIcon"
-					style={{ color: 'lightgrey', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
-				>
+				<span className={styles.inputIcon}>
 					<RightIcon {...customRightIconProps} />
 				</span>
 			)}

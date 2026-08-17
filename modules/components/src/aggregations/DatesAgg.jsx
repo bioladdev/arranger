@@ -8,6 +8,7 @@ import { withTheme } from '#ThemeContext/index';
 import { emptyObj } from '#utils/noops';
 
 import AggsGroup from './AggsGroup/index';
+import styles from './DatesAgg.module.css';
 
 const dateFromSqon = (dateString) => new Date(dateString);
 const toSqonDate = (date) => date.valueOf();
@@ -88,18 +89,14 @@ class DatesAgg extends React.Component {
 			facetView = false,
 			fieldName,
 			theme: {
-				colors,
 				components: {
 					Aggregations: {
 						NoDataContainer: {
-							fontColor: themeNoDataFontColor = colors?.grey?.[600],
-							fontSize: themeNoDataFontSize = '0.8em',
+							fontColor: themeNoDataFontColor,
+							fontSize: themeNoDataFontSize,
 						} = emptyObj,
 					} = emptyObj,
-					Input: {
-						borderColor: themeInputBorderColor = colors?.grey?.[400],
-						boxShadow: themeInputBoxShadow,
-					} = emptyObj,
+					Input: { borderColor: themeInputBorderColor, boxShadow: themeInputBoxShadow } = emptyObj,
 				} = emptyObj,
 			},
 			type,
@@ -107,6 +104,12 @@ class DatesAgg extends React.Component {
 		} = this.props;
 		const { minDate, maxDate, startDate, endDate } = this.state;
 		const hasData = minDate && maxDate;
+
+		/** @type {import('react').CSSProperties & Record<`--arranger-dates-agg-${string}`, string | undefined>} */
+		const noDataThemeStyle = {
+			'--arranger-dates-agg-no-data-font-color': themeNoDataFontColor,
+			'--arranger-dates-agg-no-data-font-size': themeNoDataFontSize,
+		};
 
 		const dataFields = {
 			...(fieldName && { 'data-fieldname': fieldName }),
@@ -124,12 +127,11 @@ class DatesAgg extends React.Component {
 				}}
 			>
 				{hasData ? (
-					// TODO: restore react-datepicker nested class styles via CSS
-					<div style={{ alignItems: 'center', display: 'flex', justifyContent: 'space-around', paddingLeft: '5px' }}>
+					<div className={styles.dateRangeWrapper}>
 						<DatePicker
 							{...{ minDate, maxDate }}
 							aria-label={`Pick start date`}
-							className="start-date"
+							className={styles.dateInput}
 							closeOnScroll
 							dateFormat={dateFormat}
 							disabled={!hasData}
@@ -137,19 +139,18 @@ class DatesAgg extends React.Component {
 							onChange={this.handleDateChange('start')}
 							openToDate={startDate || minDate}
 							placeholderText={fieldPlaceholder}
+							popperClassName={styles.datePickerPopper}
 							popperPlacement={facetView ? 'bottom-start' : 'top-start'}
 							selected={startDate}
 							showMonthDropdown
 							showYearDropdown
 							todayButton="Select Today"
 						/>
-						<span style={{ fontSize: '13px', margin: '0 10px' }}>
-							to
-						</span>
+						<span className={styles.dateSeparator}>to</span>
 						<DatePicker
 							{...{ minDate, maxDate }}
 							aria-label={`Pick end date`}
-							className="end-date"
+							className={styles.dateInput}
 							closeOnScroll
 							dateFormat={dateFormat}
 							disabled={!hasData}
@@ -157,6 +158,7 @@ class DatesAgg extends React.Component {
 							onChange={this.handleDateChange('end')}
 							openToDate={endDate || maxDate}
 							placeholderText={fieldPlaceholder}
+							popperClassName={styles.datePickerPopper}
 							popperPlacement={facetView ? 'bottom-end' : 'top-start'}
 							selected={endDate}
 							showMonthDropdown
@@ -166,8 +168,8 @@ class DatesAgg extends React.Component {
 					</div>
 				) : (
 					<span
-						className="no-data"
-						style={{ color: themeNoDataFontColor, display: 'block', fontSize: themeNoDataFontSize }}
+						className={styles.noData}
+						style={noDataThemeStyle}
 					>
 						No data available
 					</span>

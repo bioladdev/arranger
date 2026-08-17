@@ -1,11 +1,11 @@
 import cx from 'classnames';
-import Color from 'color';
-import { createRef, type CSSProperties, type ForwardedRef, forwardRef, type MouseEventHandler, useState } from 'react';
+import { createRef, type CSSProperties, type ForwardedRef, forwardRef, type MouseEventHandler } from 'react';
 
 import { useThemeContext } from '#ThemeContext/index';
 import { withTooltip } from '#Tooltip/index';
 import noopFn, { emptyObj } from '#utils/noops';
 
+import styles from './styles.module.css';
 import type { ButtonProps } from './types';
 
 const propagationStopper =
@@ -14,6 +14,9 @@ const propagationStopper =
 		event.stopPropagation();
 		clickHandler?.(event);
 	};
+
+type ButtonCustomProperties = CSSProperties &
+	Record<`--arranger-button-${string}` | `--arranger-transparent-button-${string}`, string | number | undefined>;
 
 interface BaseButtonInnerProps extends ButtonProps {
 	forwardedRef?: ForwardedRef<HTMLButtonElement>;
@@ -45,58 +48,49 @@ const BaseButtonInner = ({
 		lineHeight = undefined,
 		margin = undefined,
 		padding = undefined,
-		position = 'relative',
+		position = undefined,
 		textTransform = undefined,
 		whiteSpace = undefined,
 		width = undefined,
 	} = emptyObj,
 	...rest
 }: BaseButtonInnerProps) => {
-	const [isHovered, setIsHovered] = useState(false);
 	const isDisabled = disabled || className?.split(' ').includes('disabled');
 
-	const style: CSSProperties = {
-		alignItems: 'center',
-		background: isDisabled ? disabledBackground : isHovered ? hoverBackground : background,
-		boxSizing: 'border-box',
-		border: isDisabled
-			? disabledBorderColor
-				? `0.08rem solid ${disabledBorderColor}`
-				: undefined
-			: borderColor
-				? `0.08rem solid ${borderColor}`
-				: undefined,
-		borderRadius,
-		color: isDisabled ? disabledFontColor : fontColor,
-		cursor: typeof onClick === 'function' ? 'pointer' : 'default',
-		display: 'flex',
-		flex,
-		fontFamily,
-		fontSize,
-		fontWeight,
-		height,
-		justifyContent: 'center',
-		letterSpacing,
-		lineHeight,
-		margin,
-		padding,
-		pointerEvents: hidden ? 'none' : undefined,
-		position,
-		textTransform: textTransform as CSSProperties['textTransform'],
-		visibility: hidden ? 'hidden' : undefined,
-		whiteSpace: whiteSpace as CSSProperties['whiteSpace'],
-		width,
-		...customStyle,
+	const themeStyle: ButtonCustomProperties = {
+		'--arranger-button-background': background,
+		'--arranger-button-border-color': borderColor,
+		'--arranger-button-border-radius': borderRadius,
+		'--arranger-button-disabled-background': disabledBackground,
+		'--arranger-button-disabled-border-color': disabledBorderColor,
+		'--arranger-button-disabled-font-color': disabledFontColor,
+		'--arranger-button-flex': flex,
+		'--arranger-button-font-color': fontColor,
+		'--arranger-button-font-family': fontFamily,
+		'--arranger-button-font-size': fontSize,
+		'--arranger-button-font-weight': fontWeight,
+		'--arranger-button-height': height,
+		'--arranger-button-hover-background': hoverBackground,
+		'--arranger-button-letter-spacing': letterSpacing,
+		'--arranger-button-line-height': lineHeight,
+		'--arranger-button-margin': margin,
+		'--arranger-button-padding': padding,
+		'--arranger-button-position': position,
+		'--arranger-button-text-transform': textTransform,
+		'--arranger-button-white-space': whiteSpace,
+		'--arranger-button-width': width,
 	};
 
 	return (
 		<button
-			className={className}
+			className={cx(styles.button, className)}
+			data-clickable={typeof onClick === 'function'}
+			data-disabled={Boolean(isDisabled)}
+			data-hidden={Boolean(hidden)}
 			disabled={disabled}
-			onMouseEnter={() => setIsHovered(true)}
-			onMouseLeave={() => setIsHovered(false)}
+			onClick={onClick}
 			ref={forwardedRef as React.Ref<HTMLButtonElement>}
-			style={style}
+			style={{ ...themeStyle, ...customStyle }}
 			{...rest}
 		>
 			{children}
@@ -133,18 +127,17 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 		const forwardedRef = ref || createRef();
 
 		const {
-			colors,
 			components: {
 				Button: {
-					background: themeBackground = colors?.grey?.[100],
-					borderColor: themeBorderColor = colors?.grey?.[400],
-					borderRadius: themeBorderRadius = '0.3rem',
-					disabledBackground: themeDisabledBackground = colors?.grey?.[100],
-					disabledBorderColor: themeDisabledBorderColor = colors?.grey?.[300],
-					disabledFontColor: themeDisabledFontColor = colors?.grey?.[300],
-					fontColor: themeFontColor = '0.85rem',
-					fontSize: themeFontSize = '0.85rem',
-					lineHeight: themeLineHeight = '1.3rem',
+					background: themeBackground,
+					borderColor: themeBorderColor,
+					borderRadius: themeBorderRadius,
+					disabledBackground: themeDisabledBackground,
+					disabledBorderColor: themeDisabledBorderColor,
+					disabledFontColor: themeDisabledFontColor,
+					fontColor: themeFontColor,
+					fontSize: themeFontSize,
+					lineHeight: themeLineHeight,
 					...themeProps
 				} = emptyObj,
 			} = emptyObj,
@@ -182,42 +175,35 @@ const TransparentButtonBase = ({
 	className,
 	style: customStyle,
 	theme: {
-		background = 'none',
+		background = undefined,
 		borderColor = undefined,
-		fontColor = 'inherit',
-		fontFamily = 'inherit',
+		fontColor = undefined,
+		fontFamily = undefined,
 		hoverFontColor = undefined,
-		margin = 0,
-		padding = 0,
+		margin = undefined,
+		padding = undefined,
 	} = emptyObj,
 	onClick,
 	...props
 }: ButtonProps) => {
-	const [isHovered, setIsHovered] = useState(false);
+	const hasHoverColor = Boolean(hoverFontColor || (fontColor && fontColor !== 'inherit'));
 
-	const derivedHoverColor =
-		hoverFontColor ||
-		(fontColor && fontColor !== 'inherit' ? Color(fontColor).lighten(0.3).string() : undefined);
-
-	const style: CSSProperties = {
-		background,
-		border: borderColor ? `0.1rem solid ${borderColor}` : 'none',
-		color: isHovered ? derivedHoverColor : fontColor,
-		fontFamily,
-		justifyContent: 'flex-start',
-		margin,
-		padding,
-		textAlign: 'left',
-		...customStyle,
+	const themeStyle: ButtonCustomProperties = {
+		'--arranger-transparent-button-background': background,
+		'--arranger-transparent-button-border': borderColor ? `0.1rem solid ${borderColor}` : undefined,
+		'--arranger-transparent-button-color': fontColor,
+		'--arranger-transparent-button-font-family': fontFamily,
+		'--arranger-transparent-button-hover-color': hoverFontColor,
+		'--arranger-transparent-button-margin': margin,
+		'--arranger-transparent-button-padding': padding,
 	};
 
 	return (
 		<Button
-			className={className}
-			onMouseEnter={() => setIsHovered(true)}
-			onMouseLeave={() => setIsHovered(false)}
+			className={cx(styles.transparentButton, className)}
+			data-has-hover-color={hasHoverColor}
 			onClick={onClick}
-			style={style}
+			style={{ ...themeStyle, ...customStyle }}
 			theme={{}}
 			{...props}
 		>

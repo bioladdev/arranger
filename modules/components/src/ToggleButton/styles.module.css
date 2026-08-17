@@ -1,9 +1,4 @@
-:root {
-	--arranger-color-grey-50: #fafafa;
-	--arranger-color-grey-200: #eeeeee;
-	--arranger-color-grey-600: #757575;
-	--arranger-color-grey-700: #616161;
-}
+@import '../tokens.module.css';
 
 .toggleButton {
 	--arranger-toggle-button-border-radius: 0.9rem 50%;

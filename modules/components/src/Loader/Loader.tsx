@@ -1,11 +1,11 @@
 import cx from 'classnames';
-import color from 'color';
 import { merge } from 'lodash-es';
 import Spinkit from 'react-spinkit';
 
 import { useThemeContext } from '#ThemeContext/index';
 import { emptyObj } from '#utils/noops';
 
+import styles from './Loader.module.css';
 import type { LoaderContainerProps, LoaderOverlayProps, LoaderProps } from './types';
 
 const DefaultSpinner = ({ color, size }: { color?: string; size?: string | number }) => {
@@ -24,14 +24,9 @@ const LoaderBackground = ({
 	style?: React.CSSProperties;
 }) => (
 	<div
-		className={className}
-		style={{
-			borderRadius: 8,
-			position: 'relative',
-			overflow: isLoading ? 'hidden' : 'visible',
-			boxShadow: '0 1px 6px 0 rgba(0, 0, 0, 0.1), 0 1px 5px 0 rgba(0, 0, 0, 0.08)',
-			...customStyle,
-		}}
+		className={cx(styles.loaderBackground, className)}
+		data-loading={Boolean(isLoading)}
+		style={customStyle}
 	>
 		{children}
 	</div>
@@ -44,10 +39,9 @@ const Loader = ({
 	theme: { color: customColor, Component: customComponent, inverted, size: customSize, vertical } = emptyObj,
 }: LoaderProps) => {
 	const {
-		colors,
 		components: {
 			Loader: {
-				color: themeColor = colors?.grey?.[600],
+				color: themeColor,
 				Component: themeComponent = DefaultSpinner,
 				style: themeStyle,
 				size: themeSize = 30,
@@ -56,24 +50,19 @@ const Loader = ({
 	} = useThemeContext({ callerName: 'Loader' });
 
 	const Component = customComponent || themeComponent;
+	const isVertical = Boolean(vertical);
+	const isInverted = Boolean(inverted);
+	const captionMarginSide = isVertical ? (isInverted ? 'bottom' : 'top') : isInverted ? 'right' : 'left';
+	const captionThemeStyle = {
+		[`--arranger-loader-caption-margin-${captionMarginSide}`]: '0.5rem',
+	};
 
 	return (
 		<figure
-			className={cx('Spinner', className)}
-			style={{
-				alignItems: 'center',
-				bottom: 0,
-				display: 'flex',
-				flexDirection: vertical ? (inverted ? 'column-reverse' : 'column') : inverted ? 'row-reverse' : 'row',
-				justifyContent: 'center',
-				left: 0,
-				margin: 0,
-				position: 'relative',
-				right: 0,
-				top: 0,
-				...themeStyle,
-				...customStyle,
-			}}
+			className={cx('Spinner', styles.spinner, className)}
+			data-inverted={isInverted}
+			data-vertical={isVertical}
+			style={{ ...themeStyle, ...customStyle }}
 		>
 			<Component
 				color={customColor || themeColor}
@@ -82,9 +71,8 @@ const Loader = ({
 
 			{children && (
 				<figcaption
-					style={{
-						[`margin-${vertical ? (inverted ? 'bottom' : 'top') : inverted ? 'right' : 'left'}`]: '0.5rem',
-					}}
+					className={styles.caption}
+					style={captionThemeStyle}
 				>
 					{children}
 				</figcaption>
@@ -94,26 +82,14 @@ const Loader = ({
 };
 
 const LoaderOverlay = ({ theme: customThemeProps }: LoaderOverlayProps) => {
-	const { colors, components: { LoaderOverlay: themeProps = emptyObj } = emptyObj } = useThemeContext({
+	const { components: { LoaderOverlay: themeProps = emptyObj } = emptyObj } = useThemeContext({
 		callerName: 'LoaderOverlay',
 	});
 
 	const theme = merge({}, themeProps, customThemeProps);
 
 	return (
-		<div
-			style={{
-				position: 'absolute',
-				left: 0,
-				right: 0,
-				top: 0,
-				bottom: 0,
-				background: color(colors?.common?.white).alpha(0.7).hsl().string(),
-				display: 'flex',
-				justifyContent: 'center',
-				alignItems: 'center',
-			}}
-		>
+		<div className={styles.overlay}>
 			<Loader {...theme} />
 		</div>
 	);

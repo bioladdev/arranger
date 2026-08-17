@@ -1,0 +1,29 @@
+@import '../../tokens.module.css';
+
+.bucketCount {
+	background: var(--arranger-bucket-count-background, var(--arranger-color-grey-200));
+	border-radius: var(--arranger-bucket-count-border-radius, 0.2rem);
+	color: var(--arranger-bucket-count-font-color, var(--arranger-color-grey-900));
+	display: inline-block;
+	font-size: var(--arranger-bucket-count-font-size, 0.7rem);
+	height: fit-content;
+	padding: 0 0.2rem;
+}
+
+.bucketCount[data-has-border='true'] {
+	border: 0.1rem solid var(--arranger-bucket-count-border-color, transparent);
+}
+
+.bucketCount[data-disabled='true'] {
+	background: var(--arranger-bucket-count-disabled-background, var(--arranger-color-common-white));
+	border-color: var(--arranger-bucket-count-disabled-border-color);
+	color: var(--arranger-bucket-count-disabled-font-color, var(--arranger-color-grey-700));
+	font-size: var(--arranger-bucket-count-disabled-font-size);
+}
+
+.bucketCount[data-active='true'] {
+	background: var(--arranger-bucket-count-active-background);
+	border-color: var(--arranger-bucket-count-active-border-color);
+	color: var(--arranger-bucket-count-active-font-color);
+	font-size: var(--arranger-bucket-count-active-font-size);
+}

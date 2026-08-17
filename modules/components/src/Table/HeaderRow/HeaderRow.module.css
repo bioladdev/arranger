@@ -1,0 +1,49 @@
+@import '../../tokens.module.css';
+
+.headerRow {
+	background: var(--arranger-header-row-background);
+	color: var(--arranger-header-row-font-color);
+	font-family: var(--arranger-header-row-font-family);
+	font-size: var(--arranger-header-row-font-size, 0.9rem);
+	font-weight: var(--arranger-header-row-font-weight);
+	letter-spacing: var(--arranger-header-row-letter-spacing);
+	line-height: var(--arranger-header-row-line-height, 1rem);
+	position: var(--arranger-header-row-position);
+}
+
+.headerRow[data-has-visible-rows='false'] {
+	background: var(--arranger-header-row-disabled-background, var(--arranger-color-grey-100));
+	color: var(--arranger-header-row-disabled-font-color, var(--arranger-color-grey-500));
+}
+
+.header {
+	overflow: var(--arranger-header-row-overflow, hidden);
+	padding: var(--arranger-header-row-padding, 0.1rem 0.4rem);
+	position: relative;
+	text-align: left;
+	text-decoration: var(--arranger-header-row-text-decoration);
+	text-overflow: var(--arranger-header-row-text-overflow, ellipsis);
+	text-transform: var(--arranger-header-row-text-transform);
+	white-space: var(--arranger-header-row-white-space);
+}
+
+.header[data-sortable='true'] {
+	cursor: pointer;
+}
+
+.header[data-sorted='asc'],
+.header[data-sorted='desc'] {
+	color: var(--arranger-header-row-sorting-highlight-color, var(--arranger-color-grey-500));
+}
+
+.resizer {
+	background: rgba(0, 0, 0, 0.5);
+	cursor: col-resize;
+	height: 100%;
+	position: absolute;
+	right: 0;
+	top: 0;
+	touch-action: none;
+	user-select: none;
+	width: 3px;
+}

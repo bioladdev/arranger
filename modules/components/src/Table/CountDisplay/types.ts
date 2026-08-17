@@ -1,6 +1,5 @@
 import type { LoaderThemeProps } from '#Loader/types';
 import type { ThemeCommon } from '#ThemeContext/types/index';
-import type { RecursivePartial } from '#utils/types';
 
 export type CountDisplayThemeProps = {
 	hideLoader: boolean;
@@ -11,5 +10,5 @@ export type CountDisplayThemeProps = {
 } & ThemeCommon.FontProperties;
 
 export type CountDisplayProps = {
-	theme?: RecursivePartial<CountDisplayThemeProps>;
-} & ThemeCommon.CustomCSS;
+	className?: string;
+};

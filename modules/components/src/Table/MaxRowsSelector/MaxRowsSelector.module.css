@@ -1,0 +1,25 @@
+@import '../../tokens.module.css';
+
+.maxRowsSelector {
+	--arranger-max-rows-selector-border-radius: 0.3rem;
+	--arranger-max-rows-selector-border-width: 0.1rem;
+	--arranger-max-rows-selector-font-size: 0.8rem;
+
+	align-items: center;
+	color: var(--arranger-color-grey-700);
+	display: flex;
+	font-size: var(--arranger-max-rows-selector-font-size);
+}
+
+.select {
+	background: var(--arranger-color-common-white);
+	border: var(--arranger-max-rows-selector-border-width) solid var(--arranger-color-grey-300);
+	border-radius: var(--arranger-max-rows-selector-border-radius);
+	box-sizing: border-box;
+	color: var(--arranger-color-grey-700);
+	font-size: calc(var(--arranger-max-rows-selector-font-size) * 0.9);
+	height: calc(var(--arranger-max-rows-selector-font-size) * 1.5);
+	margin: 0 0.1rem;
+	padding: 0 0.2rem;
+	text-align: center;
+}

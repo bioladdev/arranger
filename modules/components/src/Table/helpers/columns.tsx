@@ -1,4 +1,5 @@
 import { createColumnHelper } from '@tanstack/react-table';
+import cx from 'classnames';
 import { mergeWith } from 'lodash-es';
 import { type HTMLAttributes, useEffect, useRef } from 'react';
 
@@ -13,6 +14,7 @@ import {
 import { emptyObj } from '#utils/noops';
 
 import { defaultCellTypes, getCellValue } from './cells';
+import styles from './columns.module.css';
 
 export const aggregateCustomColumns = (
 	customColumns: ColumnMappingInterface[] = [],
@@ -63,8 +65,7 @@ function IndeterminateCheckbox({
 	return (
 		<input
 			aria-label={'Select this row'}
-			style={{ cursor: 'pointer', margin: '0.2rem 0 0' }}
-			className={className + ' cursor-pointer'}
+			className={cx(styles.checkbox, className)}
 			ref={ref}
 			type="checkbox"
 			{...rest}
@@ -155,7 +156,7 @@ export const makeTableColumns = ({
 		? [
 				columnHelper.display({
 					cell: ({ row }) => (
-						<div className="px-1">
+						<div>
 							<IndeterminateCheckbox
 								{...{
 									checked: row.getIsSelected(),

@@ -1,0 +1,49 @@
+@import '../../tokens.module.css';
+
+.pageSelector {
+	color: var(--arranger-page-selector-font-color, var(--arranger-color-grey-700));
+	font-size: var(--arranger-page-selector-font-size, 0.8rem);
+}
+
+.list {
+	align-items: center;
+	display: flex;
+	list-style: none;
+	margin: 0;
+}
+
+.navButton[data-disabled='true'] {
+	color: var(--arranger-page-selector-disabled-font-color, var(--arranger-color-grey-400));
+}
+
+.navButtonFirst {
+	margin-right: 0.3rem;
+}
+
+.navButtonLast {
+	margin-left: 0.3rem;
+}
+
+.pageLabel {
+	display: flex;
+}
+
+.pageLabelText {
+	margin: 0 0.2rem 0 0;
+}
+
+.pageInput {
+	border: 0.1rem solid var(--arranger-page-selector-input-border-color, var(--arranger-color-grey-300));
+	border-radius: var(--arranger-page-selector-border-radius, 0.3rem);
+	box-sizing: border-box;
+	color: var(--arranger-page-selector-font-color, var(--arranger-color-grey-700));
+	font-size: calc(var(--arranger-page-selector-font-size, 0.8rem) * 0.9);
+	height: calc(var(--arranger-page-selector-font-size, 0.8rem) * 1.5);
+	padding: 0 0.3rem;
+	text-align: center;
+	width: 2.5rem;
+}
+
+.pageInput[data-error='true'] {
+	border-color: var(--arranger-page-selector-error-border-color, #e53935);
+}

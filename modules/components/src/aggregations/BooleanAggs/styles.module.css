@@ -1,0 +1,19 @@
+@import '../../tokens.module.css';
+
+.optionsWrapper {
+	width: 100%;
+}
+
+.trueBucketCount {
+	margin-left: 0.3rem;
+}
+
+.falseBucketCount {
+	margin-left: 0.2rem;
+}
+
+.noData {
+	color: var(--arranger-boolean-aggs-no-data-font-color, var(--arranger-color-grey-600));
+	display: block;
+	font-size: var(--arranger-boolean-aggs-no-data-font-size, 0.8em);
+}

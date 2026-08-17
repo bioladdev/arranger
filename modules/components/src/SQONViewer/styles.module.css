@@ -1,0 +1,20 @@
+@import '../tokens.module.css';
+
+.sqonView {
+	background-color: var(--arranger-color-surface-muted);
+	border: 1px solid var(--arranger-color-border-strong);
+	padding: 4px 19px 14px;
+}
+
+.sqonValueGroupStart {
+	margin-left: 8px;
+	margin-right: 6px;
+}
+
+.sqonValueGroupEnd {
+	margin-right: 10px;
+}
+
+.valueSingle {
+	margin-right: 10px;
+}

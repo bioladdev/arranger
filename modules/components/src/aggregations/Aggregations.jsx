@@ -7,14 +7,14 @@ import { DEBUG } from '#utils/config';
 import noopFn, { emptyArrFn, emptyObj, emptyObjFn } from '#utils/noops';
 
 import aggComponents from './aggComponentsMap';
+import styles from './Aggregations.module.css';
 import AggsQuery from './AggsQuery';
 import AggsState from './AggsState';
 
 const BaseWrapper = ({ className, ...props }) => (
 	<section
-		style={{ height: '100%', width: '100%' }}
 		{...props}
-		className={cx('aggregations', className)}
+		className={cx(styles.aggregations, className)}
 	/>
 );
 

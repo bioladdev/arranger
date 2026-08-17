@@ -1,0 +1,8 @@
+.results {
+	margin-bottom: 0.2rem;
+}
+
+.pinnedValues {
+	display: flex;
+	flex-wrap: wrap;
+}

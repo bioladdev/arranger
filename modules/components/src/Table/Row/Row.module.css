@@ -1,0 +1,27 @@
+@import '../../tokens.module.css';
+
+.row {
+	background: var(--arranger-row-background);
+	border-left: var(--arranger-row-vertical-border-color) solid 0.1rem;
+	border-right: var(--arranger-row-vertical-border-color) solid 0.1rem;
+	color: var(--arranger-row-font-color);
+	font-family: var(--arranger-row-font-family);
+	font-size: var(--arranger-row-font-size);
+	font-weight: var(--arranger-row-font-weight);
+	letter-spacing: var(--arranger-row-letter-spacing);
+	line-height: var(--arranger-row-line-height);
+	position: var(--arranger-row-position);
+	text-overflow: var(--arranger-row-text-overflow);
+}
+
+.row:hover {
+	background: var(--arranger-row-hover-background, var(--arranger-color-grey-100));
+	border-left-color: var(--arranger-row-hover-border-color);
+	border-right-color: var(--arranger-row-hover-border-color);
+	color: var(--arranger-row-hover-font-color, var(--arranger-row-font-color));
+}
+
+.row[data-selected='true'] {
+	background: var(--arranger-row-selected-background, var(--arranger-color-grey-300));
+	color: var(--arranger-row-selected-font-color);
+}

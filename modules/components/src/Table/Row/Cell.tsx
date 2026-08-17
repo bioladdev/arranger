@@ -4,6 +4,7 @@ import { ColumnListStyles, SELECTION_COLUMN_ID } from '#Table/types';
 import { useThemeContext } from '#ThemeContext/index';
 import { emptyObj } from '#utils/noops';
 
+import styles from './Cell.module.css';
 import type { CellProps } from './types';
 
 const Cell = ({
@@ -26,27 +27,26 @@ const Cell = ({
 	value,
 }: CellProps) => {
 	const {
-		colors,
 		components: {
 			Table: {
-				padding: themeTablePadding = '0.1rem 0.4rem',
-				textOverflow: themeTableTextOverflow = 'ellipsis',
+				padding: themeTablePadding,
+				textOverflow: themeTableTextOverflow,
 
 				// components
 				columnTypes: { list: { listStyle: themeListStyle } = emptyObj, ...otherThemeColumnTypes } = emptyObj,
 				Cell: {
 					background: themeBackground,
-					borderColor: themeBorderColor = 'transparent',
+					borderColor: themeBorderColor,
 					className: themeClassName,
 					style: themeCSS,
 					fontColor: themeFontColor,
 					horizontalBorderColor: themeHorizontalBorderColor,
-					hoverBackground: themeHoverBackground = colors?.grey?.[300],
+					hoverBackground: themeHoverBackground,
 					hoverBorderColor: themeHoverBorderColor,
 					hoverFontColor: themeHoverFontColor,
 					hoverHorizontalBorderColor: themeHoverHorizontalBorderColor,
 					hoverVerticalBorderColor: themeHoverVerticalBorderColor,
-					overflow: themeOverflow = 'hidden',
+					overflow: themeOverflow,
 					padding: themePadding = themeTablePadding,
 					textDecoration: themeTextDecoration,
 					textOverflow: themeTextOverflow = themeTableTextOverflow,
@@ -73,11 +73,29 @@ const Cell = ({
 
 	const { listStyle = themeListStyle } = otherThemeColumnTypes[accessor] || emptyObj;
 
+	const themeStyle = {
+		'--arranger-cell-background': background,
+		'--arranger-cell-font-color': themeFontColor,
+		'--arranger-cell-horizontal-border-color': horizontalBorderColor,
+		'--arranger-cell-hover-background': hoverBackground,
+		'--arranger-cell-hover-font-color': themeHoverFontColor,
+		'--arranger-cell-hover-horizontal-border-color': hoverHorizontalBorderColor,
+		'--arranger-cell-hover-vertical-border-color': hoverVerticalBorderColor,
+		'--arranger-cell-overflow': themeOverflow,
+		'--arranger-cell-padding': padding,
+		'--arranger-cell-text-decoration': themeTextDecoration,
+		'--arranger-cell-text-overflow': textOverflow,
+		'--arranger-cell-text-transform': themeTextTransform,
+		'--arranger-cell-vertical-border-color': verticalBorderColor,
+		'--arranger-cell-white-space': themeWhiteSpace,
+		'--arranger-cell-width': columnWidth,
+	};
+
 	return (
 		<td
-			className={cx('cell', themeClassName)}
+			className={cx(styles.cell, themeClassName)}
 			colSpan={colSpan}
-			style={{ background, borderBottomColor: horizontalBorderColor, borderLeftColor: verticalBorderColor, borderRightColor: verticalBorderColor, borderTopColor: horizontalBorderColor, borderStyle: 'solid', borderWidth: '1px', boxSizing: 'border-box', color: themeFontColor, overflow: themeOverflow, padding, position: 'relative', textAlign: 'left', textDecoration: themeTextDecoration, textOverflow: textOverflow, textTransform: themeTextTransform, verticalAlign: 'top', whiteSpace: themeWhiteSpace, width: columnWidth, ...themeCSS, ...customCSS }}
+			style={{ ...themeStyle, ...themeCSS, ...customCSS }}
 			data-accessor={accessor}
 			data-value={value}
 			title={accessor === SELECTION_COLUMN_ID ? 'Select this row' : value}

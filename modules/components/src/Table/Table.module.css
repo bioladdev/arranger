@@ -1,0 +1,43 @@
+@import '../tokens.module.css';
+
+.table {
+	background: var(--arranger-table-background);
+	border-collapse: collapse;
+	color: var(--arranger-table-font-color, var(--arranger-color-grey-700));
+	font-family: var(--arranger-table-font-family);
+	font-size: var(--arranger-table-font-size, 0.8rem);
+	font-weight: var(--arranger-table-font-weight);
+	letter-spacing: var(--arranger-table-letter-spacing);
+	line-height: var(--arranger-table-line-height);
+	table-layout: fixed;
+	text-decoration: var(--arranger-table-text-decoration);
+	text-transform: var(--arranger-table-text-transform);
+	white-space: var(--arranger-table-white-space, nowrap);
+	width: 100%;
+}
+
+.headerGroup {
+	background: var(--arranger-header-group-background);
+	border: var(--arranger-header-group-border);
+	margin: var(--arranger-header-group-margin);
+	overflow: var(--arranger-header-group-overflow);
+	position: var(--arranger-header-group-position);
+}
+
+.tableBody {
+	background: var(--arranger-table-body-background);
+	border: var(--arranger-table-body-border);
+	margin: var(--arranger-table-body-margin);
+	overflow: var(--arranger-table-body-overflow);
+	position: var(--arranger-table-body-position);
+}
+
+.messageContainer {
+	background: var(--arranger-table-background);
+	border: 1px solid var(--arranger-header-group-border-color, var(--arranger-color-grey-200));
+	display: flex;
+	font-style: italic;
+	justify-content: center;
+	margin: 0;
+	padding: 0.7rem 0.5rem;
+}

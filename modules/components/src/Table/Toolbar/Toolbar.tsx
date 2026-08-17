@@ -9,6 +9,7 @@ import { useThemeContext } from '#ThemeContext/index';
 import getDisplayName from '#utils/getComponentDisplayName';
 import { emptyObj } from '#utils/noops';
 
+import styles from './Toolbar.module.css';
 import type { ToolbarProps } from './types';
 
 const Toolbar = ({
@@ -39,10 +40,7 @@ const Toolbar = ({
 				className={className}
 				style={{ alignItems: 'flex-start', display: 'flex', justifyContent: 'space-between', ...themeCSS, ...customCSS }}
 			>
-				<CountDisplay
-					style={{ flexShrink: 0, margin: '0.3rem 0 0 0.3rem' }}
-					theme={countDisplayTheme}
-				/>
+				<CountDisplay className={styles.countDisplay} />
 
 				<ul
 					className="tools"

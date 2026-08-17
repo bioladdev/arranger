@@ -1,0 +1,102 @@
+@import '../tokens.module.css';
+
+.advancedFacetViewWrapper {
+	--arranger-facet-view-tree-panel-background: #fafafc;
+	--arranger-facet-view-panel-heading-background: #e1f0f3;
+
+	bottom: 0;
+	display: flex;
+	flex-direction: column;
+	font-size: 13px;
+	height: 100%;
+	left: 0;
+	position: absolute;
+	right: 0;
+	top: 0;
+}
+
+.spinnerOverlay {
+	background: rgba(255, 255, 255, 0.9);
+}
+
+.facetViewWrapper {
+	display: flex;
+	flex-direction: row;
+	font-size: 13px;
+	height: 100%;
+}
+
+.panel {
+	position: relative;
+}
+
+.treeViewPanel {
+	background-color: var(--arranger-facet-view-tree-panel-background);
+	border: 1px solid var(--arranger-color-border-strong);
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	margin-right: 5px;
+	margin-top: 10px;
+	overflow-y: scroll;
+}
+
+.treeViewPanelHeading {
+	align-items: center;
+	background-color: var(--arranger-facet-view-panel-heading-background);
+	display: flex;
+	font-size: 13px;
+	justify-content: space-between;
+	padding: 10px;
+}
+
+.fieldsShown {
+	font-weight: bold;
+}
+
+.valueOnlyCheck {
+	cursor: pointer;
+	text-align: right;
+}
+
+.facetsPanel {
+	border: 1px solid var(--arranger-color-border-strong);
+	flex: 2;
+	margin-left: 5px;
+	margin-top: 10px;
+}
+
+.facetsPanelHeading {
+	align-items: center;
+	background-color: var(--arranger-facet-view-panel-heading-background);
+	display: flex;
+	font-size: 13px;
+	height: 50px;
+	left: 0;
+	padding: 10px;
+	position: absolute;
+	right: 0;
+}
+
+.filterInput {
+	margin-right: 10px;
+}
+
+.statsBar {
+	display: flex;
+	flex: 1;
+	height: 100%;
+}
+
+.statsBarContent {
+	flex-grow: 1;
+}
+
+.facets {
+	bottom: 0;
+	left: 0;
+	overflow: hidden;
+	position: absolute;
+	right: 0;
+	top: 50px;
+}

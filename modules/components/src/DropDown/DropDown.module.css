@@ -1,0 +1,42 @@
+.dropDownHeader {
+	display: inline-block;
+	position: relative;
+	white-space: nowrap;
+}
+
+.dropDownButton {
+	align-items: center;
+	background-color: unset;
+	display: flex;
+}
+
+.dropDownButton:not([disabled]) {
+	cursor: pointer;
+}
+
+.dropDownContent {
+	background: white;
+	border: 1px solid rgba(0, 0, 0, 0.05);
+	box-sizing: border-box;
+	min-width: 100%;
+	padding: 5px;
+	position: absolute;
+	top: 100%;
+	z-index: 100;
+}
+
+.dropDownContentElement {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	padding: 5px;
+	user-select: none;
+}
+
+.dropDownContentElement[data-type='clickable'][disabled] {
+	color: #999;
+}
+
+.dropDownContentElement[data-type='clickable']:not([disabled]):hover {
+	cursor: pointer;
+}

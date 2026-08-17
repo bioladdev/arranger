@@ -1,0 +1,11 @@
+@import '../../tokens.module.css';
+
+.countDisplay {
+	--arranger-count-display-font-size: 0.8rem;
+
+	align-items: center;
+	color: var(--arranger-color-grey-700);
+	display: flex;
+	flex-grow: 1;
+	font-size: var(--arranger-count-display-font-size);
+}

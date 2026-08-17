@@ -1,0 +1,77 @@
+@import '../../tokens.module.css';
+
+.aggregationGroup {
+	border-bottom: 0.05rem solid transparent;
+	border-color: var(--arranger-aggs-group-divider-color, var(--arranger-color-grey-300));
+	box-sizing: border-box;
+	padding-bottom: 0.3rem;
+}
+
+.aggregationGroup[data-collapsed='true'] {
+	padding-bottom: 0;
+}
+
+.header {
+	background: var(--arranger-aggs-header-background, var(--arranger-color-common-white));
+	box-sizing: border-box;
+	padding: 0 6px;
+	position: relative;
+	top: 0;
+}
+
+.header[data-sticky='true'] {
+	position: sticky;
+}
+
+.titleWrapper {
+	align-items: center;
+	border-bottom: 0.1rem solid var(--arranger-aggs-header-divider-color, var(--arranger-color-grey-200));
+	box-sizing: border-box;
+	display: flex;
+	padding: 6px 0 4px;
+}
+
+.titleWrapper[data-collapsed='true'] {
+	border-bottom: none;
+	padding-bottom: 0;
+}
+
+.titleControl {
+	padding: 2px 0;
+	width: 100%;
+}
+
+.title {
+	color: var(--arranger-aggs-header-font-color, inherit);
+	font-size: 0.9rem;
+	margin-left: 0.5rem;
+}
+
+.title[data-has-modifiers='true'] {
+	padding-right: 1rem;
+}
+
+.sortingIcon {
+	cursor: pointer;
+	margin-left: 0.4rem;
+	margin-top: 0.1rem;
+	padding: 0.2rem;
+}
+
+.filterIcon {
+	cursor: pointer;
+	margin-left: 0.4rem;
+	margin-top: 0.1rem;
+	padding: 0.2rem;
+}
+
+.filter {
+	padding: 7px 0;
+}
+
+.bucket {
+	align-items: flex-end;
+	display: flex;
+	flex-direction: column;
+	padding: 0.1rem 0.3rem;
+}

@@ -1,0 +1,45 @@
+@import '../tokens.module.css';
+
+.dateRangeWrapper {
+	align-items: center;
+	display: flex;
+	justify-content: space-around;
+	padding-left: 5px;
+}
+
+.dateSeparator {
+	font-size: 13px;
+	margin: 0 10px;
+}
+
+/*
+ * Recovered from beagle.css's `.facetContainer .react-datepicker-wrapper input,
+ * .aggregation-group .react-datepicker-wrapper input` rule. react-datepicker exposes
+ * `className` as a documented hook that styles its own internal <input> directly, so
+ * this doesn't need a descendant selector into the library's markup.
+ */
+.dateInput {
+	border: 1px solid var(--arranger-color-border-muted);
+	border-radius: 10px;
+	padding: 5px;
+	width: 100px;
+}
+
+.noData {
+	color: var(--arranger-dates-agg-no-data-font-color, var(--arranger-color-grey-600));
+	display: block;
+	font-size: var(--arranger-dates-agg-no-data-font-size, 0.8em);
+}
+
+/*
+ * `.react-datepicker__triangle` is react-datepicker's own internal element with no
+ * exposed styling hook (unlike the input, which the library documents `className` for).
+ * `popperClassName` at least scopes this under our own class instead of a bare global
+ * selector, but reaching the triangle itself still requires a descendant selector into
+ * the library's markup, and beating its own specificity requires !important. Both are
+ * explicitly justified exceptions for third-party library overrides per project
+ * convention — not a silent violation of the no-descendant-selector/no-!important rules.
+ */
+.datePickerPopper[data-placement='bottom-end'] :global(.react-datepicker__triangle) {
+	left: 200px !important;
+}

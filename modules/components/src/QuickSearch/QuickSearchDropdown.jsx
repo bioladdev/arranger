@@ -1,6 +1,18 @@
+import cx from 'classnames';
+
 import TextHighlight from '#TextHighlight/index';
 import { useThemeContext } from '#ThemeContext/index';
 import { emptyObj } from '#utils/noops';
+
+import styles from './QuickSearchDropdown.module.css';
+
+const entityColorClasses = {
+	1: styles.resultEntity1,
+	2: styles.resultEntity2,
+	3: styles.resultEntity3,
+	4: styles.resultEntity4,
+	5: styles.resultEntity5,
+};
 
 const QuickSearchDropdownItem = ({ entityName, inputValue, onMouseDown, optionIndex, primaryKey, result }) => {
 	const {
@@ -8,78 +20,68 @@ const QuickSearchDropdownItem = ({ entityName, inputValue, onMouseDown, optionIn
 			QuickSearch: {
 				DropDownItems: {
 					entityLogo: {
-						borderRadius: themeEntityLogoBorderRadius = '50%',
-						color1: themeEntityLogoColor1 = '#a42c90',
-						color2: themeEntityLogoColor2 = '#00afed',
-						color3: themeEntityLogoColor3 = '#ff9324',
-						color4: themeEntityLogoColor4 = '#009bb8',
-						color5: themeEntityLogoColor5 = '#d8202f',
+						borderRadius: themeEntityLogoBorderRadius,
 						style: themeEntityLogoCSS = emptyObj,
 						enabled: themeEntityLogoEnabled = true,
-						margin: themeEntityLogoMargin = '6px',
-						width: themeEntityLogoWidth = '14%',
+						margin: themeEntityLogoMargin,
+						width: themeEntityLogoWidth,
 					} = emptyObj,
-					evenRowColor: themeDropDownItemsEvenRowColor = '#f4f5f8',
-					lineHeight: themeDropdownItemsLineHeight = '220%',
+					lineHeight: themeDropdownItemsLineHeight,
 					resultKeyText: {
 						style: themeResultKeyTextCSS = emptyObj,
-						fontSize: themeResultKeyTextFontSize = '0.9em',
+						fontSize: themeResultKeyTextFontSize,
 					} = emptyObj,
-					resultValue: { style: themeResultValueCSS = emptyObj, fontSize: themeResultValueFontSize = '0.7em' } = emptyObj,
+					resultValue: { style: themeResultValueCSS = emptyObj, fontSize: themeResultValueFontSize } = emptyObj,
 				} = emptyObj,
 			} = emptyObj,
 		} = emptyObj,
 	} = useThemeContext({ callerName: 'QuickSearch' });
 
-	const logoEntityColors = {
-		1: themeEntityLogoColor1,
-		2: themeEntityLogoColor2,
-		3: themeEntityLogoColor3,
-		4: themeEntityLogoColor4,
-		5: themeEntityLogoColor5,
+	const entityThemeStyle = {
+		'--arranger-qs-entity-border-radius': themeEntityLogoBorderRadius,
+		'--arranger-qs-entity-margin': themeEntityLogoMargin,
+		'--arranger-qs-entity-width': themeEntityLogoWidth,
+	};
+
+	/** @type {import('react').CSSProperties & Record<`--arranger-qs-${string}`, string | undefined>} */
+	const detailsThemeStyle = {
+		'--arranger-qs-dropdown-line-height': themeDropdownItemsLineHeight,
+		'--arranger-qs-result-key-font-size': themeResultKeyTextFontSize,
+		'--arranger-qs-result-value-font-size': themeResultValueFontSize,
 	};
 
 	return (
 		<div
-			className="quick-search-result"
-			style={onMouseDown ? { cursor: 'pointer', display: 'flex', alignItems: 'center' } : undefined}
+			className={styles.result}
+			data-clickable={Boolean(onMouseDown)}
 			onMouseDown={onMouseDown}
 			role="presentation"
 			title={primaryKey}
 		>
 			{themeEntityLogoEnabled && (
 				<div
-					className={`quick-search-result-entity quick-search-result-entity-${optionIndex}`}
-					style={{
-						backgroundColor: logoEntityColors[optionIndex],
-						borderRadius: themeEntityLogoBorderRadius,
-						width: themeEntityLogoWidth,
-						margin: themeEntityLogoMargin,
-						display: 'flex',
-						alignItems: 'center',
-						justifyContent: 'center',
-						...themeEntityLogoCSS,
-					}}
+					className={cx(styles.resultEntity, entityColorClasses[optionIndex])}
+					style={{ ...entityThemeStyle, ...themeEntityLogoCSS }}
 				>
 					<div>{entityName.slice(0, 2).toUpperCase()}</div>
 				</div>
 			)}
 
 			<div
-				className="quick-search-result-details"
-				style={{ overflow: 'hidden' }}
+				className={styles.resultDetails}
+				style={detailsThemeStyle}
 			>
 				<div
-					className="quick-search-result-key"
-					style={{ fontSize: themeResultKeyTextFontSize, lineHeight: themeDropdownItemsLineHeight, ...themeResultKeyTextCSS }}
+					className={styles.resultKey}
+					style={{ ...detailsThemeStyle, ...themeResultKeyTextCSS }}
 				>
 					<TextHighlight highlightText={inputValue} content={primaryKey} />
 				</div>
 
 				{primaryKey === result || (
 					<div
-						className="quick-search-result-value"
-						style={{ overflow: 'hidden', textOverflow: 'ellipsis', fontSize: themeResultValueFontSize, whiteSpace: 'nowrap', ...themeResultValueCSS }}
+						className={styles.resultValue}
+						style={{ ...detailsThemeStyle, ...themeResultValueCSS }}
 					>
 						<TextHighlight highlightText={inputValue} content={result} />
 					</div>

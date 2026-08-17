@@ -5,7 +5,7 @@ import { ArrowIcon } from '#Icons/index';
 import { withTheme } from '#ThemeContext/index';
 import noopFn, { emptyObj } from '#utils/noops';
 
-import './DropDown.css';
+import styles from './DropDown.module.css';
 
 class DropDown extends React.Component {
 	state = { isOpen: false };
@@ -64,16 +64,16 @@ class DropDown extends React.Component {
 					selectedItem,
 					toggleMenu,
 				}) => (
-					<div className="dropDownHeader">
+					<div className={styles.dropDownHeader}>
 						<button
 							aria-label={`Show columns to select`}
-							className="dropDownButton"
+							className={styles.dropDownButton}
 							{...getButtonProps({
 								disabled: disableDownloads,
 								onClick: this.handleToggleMenu,
 							})}
 						>
-							<div className="dropDownButtonContent">{children}</div>
+							<div>{children}</div>
 							<ArrowIcon
 								style={{ marginLeft: '0.3rem', marginTop: '0.1rem' }}
 								fill={customArrowColor || themeArrowColor}
@@ -85,7 +85,8 @@ class DropDown extends React.Component {
 
 						{isOpen && (
 							<div
-								className={`dropDownContent ${singleSelect ? 'single' : 'multiple'}`}
+								className={styles.dropDownContent}
+								data-select-mode={singleSelect ? 'single' : 'multiple'}
 								style={{
 									right: align === 'right' ? 0 : 'auto',
 									left: align === 'right' ? 'auto' : 0,
@@ -102,7 +103,8 @@ class DropDown extends React.Component {
 									const labelIsComponent = React.isValidElement(label);
 									return (
 										<div
-											className={`dropDownContentElement${labelIsComponent ? ' custom' : ' clickable'}`}
+											className={styles.dropDownContentElement}
+											data-type={labelIsComponent ? 'custom' : 'clickable'}
 											key={item.id || id}
 											{...itemProps}
 										>

@@ -1,6 +1,8 @@
-import { type CSSProperties, forwardRef } from 'react';
+import cx from 'classnames';
+import { forwardRef } from 'react';
 
 import type { TableThemeProps } from './types';
+import styles from './Wrapper.module.css';
 
 type TableWrapperProps = TableThemeProps['TableWrapper'] & {
 	children?: React.ReactNode;
@@ -19,39 +21,36 @@ const TableWrapper = forwardRef<HTMLElement, TableWrapperProps>(
 			flex,
 			height,
 			margin,
-			overflow = 'auto',
+			overflow,
 			padding,
-			position = 'relative',
+			position,
 			style: customStyle,
-			width = '100%',
+			width,
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			key: _key,
 			...rest
 		},
 		ref,
 	) => {
-		const style: CSSProperties = {
-			background,
-			border: borderColor ? `1px solid ${borderColor}` : undefined,
-			borderRadius,
-			boxShadow,
-			display: 'flex',
-			flex,
-			flexWrap: 'wrap',
-			height,
-			margin,
-			overflow,
-			padding,
-			position,
-			width,
-			...customStyle,
+		const themeStyle = {
+			'--arranger-table-wrapper-background': background,
+			'--arranger-table-wrapper-border': borderColor ? `1px solid ${borderColor}` : undefined,
+			'--arranger-table-wrapper-border-radius': borderRadius,
+			'--arranger-table-wrapper-box-shadow': boxShadow,
+			'--arranger-table-wrapper-flex': flex,
+			'--arranger-table-wrapper-height': height,
+			'--arranger-table-wrapper-margin': margin,
+			'--arranger-table-wrapper-overflow': overflow,
+			'--arranger-table-wrapper-padding': padding,
+			'--arranger-table-wrapper-position': position,
+			'--arranger-table-wrapper-width': width,
 		};
 
 		return (
 			<section
-				className={className}
+				className={cx(styles.wrapper, className)}
 				ref={ref}
-				style={style}
+				style={{ ...themeStyle, ...customStyle }}
 				{...rest}
 			>
 				{children}

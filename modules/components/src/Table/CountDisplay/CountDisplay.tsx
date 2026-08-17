@@ -2,35 +2,15 @@ import cx from 'classnames';
 import pluralize from 'pluralize';
 
 import { useTableContext } from '#Table/helpers/index';
-import { useThemeContext } from '#ThemeContext/index';
-import { emptyObj } from '#utils/noops';
 
-import { isPlural } from './helpers';
+import styles from './CountDisplay.module.css';
+import { isPlural } from './helpers.js';
 import type { CountDisplayProps } from './types';
 
-const CountDisplay = ({
-	className: customClassName,
-	style: customCSS,
-	theme: { fontColor: customFontColor, fontSize: customFontSize, spacing: customSpacing } = emptyObj,
-}: CountDisplayProps) => {
+const CountDisplay = ({ className }: CountDisplayProps) => {
 	const { currentPage, documentType, isLoading, pageSize, missingProvider, total } = useTableContext({
 		callerName: 'Table - CountDisplay',
 	});
-	const {
-		colors,
-		components: {
-			Table: {
-				CountDisplay: {
-					className: themeClassName,
-					style: themeCSS,
-					fontColor: themeFontColor = colors?.grey?.[700],
-					fontSize: themeFontSize = '0.8rem',
-					spacing: themeSpacing = '0.2rem',
-				} = emptyObj,
-				Toolbar: { spacing: themeToolbarSpacing } = emptyObj,
-			} = emptyObj,
-		} = emptyObj,
-	} = useThemeContext({ callerName: 'Table - CountDisplay' });
 
 	const hasData = total > 0;
 
@@ -38,31 +18,28 @@ const CountDisplay = ({
 		missingProvider || pluralize(documentType, isPlural({ total, pageSize, currentPage }) ? 2 : 1);
 
 	return (
-		<article
-			className={cx('currentlyDisplayed', customClassName, themeClassName)}
-			style={{ alignItems: 'center', color: customFontColor ?? themeFontColor, display: 'flex', flexGrow: 1, fontSize: customFontSize ?? themeFontSize, ...themeCSS, ...customCSS }}
-		>
+		<article className={cx(styles.countDisplay, className)}>
 			{missingProvider ? (
-				<span className="noProvider">The counter is missing its {missingProvider || 'context'} provider.</span>
+				<span>The counter is missing its {missingProvider || 'context'} provider.</span>
 			) : isLoading ? (
-				<span className="loading">{`Loading ${oneOrManyDocuments}...`}</span>
+				<span>{`Loading ${oneOrManyDocuments}...`}</span>
 			) : (
 				<>
-					<span className="showing">Showing</span>
+					<span>Showing</span>
 					{hasData ? (
 						<>
-							<span className="numbers">
+							<span>
 								{`${(currentPage * pageSize + 1).toLocaleString()} - ${Math.min(
 									(currentPage + 1) * pageSize,
 									total,
 								).toLocaleString()}`}
 							</span>{' '}
-							<span className="ofTotal">of {total?.toLocaleString()}</span>{' '}
+							<span>of {total?.toLocaleString()}</span>{' '}
 						</>
 					) : (
-						<span className="numbers">{total}</span>
+						<span>{total}</span>
 					)}
-					<span className="type">{oneOrManyDocuments}</span>
+					<span>{oneOrManyDocuments}</span>
 				</>
 			)}
 		</article>

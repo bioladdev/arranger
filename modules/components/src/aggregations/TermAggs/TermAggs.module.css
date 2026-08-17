@@ -1,0 +1,72 @@
+@import '../../tokens.module.css';
+
+.header {
+	font-size: 11px;
+	margin-top: 4px;
+	text-align: right;
+	text-transform: uppercase;
+}
+
+.bucketList {
+	width: 100%;
+}
+
+/*
+ * Recovered from beagle.css's `.aggregation-group .bucket-item` (padding/cursor/font-size)
+ * plus `.facetViewWrapper .bucket .bucket-item` (min-width/max-width 25% grid sizing).
+ * The grid sizing only produces an actual multi-column wrap layout when the parent .bucket
+ * is `display:flex;flex-wrap:wrap` (AdvancedFacetView.css's override for that context).
+ * AggsGroup's current .bucket is `flex-direction:column` (its own live, already-redesigned
+ * layout) — outside that AdvancedFacetView context, bucket items will render as narrower
+ * (25%-wide) boxes stacked vertically rather than wrapping into a grid. Reconciling this
+ * would mean making AggsGroup's .bucket layout context-aware, which is a new coordination
+ * decision between AggsGroup/TermAggs/FacetView, not a flattening of existing rules — left
+ * unresolved and flagged rather than improvised.
+ */
+.bucketItem {
+	cursor: pointer;
+	display: flex;
+	font-size: 0.8rem;
+	justify-content: space-between;
+	margin: 0.15rem 0;
+	max-width: 25%;
+	min-width: 25%;
+	padding-bottom: 5px;
+	padding-top: 5px;
+}
+
+.bucketLink {
+	display: flex;
+	word-wrap: break-word;
+}
+
+.checkbox {
+	cursor: pointer;
+	flex-shrink: 0;
+	margin: 0.2rem 0.3rem 0 0;
+	pointer-events: none;
+	vertical-align: middle;
+}
+
+.bucketCount {
+	align-items: center;
+	background-color: rgba(169, 173, 192, 0.3);
+	border-radius: 5px;
+	color: var(--arranger-color-text);
+	display: flex;
+	font-family: 'Open Sans', sans-serif;
+	margin-left: auto;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+.noData {
+	color: var(--arranger-term-aggs-no-data-font-color, var(--arranger-color-grey-600));
+	display: block;
+	font-size: var(--arranger-term-aggs-no-data-font-size, 0.8em);
+}
+
+.showMoreWrapper {
+	margin-left: 0.5rem;
+	text-decoration: underline;
+}

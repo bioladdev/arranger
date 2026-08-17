@@ -1,0 +1,32 @@
+@import '../../tokens.module.css';
+
+.cell {
+	background: var(--arranger-cell-background);
+	border-bottom-color: var(--arranger-cell-horizontal-border-color, transparent);
+	border-left-color: var(--arranger-cell-vertical-border-color, transparent);
+	border-right-color: var(--arranger-cell-vertical-border-color, transparent);
+	border-style: solid;
+	border-top-color: var(--arranger-cell-horizontal-border-color, transparent);
+	border-width: 1px;
+	box-sizing: border-box;
+	color: var(--arranger-cell-font-color);
+	overflow: var(--arranger-cell-overflow, hidden);
+	padding: var(--arranger-cell-padding, 0.1rem 0.4rem);
+	position: relative;
+	text-align: left;
+	text-decoration: var(--arranger-cell-text-decoration);
+	text-overflow: var(--arranger-cell-text-overflow, ellipsis);
+	text-transform: var(--arranger-cell-text-transform);
+	vertical-align: top;
+	white-space: var(--arranger-cell-white-space);
+	width: var(--arranger-cell-width);
+}
+
+.cell:hover {
+	background: var(--arranger-cell-hover-background, var(--arranger-color-grey-300));
+	border-bottom-color: var(--arranger-cell-hover-horizontal-border-color, var(--arranger-cell-horizontal-border-color, transparent));
+	border-left-color: var(--arranger-cell-hover-vertical-border-color, var(--arranger-cell-vertical-border-color, transparent));
+	border-right-color: var(--arranger-cell-hover-vertical-border-color, var(--arranger-cell-vertical-border-color, transparent));
+	border-top-color: var(--arranger-cell-hover-horizontal-border-color, var(--arranger-cell-horizontal-border-color, transparent));
+	color: var(--arranger-cell-hover-font-color, var(--arranger-cell-font-color));
+}

@@ -1,11 +1,11 @@
 import type { ThemeCommon } from '#ThemeContext/types/index';
-import type { RecursivePartial } from '#utils/types';
 
 export interface MaxRowsSelectorThemeProps extends ThemeCommon.NonButtonThemeProps {
 	pageSizes: number[];
 }
 
-export interface MaxRowsSelectorProps extends ThemeCommon.CustomCSS {
+export interface MaxRowsSelectorProps {
+	className?: string;
 	disabled?: boolean;
-	theme?: RecursivePartial<MaxRowsSelectorThemeProps>;
+	pageSizes?: number[];
 }

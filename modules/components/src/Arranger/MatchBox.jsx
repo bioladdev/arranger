@@ -1,3 +1,4 @@
+import cx from 'classnames';
 import React, { Fragment } from 'react';
 import { capitalize, difference, get, uniqBy } from 'lodash-es';
 
@@ -11,6 +12,8 @@ import formatNumber from '../utils/formatNumber';
 import parseInputFiles from '../utils/parseInputFiles';
 
 import QuickSearchQuery from '../QuickSearch/QuickSearchQuery';
+
+import styles from './MatchBox.module.css';
 
 const compose = (...fns) => (Component) => fns.reduceRight((acc, fn) => fn(acc), Component);
 const withState = (key, setKey, initial) => (Component) => (props) => {
@@ -57,8 +60,8 @@ const EntitySelectionSection = ({
 	activeFields,
 	uploadableFieldNames,
 }) => (
-	<div className="match-box-select-entity-form">
-		<div className="match-box-entity-select-text">{entitySelectText}</div>
+	<div className={styles.matchBoxSelectEntityForm}>
+		<div>{entitySelectText}</div>
 		<select onChange={onEntityChange}>
 			<option value={null}>{entitySelectPlaceholder}</option>
 			{activeFields
@@ -104,11 +107,12 @@ const MatchBox = ({
 	activeEntityField,
 	uploadableFieldNames = null,
 	setActiveEntityField,
+	className,
 	...props
 }) => {
 	const selectableEntityType = !(uploadableFieldNames && (uploadableFieldNames || []).length === 1);
 	return (
-		<div className="match-box">
+		<div className={cx(styles.matchBox, className)}>
 			<MatchBoxState
 				{...props}
 				onInitialLoaded={({ activeFields }) => {
@@ -140,23 +144,24 @@ const MatchBox = ({
 								}}
 							/>
 						)}
-						<div className="match-box-id-form">
-							<div className="match-box-selection-text">{instructionText}</div>
+						<div>
+							<div className={styles.matchBoxSelectionText}>{instructionText}</div>
 							<Input
 								onChange={onTextChange}
 								theme={{
 									altText: `Match box`,
 									Component: 'textarea',
 									disabled: !activeField,
+									margin: '0 0 1.5em 0',
 									placeholder: placeholderText,
 								}}
 								value={searchText}
 							/>
-							<div className="match-box-upload-instruction-text">{uploadInstructionText}</div>
-							<div style={{ display: 'flex' }}>
+							<div className={styles.matchBoxUploadInstructionText}>{uploadInstructionText}</div>
+							<div className={styles.matchBoxBrowseRow}>
 								<input
 									type="file"
-									style={{ position: 'absolute', top: '-10000px', left: '0px' }}
+									className={styles.matchBoxFileInput}
 									aria-label={`File upload`}
 									accept=".tsv,.csv,text/*"
 									ref={inputRef}
@@ -184,7 +189,7 @@ const MatchBox = ({
 								),
 							})}
 							render={({ results, unmatchedKeys, sqon: quickSearchSqon }) => (
-								<div className="match-box-results-table">
+								<div>
 									{!!searchText.length && (
 										<Fragment>
 											{matchHeaderText}
