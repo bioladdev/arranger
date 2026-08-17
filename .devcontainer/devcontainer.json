@@ -1,76 +1,20 @@
 {
-  "name": "Claude Code Sandbox",
+  "name": "arranger-cc",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:20",
 
-  // ── Build ───────────────────────────────────────────────────────────────────
-  "build": {
-    "dockerfile": "Dockerfile",
-    "args": {
-      // Pin a specific version or leave as "latest"
-      "CLAUDE_CODE_VERSION": "latest"
-    }
-  },
-
-  // ── Security ─────────────────────────────────────────────────────────────────
-  // NET_ADMIN + NET_RAW are required for the firewall script (iptables / ipset).
-  // These are the ONLY extra capabilities granted — everything else is dropped.
-  // Added SYS and security-opt for bwrap to run commands in bash
-  "runArgs": [
-    "--cap-add=NET_ADMIN",
-    "--cap-add=NET_RAW",
-    "--cap-add=SYS_ADMIN",
-    "--security-opt=seccomp=unconfined"
-  ],
-  // ── Volumes ───────────────────────────────────────────────────────────────────
-  // Claude config (auth tokens, settings) persists across container rebuilds.
-  // Your project is bind-mounted; nothing else from your host is exposed.
-  "mounts": [
-    "source=claude-code-config-${devcontainerId},target=/home/node/.claude,type=volume",
-    "source=claude-code-history-${devcontainerId},target=/commandhistory,type=volume"
-  ],
-
-  // ── Workspace ─────────────────────────────────────────────────────────────────
-  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=delegated",
-  "workspaceFolder": "/workspace",
-
-  // ── Environment ───────────────────────────────────────────────────────────────
-  "containerEnv": {
-    "NODE_OPTIONS": "--max-old-space-size=4096",
-    "CLAUDE_CONFIG_DIR": "/home/node/.claude",
-    // Prevents a slow git status prompt inside the container
-    "POWERLEVEL9K_DISABLE_GITSTATUS": "true"
-  },
-
-  // OAuth token passthrough for `claude setup-token` auth (Pro/Max/Team/Enterprise
-  // subscription, no per-token API billing). In GitHub Codespaces, set
-  // CLAUDE_CODE_OAUTH_TOKEN as a Codespaces secret (repo or org level) — it's
-  // injected automatically, this block is what makes the same devcontainer also
-  // work if opened locally via the VS Code Dev Containers extension.
+  // OAuth token from `claude setup-token`, run locally once with a real
+  // browser. Store the value as a Codespaces secret named
+  // CLAUDE_CODE_OAUTH_TOKEN (repo or org level) — never paste the token
+  // itself in this file.
   "remoteEnv": {
     "CLAUDE_CODE_OAUTH_TOKEN": "${localEnv:CLAUDE_CODE_OAUTH_TOKEN}"
   },
 
-  // ── Ports ─────────────────────────────────────────────────────────────────────
-  // Vite's default dev server port (playground app). Codespaces auto-detects
-  // listening ports regardless, this just gives it a predictable label sooner.
-  // Confirm this matches vite.config.ts if a custom port is ever set there.
-  "forwardPorts": [5173],
+  "postCreateCommand": "npm install && curl -fsSL https://claude.ai/install.sh | bash",
 
-  // ── VS Code ───────────────────────────────────────────────────────────────────
   "customizations": {
     "vscode": {
-      "extensions": [
-        "anthropic.claude-code",
-        "esbenp.prettier-vscode",
-        "dbaeumer.vscode-eslint"
-      ],
-      "settings": {
-        "editor.formatOnSave": true,
-        "editor.defaultFormatter": "esbenp.prettier-vscode",
-        "terminal.integrated.defaultProfile.linux": "zsh"
-      }
+      "extensions": ["anthropic.claude-code", "dbaeumer.vscode-eslint", "esbenp.prettier-vscode"]
     }
-  },
-
-  // ── Run as non-root ───────────────────────────────────────────────────────────
-  "remoteUser": "node"
+  }
 }
