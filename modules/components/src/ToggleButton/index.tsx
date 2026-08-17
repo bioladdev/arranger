@@ -3,13 +3,13 @@ import cx from 'classnames';
 import noopFn, { emptyObj } from '#utils/noops';
 
 import { NonEmptyArray } from '#types/utility.js';
-import { FC, HTMLProps } from 'react';
+import { HTMLProps, ReactNode } from 'react';
 
 import styles from './styles.module.css';
 
 export interface Option {
 	disabled?: boolean;
-	title?: FC<{ toggleStatus?: string } | undefined>;
+	title?: (props: { active: boolean; disabled: boolean }) => ReactNode;
 	value: string;
 }
 
@@ -40,7 +40,7 @@ const ToggleButton = ({ onChange = noopFn, options, value: selectedValue = '', c
 						key={value || `undefined-${index}`}
 						onClick={clickHandler}
 					>
-						{typeof title === 'function' ? title({ toggleStatus: cx({ active, disabled }) }) : title}
+						{typeof title === 'function' ? title({ active, disabled }) : title}
 					</button>
 				);
 			})}

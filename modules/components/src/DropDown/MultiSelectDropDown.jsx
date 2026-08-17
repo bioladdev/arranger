@@ -343,10 +343,12 @@ const DropDownMenu = ({
 				<ArrowIcon
 					style={{ marginLeft: '0.3rem', marginTop: '0.1rem' }}
 					disabled={isDisabled}
-					disabledFill={customArrowDisabledColor || themeArrowDisabledColor || disabledFontColor}
-					fill={customArrowColor || themeArrowColor || fontColor}
 					pointUp={isOpen}
-					transition={customArrowTransition || themeArrowTransition}
+					theme={{
+						disabledFill: customArrowDisabledColor || themeArrowDisabledColor || disabledFontColor,
+						fill: customArrowColor || themeArrowColor || fontColor,
+						transition: customArrowTransition || themeArrowTransition,
+					}}
 				/>
 			</Button>
 

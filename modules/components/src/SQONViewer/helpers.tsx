@@ -119,7 +119,6 @@ export const useDataBubbles = ({
 				background: colors?.grey?.[200],
 				borderRadius: '0.3em',
 				disabledBackground: colors?.grey?.[100],
-				hoverBackground: colors?.grey?.[300],
 				padding: '0.2em 0.5em',
 				...themeSQONClearProps,
 			}}

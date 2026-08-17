@@ -12,5 +12,6 @@ export type BucketCountThemeProps = ThemeCommon.CustomCSS &
 	ThemeCommon.FontProperties;
 
 export default interface Props extends HTMLProps<HTMLButtonElement>, ThemeCommon.CustomCSS {
+	active?: boolean;
 	theme?: RecursivePartial<BucketCountThemeProps>;
 }

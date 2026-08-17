@@ -124,14 +124,16 @@ const BooleanAggs = ({
 		{
 			value: valueKeys.true,
 			disabled: isTrueBucketDisabled,
-			title: ({ toggleStatus = '' } = emptyObj) => (
+			title: ({ active, disabled }) => (
 				<>
 					<TextHighlight
 						content={displayKeys.true}
 						highlightText={highlightText}
 					/>
 					<BucketCount
-						className={cx(toggleStatus, styles.trueBucketCount, themeBucketCountClassName)}
+						active={active}
+						className={cx(styles.trueBucketCount, themeBucketCountClassName)}
+						disabled={disabled}
 						theme={bucketCountTheme}
 					>
 						{formatNumber(isTrueBucketDisabled ? 0 : trueBucket.doc_count)}
@@ -142,14 +144,16 @@ const BooleanAggs = ({
 		{
 			value: valueKeys.false,
 			disabled: isFalseBucketDisabled,
-			title: ({ toggleStatus = '' } = emptyObj) => (
+			title: ({ active, disabled }) => (
 				<>
 					<TextHighlight
 						content={displayKeys.false}
 						highlightText={highlightText}
 					/>
 					<BucketCount
-						className={cx(toggleStatus, styles.falseBucketCount, themeBucketCountClassName)}
+						active={active}
+						className={cx(styles.falseBucketCount, themeBucketCountClassName)}
+						disabled={disabled}
 						theme={bucketCountTheme}
 					>
 						{formatNumber(isFalseBucketDisabled ? 0 : falseBucket.doc_count)}
