@@ -76,10 +76,12 @@ class DropDown extends React.Component {
 							<div>{children}</div>
 							<ArrowIcon
 								style={{ marginLeft: '0.3rem', marginTop: '0.1rem' }}
-								fill={customArrowColor || themeArrowColor}
 								pointUp={isOpen}
-								transition={customArrowTransition || themeArrowTransition}
-								{...themeArrowProps}
+								theme={{
+									fill: customArrowColor || themeArrowColor,
+									transition: customArrowTransition || themeArrowTransition,
+									...themeArrowProps,
+								}}
 							/>
 						</button>
 
